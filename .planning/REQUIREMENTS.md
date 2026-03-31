@@ -73,7 +73,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **INFR-02**: GitHub repository under 1x-technologies org (ERP Team) with CI/CD pipeline
 - [ ] **INFR-03**: Location model supports adding new locations via configuration without code changes
 - [x] **INFR-04**: Firestore data model with nested subcollections (pieces under shipments)
-- [ ] **INFR-05**: Cloud Run for containerized backend services (report generation/export, bulk operations)
+- [x] **INFR-05**: Cloud Run for containerized backend services (report generation/export, bulk operations)
 - [x] **INFR-06**: Secret Manager for API keys and credentials management
 - [x] **INFR-07**: Pub/Sub for event-driven async processing between services
 - [x] **INFR-08**: Cloud Scheduler for aged report cron jobs and scheduled maintenance tasks
@@ -158,7 +158,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFR-02 | Phase 1: Project Scaffolding & Firebase Infrastructure | Pending |
 | INFR-03 | Phase 3: Shipment Creation | Pending |
 | INFR-04 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
-| INFR-05 | Phase 1: Project Scaffolding & Firebase Infrastructure | Pending |
+| INFR-05 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-06 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-07 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-08 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
