@@ -1,0 +1,27 @@
+{
+  "name": "material-tracking",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter web dev\" \"pnpm --filter api dev\"",
+    "dev:emulators": "firebase emulators:start --import=./emulator-data --export-on-exit=./emulator-data",
+    "build": "pnpm --filter shared build && pnpm -r --filter '!shared' build",
+    "build:functions": "pnpm --filter functions build",
+    "build:api": "pnpm --filter api build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:emulator": "firebase emulators:exec 'pnpm --filter functions test'",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.10",
+    "concurrently": "^9.1.2",
+    "firebase-tools": "^15.12.0",
+    "typescript": "^6.0.2"
+  },
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=22"
+  }
+}

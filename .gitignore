@@ -1,1 +1,14 @@
 .planning/
+
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+*.log
+.firebase/
+emulator-data/
+.turbo/
+coverage/
+.DS_Store
+*.tsbuildinfo
