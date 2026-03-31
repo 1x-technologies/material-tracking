@@ -1,11 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
-import { AuthProvider, useAuthContext } from './context/AuthContext';
-import { TRPCProvider } from './trpc';
-import { AppLayout } from './components/layout/AppLayout';
-import { DashboardPage } from './pages/DashboardPage';
-import { SignInPage } from './pages/SignInPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { Spinner } from './components/ui/Spinner';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { AppLayout } from "./components/layout/AppLayout";
+import { Spinner } from "./components/ui/Spinner";
+import { AuthProvider, useAuthContext } from "./context/AuthContext";
+import { DashboardPage } from "./pages/DashboardPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { SignInPage } from "./pages/SignInPage";
+import { TRPCProvider } from "./trpc";
 
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuthContext();

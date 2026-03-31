@@ -1,9 +1,9 @@
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
 
 export const onShipmentCreated = onDocumentCreated(
   {
-    document: 'shipments/{shipmentId}',
-    region: 'us-central1',
+    document: "shipments/{shipmentId}",
+    region: "us-central1",
   },
   async (event) => {
     const data = event.data?.data();

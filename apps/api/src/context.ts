@@ -1,6 +1,6 @@
-import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-import type { UserRole } from '@material-tracking/shared';
-import { auth } from './lib/firebase';
+import type { UserRole } from "@material-tracking/shared";
+import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
+import { auth } from "./lib/firebase";
 
 export interface AuthUser {
   uid: string;
@@ -14,7 +14,7 @@ export interface Context {
 }
 
 export async function createContext({ req }: CreateExpressContextOptions): Promise<Context> {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  const token = req.headers.authorization?.replace("Bearer ", "");
   if (!token) return { user: null };
 
   try {
@@ -23,7 +23,7 @@ export async function createContext({ req }: CreateExpressContextOptions): Promi
       user: {
         uid: decoded.uid,
         email: decoded.email,
-        role: (decoded.role as UserRole) ?? 'staff',
+        role: (decoded.role as UserRole) ?? "staff",
         name: decoded.name,
       },
     };

@@ -25,11 +25,17 @@
     "indentWidth": 2,
     "lineWidth": 100
   },
+  "css": {
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
+    }
+  },
   "files": {
     "includes": [
       "**",
       "!node_modules",
-      "!dist",
+      "!**/dist",
       "!.planning",
       "!emulator-data",
       "!apps/web/public",

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router';
+import { NavLink } from "react-router";
 
 interface NavItem {
   label: string;
@@ -6,9 +6,7 @@ interface NavItem {
   icon: string;
 }
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: '\u{1F4CA}' },
-];
+const navItems: NavItem[] = [{ label: "Dashboard", path: "/dashboard", icon: "\u{1F4CA}" }];
 
 export function Sidebar() {
   return (
@@ -22,8 +20,8 @@ export function Sidebar() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                     isActive
-                      ? 'bg-brand-50 text-brand-700 font-semibold'
-                      : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900'
+                      ? "bg-brand-50 text-brand-700 font-semibold"
+                      : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
                   }`
                 }
               >
