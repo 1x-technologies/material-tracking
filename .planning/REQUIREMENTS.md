@@ -70,7 +70,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Infrastructure
 
 - [x] **INFR-01**: Three Firebase/GCP environments: dev, staging, production
-- [ ] **INFR-02**: GitHub repository under 1x-technologies org (ERP Team) with CI/CD pipeline
+- [x] **INFR-02**: GitHub repository under 1x-technologies org (ERP Team) with CI/CD pipeline
 - [ ] **INFR-03**: Location model supports adding new locations via configuration without code changes
 - [x] **INFR-04**: Firestore data model with nested subcollections (pieces under shipments)
 - [x] **INFR-05**: Cloud Run for containerized backend services (report generation/export, bulk operations)
@@ -155,7 +155,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMN-04 | Phase 10: Admin Panel & Reports | Pending |
 | ADMN-05 | Phase 9: History, Search & Audit | Pending |
 | INFR-01 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
-| INFR-02 | Phase 1: Project Scaffolding & Firebase Infrastructure | Pending |
+| INFR-02 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-03 | Phase 3: Shipment Creation | Pending |
 | INFR-04 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-05 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |

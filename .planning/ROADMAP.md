@@ -41,7 +41,7 @@ Plans:
 - [x] 01-03-PLAN.md — tRPC API server on Cloud Run
 - [x] 01-04-PLAN.md — Cloud Functions scaffold + GCP service patterns
 - [x] 01-05-PLAN.md — React frontend scaffold with layout shell
-- [ ] 01-06-PLAN.md — CI/CD pipeline + build verification
+- [x] 01-06-PLAN.md — CI/CD pipeline + build verification
 **UI hint**: no
 
 ### Phase 2: Authentication & User Roles
