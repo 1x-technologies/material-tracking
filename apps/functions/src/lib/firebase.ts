@@ -1,0 +1,19 @@
+import { getApps, initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+
+const app = getApps().length === 0 ? initializeApp() : getApps()[0];
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+const secretClient = new SecretManagerServiceClient();
+
+export async function getSecret(secretName: string): Promise<string> {
+  const projectId = process.env.GOOGLE_CLOUD_PROJECT ?? process.env.GCLOUD_PROJECT;
+  const [version] = await secretClient.accessSecretVersion({
+    name: `projects/${projectId}/secrets/${secretName}/versions/latest`,
+  });
+  return version.payload?.data?.toString() ?? '';
+}
