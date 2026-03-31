@@ -62,11 +62,11 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 
 - **Tech Stack**: Google Firebase (Firestore, Auth, Cloud Functions, Storage, Hosting) — chosen for rapid development and managed infrastructure
 - **Data Model**: Nested Firestore subcollections (pieces as subcollection under shipments)
-- **Business Logic**: All business logic runs in Cloud Functions (scan processing, status updates, aged reports, notifications)
+- **Business Logic**: Cloud Functions v2 for event-driven logic (Firestore triggers, scan processing, notifications, scheduled jobs); Cloud Run for heavier operations (report generation/export, bulk operations)
 - **Authentication**: Firebase Auth with Google Workspace provider (SSO)
 - **Environments**: Three Firebase projects — dev, staging, production
 - **Storage**: Firebase Storage for package photos, generated QR label PDFs, and signature captures
-- **Source Control**: GitHub repository with CI/CD pipeline, personal account initially with migration to org later
+- **Source Control**: GitHub repository under 1x-technologies org (ERP Team) with CI/CD pipeline
 - **Connectivity**: Always-online assumption — no offline mode required
 
 ## Key Decisions
@@ -75,7 +75,8 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 |----------|-----------|---------|
 | Firebase full stack | Managed infrastructure, fast development, real-time capabilities built-in | — Pending |
 | Nested subcollections for pieces | Pieces are always accessed in context of their parent shipment | — Pending |
-| Cloud Functions for all business logic | Centralized validation, security rules stay simple, easier to test | — Pending |
+| Cloud Functions v2 + Cloud Run split | Functions for triggers/events/scheduled, Cloud Run for heavy/long-running tasks | — Pending |
+| Firestore real-time over websockets | onSnapshot listeners handle live dashboard updates, no websocket server needed | — Pending |
 | Individual piece tracking | Supports partial delivery workflows where pieces arrive separately | — Pending |
 | Three environments (dev/staging/prod) | Proper deployment pipeline with staging for QA | — Pending |
 | Google SSO only | All users are company employees with Google Workspace accounts | — Pending |

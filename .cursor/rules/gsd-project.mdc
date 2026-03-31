@@ -1,0 +1,37 @@
+---
+description: GSD project context for Material Tracking System
+globs: 
+alwaysApply: true
+---
+
+# Material Tracking System — Project Context
+
+## Project
+QR-based shipment tracking system for non-inventory materials between company locations (HA ↔ SC). Replaces manual sticker + drive log process.
+
+## Tech Stack
+- **Frontend**: React 19 + Vite 8 + Tailwind CSS + shadcn/ui
+- **Database**: Cloud Firestore (nested subcollections: pieces under shipments)
+- **Auth**: Firebase Auth with Google Workspace SSO
+- **Backend**: Cloud Functions v2 (triggers, events, scheduled) + Cloud Run (heavy operations)
+- **Storage**: Firebase Storage (photos, signatures, QR labels)
+- **Hosting**: Firebase Hosting
+- **GCP Services**: Cloud Scheduler, Pub/Sub, Secret Manager
+- **Environments**: dev, staging, production (separate Firebase projects)
+- **Repo**: GitHub under 1x-technologies org (ERP Team)
+
+## Planning Files
+- `.planning/PROJECT.md` — project context and decisions
+- `.planning/REQUIREMENTS.md` — 44 v1 requirements with REQ-IDs
+- `.planning/ROADMAP.md` — 10 phases
+- `.planning/STATE.md` — current progress
+- `.planning/research/` — stack, features, architecture, pitfalls research
+- `.planning/config.json` — GSD workflow settings
+
+## Key Patterns
+- Cloud Functions v2 for all Firestore triggers and event-driven logic
+- Cloud Run for report generation, bulk operations, long-running tasks
+- Firestore `onSnapshot` for real-time dashboard (no websocket server)
+- Pieces as subcollections under shipments with denormalized fields
+- Three roles: Admin, Driver, Staff
+- Status lifecycle per piece: Created → In Transit → Delivered → Picked Up
