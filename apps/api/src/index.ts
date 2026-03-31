@@ -4,6 +4,8 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import { appRouter } from './router';
 import { createContext } from './context';
 
+export type { AppRouter } from './router';
+
 const app = express();
 
 app.use(
