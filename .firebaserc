@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "1xtech-material-tracking-dev",
+    "dev": "1xtech-material-tracking-dev",
+    "staging": "1xtech-material-tracking-staging",
+    "prod": "1xtech-material-tracking-prod"
+  }
+}
