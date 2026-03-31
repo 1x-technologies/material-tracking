@@ -1,0 +1,11 @@
+node_modules
+.git
+.planning
+.github
+.cursor
+apps/web
+apps/functions
+packages
+emulator-data
+*.md
+.env*
