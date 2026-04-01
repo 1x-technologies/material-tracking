@@ -23,9 +23,10 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 - [x] Sender/receiver lookup from company directory with free text fallback for external contacts — Validated in Phase 3 (stub directory; real API deferred)
 - [x] Scalable location model (HA and SC now, expandable to more) — Validated in Phase 3
 
+- [x] Generate and print QR code labels via networked Zebra printers with multi-piece support (1/5, 2/5, etc.) — Validated in Phase 4
+- [x] Label preview before printing — Validated in Phase 4
+
 ### Active
-- [ ] Generate and print QR code labels via networked Zebra printers with multi-piece support (1/5, 2/5, etc.)
-- [ ] Label preview before printing
 - [ ] Scan QR codes via RF scanners and phone cameras to trigger status updates
 - [ ] Individual piece-level tracking within multi-piece shipments
 - [ ] Four-stage status lifecycle per piece: Created → In Transit → Delivered → Picked Up
@@ -109,4 +110,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 after Phase 3 completion*
+*Last updated: 2026-04-01 after Phase 4 completion*
