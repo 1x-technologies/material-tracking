@@ -14,6 +14,8 @@ export interface ShipmentReceiver {
   email?: string;
   department?: string;
   isExternal: boolean;
+  /** Required when isExternal is true (enforced by Zod at runtime) */
+  company?: string;
 }
 
 export interface LocationRef {
