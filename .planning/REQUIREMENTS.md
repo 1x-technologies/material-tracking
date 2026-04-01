@@ -17,7 +17,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **SHIP-01**: User can create shipment with sender, receiver, description, category, priority, origin, destination, and piece count
 - [x] **SHIP-02**: User can search company directory for sender/receiver with free text fallback for external contacts
-- [ ] **SHIP-03**: User can set priority level on shipment (Urgent, Standard, Low) with visual indicators
+- [x] **SHIP-03**: User can set priority level on shipment (Urgent, Standard, Low) with visual indicators
 - [x] **SHIP-04**: User can edit shipment details after creation (before first scan)
 - [x] **SHIP-05**: User can cancel a shipment (before pickup)
 
@@ -123,7 +123,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 2: Authentication & User Roles | Complete |
 | SHIP-01 | Phase 3: Shipment Creation | Complete |
 | SHIP-02 | Phase 3: Shipment Creation | Complete |
-| SHIP-03 | Phase 3: Shipment Creation | Pending |
+| SHIP-03 | Phase 3: Shipment Creation | Complete |
 | SHIP-04 | Phase 3: Shipment Creation | Complete |
 | SHIP-05 | Phase 3: Shipment Creation | Complete |
 | QRPR-01 | Phase 4: QR Code Generation & Label Printing | Pending |

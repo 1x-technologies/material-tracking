@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Project Scaffolding & Firebase Infrastructure** - Three Firebase environments, CI/CD, Firestore schema, GCP services provisioned
 - [ ] **Phase 2: Authentication & User Roles** - Google Workspace SSO with three-role access control
-- [ ] **Phase 3: Shipment Creation** - Tablet-optimized shipment creation form with directory lookup and lifecycle management
+- [x] **Phase 3: Shipment Creation** - Tablet-optimized shipment creation form with directory lookup and lifecycle management (completed 2026-04-01)
 - [ ] **Phase 4: QR Code Generation & Label Printing** - QR generation, label preview, and Zebra printer integration
 - [ ] **Phase 5: Scan Processing & Status Workflow** - RF scanner and camera-based scanning with four-stage status lifecycle
 - [ ] **Phase 6: Enhanced Scanning Features** - Batch scan mode, signature capture, and photo attachments
@@ -73,7 +73,7 @@ Plans:
 Plans:
 - [x] 03-01-PLAN.md — Shared: ShipmentCategory, create/update/cancel Zod, receiver union (D-03/D-05)
 - [x] 03-02-PLAN.md — API: shipment CRUD + counter + pieces, locations.list, directory stub, seed HA/SC, Vitest
-- [ ] 03-03-PLAN.md — Web: single-page form, autocomplete, priority visuals, edit/cancel routes, locationId profile
+- [x] 03-03-PLAN.md — Web: single-page form, autocomplete, priority visuals, edit/cancel routes, locationId profile
 **UI hint**: yes
 
 ### Phase 4: QR Code Generation & Label Printing
@@ -168,7 +168,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. Project Scaffolding & Firebase Infrastructure | 0/? | Not started | - |
 | 2. Authentication & User Roles | 0/? | Not started | - |
-| 3. Shipment Creation | 2/3 | In Progress|  |
+| 3. Shipment Creation | 3/3 | Complete   | 2026-04-01 |
 | 4. QR Code Generation & Label Printing | 0/? | Not started | - |
 | 5. Scan Processing & Status Workflow | 0/? | Not started | - |
 | 6. Enhanced Scanning Features | 0/? | Not started | - |
