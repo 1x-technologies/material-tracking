@@ -151,7 +151,7 @@ Plans:
   4. System automatically flags packages sitting 24+ hours post-delivery and sends reminders to receiver
 **Plans**: 2 plans
 Plans:
-- [ ] 08-01-PLAN.md — Notification infrastructure + status change email trigger (NOTF-01/02/03)
+- [x] 08-01-PLAN.md — Notification infrastructure + status change email trigger (NOTF-01/02/03)
 - [ ] 08-02-PLAN.md — Aged package reminders + notification unit tests (NOTF-04)
 **UI hint**: no
 

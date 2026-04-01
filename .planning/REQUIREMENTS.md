@@ -48,9 +48,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Notifications
 
-- [ ] **NOTF-01**: Sender and receiver are notified when shipment is delivered
-- [ ] **NOTF-02**: Sender and receiver are notified when shipment is picked up by receiver
-- [ ] **NOTF-03**: Users can opt in to receive in-transit stage notifications
+- [x] **NOTF-01**: Sender and receiver are notified when shipment is delivered
+- [x] **NOTF-02**: Sender and receiver are notified when shipment is picked up by receiver
+- [x] **NOTF-03**: Users can opt in to receive in-transit stage notifications
 - [ ] **NOTF-04**: System auto-reminds receiver for packages sitting 24+ hours post-delivery (aged report)
 
 ### History & Search
@@ -142,9 +142,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DASH-01 | Phase 7: Real-Time Dashboard | Complete |
 | DASH-02 | Phase 7: Real-Time Dashboard | Complete |
 | DASH-03 | Phase 7: Real-Time Dashboard | Complete |
-| NOTF-01 | Phase 8: Notifications & Aged Reports | Pending |
-| NOTF-02 | Phase 8: Notifications & Aged Reports | Pending |
-| NOTF-03 | Phase 8: Notifications & Aged Reports | Pending |
+| NOTF-01 | Phase 8: Notifications & Aged Reports | Complete |
+| NOTF-02 | Phase 8: Notifications & Aged Reports | Complete |
+| NOTF-03 | Phase 8: Notifications & Aged Reports | Complete |
 | NOTF-04 | Phase 8: Notifications & Aged Reports | Pending |
 | HIST-01 | Phase 9: History, Search & Audit | Pending |
 | HIST-02 | Phase 9: History, Search & Audit | Pending |
