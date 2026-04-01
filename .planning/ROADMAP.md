@@ -104,9 +104,9 @@ Plans:
   5. Every scan records who scanned, which piece, and timestamp
 **Plans**: 3 plans
 Plans:
-- [ ] 05-01-PLAN.md — API: scan.process mutation with collection group lookup, transition validation, event recording, shipment status derivation
+- [x] 05-01-PLAN.md — API: scan.process mutation with collection group lookup, transition validation, event recording, shipment status derivation
 - [ ] 05-02-PLAN.md — Web: ScanPage with RF input, camera overlay, action selector, audio/toast feedback, route wiring
-- [ ] 05-03-PLAN.md — Web: Shipment detail events list (D-11) for scan history visibility
+- [x] 05-03-PLAN.md — Web: Shipment detail events list (D-11) for scan history visibility
 **UI hint**: yes
 
 ### Phase 6: Enhanced Scanning Features
@@ -178,7 +178,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 2. Authentication & User Roles | 0/? | Not started | - |
 | 3. Shipment Creation | 3/3 | Complete   | 2026-04-01 |
 | 4. QR Code Generation & Label Printing | 3/3 | Complete   | 2026-04-01 |
-| 5. Scan Processing & Status Workflow | 0/? | Not started | - |
+| 5. Scan Processing & Status Workflow | 2/3 | In Progress|  |
 | 6. Enhanced Scanning Features | 0/? | Not started | - |
 | 7. Real-Time Dashboard | 0/? | Not started | - |
 | 8. Notifications & Aged Reports | 0/? | Not started | - |

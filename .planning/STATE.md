@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 5 context gathered
-last_updated: "2026-04-01T18:31:54.994Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-04-01T18:45:12.655Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
   completed_phases: 4
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 18
+  completed_plans: 17
 ---
 
 # Project State
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Every non-inventory package is trackable end-to-end — from creation to pickup confirmation — with zero manual data entry after the initial shipment creation.
-**Current focus:** Phase 04 — qr-code-generation-label-printing
+**Current focus:** Phase 05 — scan-processing-status-workflow
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 05 (scan-processing-status-workflow) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -66,6 +66,7 @@ Progress: [███░░░░░░░] Phase 3 planned; execution not starte
 | Phase 04 P01 | 1min | 2 tasks | 2 files |
 | Phase 04 P02 | 1min | 3 tasks | 8 files |
 | Phase 04 P03 | 1min | 2 tasks | 4 files |
+| Phase 05 P01 | 1min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,9 @@ Recent decisions affecting current work:
 - [Phase 04]: Inline modal dialog pattern (fixed overlay) — no external dialog library
 - [Phase 04]: Expanded label array for per-piece copies — flatMap each selected piece by copy count before buildBatchZpl
 - [Phase 04]: Detail route reuses ShipmentFormPage with isEditRoute pathname detection
+- [Phase 05]: Pure function extraction for validateTransition and deriveShipmentStatus — testable without Firestore
+- [Phase 05]: Collection group lookup outside transaction for pieceRef, transaction for read-modify-write
+- [Phase 05]: Optimistic status mapping in allStatuses array — use newStatus for current piece since tx.update hasn't flushed
 
 ### Pending Todos
 
@@ -126,6 +130,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T18:31:54.989Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-scan-processing-status-workflow/05-CONTEXT.md
+Last session: 2026-04-01T18:45:12.652Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None

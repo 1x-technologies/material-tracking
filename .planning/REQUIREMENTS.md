@@ -32,10 +32,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **SCAN-01**: Driver can scan QR code via RF scanner (keyboard wedge input)
 - [ ] **SCAN-02**: Driver can scan QR code via phone camera as fallback
-- [ ] **SCAN-03**: Each piece follows four-stage lifecycle: Created → In Transit → Delivered → Picked Up
-- [ ] **SCAN-04**: Each piece is tracked individually within multi-piece shipments
-- [ ] **SCAN-05**: Shipment status is derived from piece statuses (e.g., "Partially Delivered 3/5")
-- [ ] **SCAN-06**: Every scan records who scanned, what piece was scanned, and timestamp
+- [x] **SCAN-03**: Each piece follows four-stage lifecycle: Created → In Transit → Delivered → Picked Up
+- [x] **SCAN-04**: Each piece is tracked individually within multi-piece shipments
+- [x] **SCAN-05**: Shipment status is derived from piece statuses (e.g., "Partially Delivered 3/5")
+- [x] **SCAN-06**: Every scan records who scanned, what piece was scanned, and timestamp
 - [ ] **SCAN-07**: Driver can use batch scan mode to scan multiple pieces and confirm all at once
 - [ ] **SCAN-08**: Signature can be captured at delivery and pickup scan points
 - [ ] **SCAN-09**: Photo can be attached during shipment creation or at scan points
@@ -132,10 +132,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QRPR-04 | Phase 4: QR Code Generation & Label Printing | Complete |
 | SCAN-01 | Phase 5: Scan Processing & Status Workflow | Pending |
 | SCAN-02 | Phase 5: Scan Processing & Status Workflow | Pending |
-| SCAN-03 | Phase 5: Scan Processing & Status Workflow | Pending |
-| SCAN-04 | Phase 5: Scan Processing & Status Workflow | Pending |
-| SCAN-05 | Phase 5: Scan Processing & Status Workflow | Pending |
-| SCAN-06 | Phase 5: Scan Processing & Status Workflow | Pending |
+| SCAN-03 | Phase 5: Scan Processing & Status Workflow | Complete |
+| SCAN-04 | Phase 5: Scan Processing & Status Workflow | Complete |
+| SCAN-05 | Phase 5: Scan Processing & Status Workflow | Complete |
+| SCAN-06 | Phase 5: Scan Processing & Status Workflow | Complete |
 | SCAN-07 | Phase 6: Enhanced Scanning Features | Pending |
 | SCAN-08 | Phase 6: Enhanced Scanning Features | Pending |
 | SCAN-09 | Phase 6: Enhanced Scanning Features | Pending |
