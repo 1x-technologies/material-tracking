@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-04-01T19:16:35.329Z"
+stopped_at: Completed 06-04-PLAN.md
+last_updated: "2026-04-01T19:50:24.224Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
   completed_phases: 5
   total_plans: 22
-  completed_plans: 19
+  completed_plans: 21
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 06 (enhanced-scanning-features) — EXECUTING
-Plan: 2 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -70,6 +70,8 @@ Progress: [███░░░░░░░] Phase 3 planned; execution not starte
 | Phase 05 P03 | 1min | 2 tasks | 2 files |
 | Phase 05 P02 | 2min | 2 tasks | 9 files |
 | Phase 06 P01 | 2min | 2 tasks | 7 files |
+| Phase 06 P02 | 1min | 2 tasks | 4 files |
+| Phase 06 P04 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -127,6 +129,9 @@ Recent decisions affecting current work:
 - [Phase 05]: ScanAction cast in mutation call — selectedAction state is string, tRPC input needs literal union
 - [Phase 06]: Mock processOneScan in router tests — isolates batch logic from Firestore internals
 - [Phase 06]: photoUrls replaces photoUrl everywhere — clean break, no backward compat needed
+- [Phase 06]: Signed URL with 2099 expiry for signature storage — avoids token refresh complexity for display
+- [Phase 06]: Route restructure: AuthenticatedRoutes wrapper so public routes are siblings to AuthGate
+- [Phase 06]: Admin button targets first unsigned delivered piece — simplified MVP without piece picker
 
 ### Pending Todos
 
@@ -140,6 +145,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T19:16:35.326Z
-Stopped at: Completed 06-01-PLAN.md
+Last session: 2026-04-01T19:50:20.794Z
+Stopped at: Completed 06-04-PLAN.md
 Resume file: None
