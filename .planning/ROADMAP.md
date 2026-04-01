@@ -87,7 +87,7 @@ Plans:
   4. User can reprint labels for any existing shipment
 **Plans**: 3 plans
 Plans:
-- [ ] 04-01-PLAN.md — API: Fix qrCode = pieceRef.id in create transaction + add listPieces query
+- [x] 04-01-PLAN.md — API: Fix qrCode = pieceRef.id in create transaction + add listPieces query
 - [ ] 04-02-PLAN.md — Web: Label infrastructure (formatters, preview card, ZPL builder, Zebra wrapper)
 - [ ] 04-03-PLAN.md — Web: Print/Reprint dialogs + detail route + button wiring
 **UI hint**: yes
