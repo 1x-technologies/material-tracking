@@ -12,12 +12,18 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Three Firebase environments (dev/staging/prod) with CI/CD pipeline — Validated in Phase 1
+- [x] Firestore schema with security rules and composite indexes — Validated in Phase 1
+- [x] Cloud Run, Pub/Sub, Cloud Scheduler, Secret Manager service patterns — Validated in Phase 1
+- [x] Base React app with routing and layout shell — Validated in Phase 1
+- [x] Google Workspace SSO authentication restricted to company domain — Validated in Phase 2
+- [x] Session persistence across browser refresh — Validated in Phase 2
+- [x] Three-role access control (Admin, Driver, Staff) with UI and API enforcement — Validated in Phase 2
+- [x] Create shipments with full details (sender, receiver, description, category, priority, origin, destination, piece count) — Validated in Phase 3
+- [x] Sender/receiver lookup from company directory with free text fallback for external contacts — Validated in Phase 3 (stub directory; real API deferred)
+- [x] Scalable location model (HA and SC now, expandable to more) — Validated in Phase 3
 
 ### Active
-
-- [ ] Create shipments with full details (sender, receiver, description, category, priority, origin, destination, piece count)
-- [ ] Sender/receiver lookup from company directory with free text fallback for external contacts
 - [ ] Generate and print QR code labels via networked Zebra printers with multi-piece support (1/5, 2/5, etc.)
 - [ ] Label preview before printing
 - [ ] Scan QR codes via RF scanners and phone cameras to trigger status updates
@@ -33,8 +39,6 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 - [ ] Package photo attachments
 - [ ] Unlimited searchable shipment history
 - [ ] Full admin panel: user management, location management, system settings, reports
-- [ ] Google Workspace SSO authentication
-- [ ] Scalable location model (HA and SC now, expandable to more)
 
 ### Out of Scope
 
@@ -61,6 +65,7 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 ## Constraints
 
 - **Tech Stack**: Google Firebase (Firestore, Auth, Cloud Functions, Storage, Hosting) — chosen for rapid development and managed infrastructure
+- **UI Components**: Untitled UI React components (replaces shadcn/ui)
 - **Data Model**: Nested Firestore subcollections (pieces as subcollection under shipments)
 - **Business Logic**: Cloud Functions v2 for event-driven logic (Firestore triggers, scan processing, notifications, scheduled jobs); Cloud Run for heavier operations (report generation/export, bulk operations)
 - **Authentication**: Firebase Auth with Google Workspace provider (SSO)
@@ -73,13 +78,18 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Firebase full stack | Managed infrastructure, fast development, real-time capabilities built-in | — Pending |
-| Nested subcollections for pieces | Pieces are always accessed in context of their parent shipment | — Pending |
-| Cloud Functions v2 + Cloud Run split | Functions for triggers/events/scheduled, Cloud Run for heavy/long-running tasks | — Pending |
+| Firebase full stack | Managed infrastructure, fast development, real-time capabilities built-in | Validated (Phase 1) |
+| Nested subcollections for pieces | Pieces are always accessed in context of their parent shipment | Validated (Phase 1) |
+| Cloud Functions v2 + Cloud Run split | Functions for triggers/events/scheduled, Cloud Run for heavy/long-running tasks | Validated (Phase 1) |
 | Firestore real-time over websockets | onSnapshot listeners handle live dashboard updates, no websocket server needed | — Pending |
-| Individual piece tracking | Supports partial delivery workflows where pieces arrive separately | — Pending |
-| Three environments (dev/staging/prod) | Proper deployment pipeline with staging for QA | — Pending |
-| Google SSO only | All users are company employees with Google Workspace accounts | — Pending |
+| Individual piece tracking | Supports partial delivery workflows where pieces arrive separately | Validated (Phase 1) |
+| Three environments (dev/staging/prod) | Proper deployment pipeline with staging for QA | Validated (Phase 1) |
+| Google SSO only | All users are company employees with Google Workspace accounts | Validated (Phase 2) |
+| tRPC on Cloud Run for API layer | Typed end-to-end API, Firebase Auth middleware, Pub/Sub integration | Validated (Phase 1) |
+| Biome for linting/formatting | Replaces ESLint+Prettier, single config, faster execution | Validated (Phase 1) |
+| Discriminated union for receiver schema | External contacts require company + email; internal use directory uid | Validated (Phase 3) |
+| Firestore locations collection | Config-based location management; no code deploy for new sites | Validated (Phase 3) |
+| Directory stub with feature flag | DIRECTORY_STUB=1 for dev; real Google Directory API deferred to IT approval | Validated (Phase 3) |
 
 ## Evolution
 
@@ -99,4 +109,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-31 after initialization*
+*Last updated: 2026-04-01 after Phase 3 completion*
