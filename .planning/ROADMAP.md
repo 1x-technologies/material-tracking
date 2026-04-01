@@ -119,7 +119,7 @@ Plans:
   3. Photos can be attached during shipment creation or at scan points
 **Plans**: 4 plans
 Plans:
-- [ ] 06-01-PLAN.md — API: Schema extension, scan core extraction, batch endpoint, piece-level field writes, tests
+- [x] 06-01-PLAN.md — API: Schema extension, scan core extraction, batch endpoint, piece-level field writes, tests
 - [ ] 06-02-PLAN.md — Web: Batch scan mode UI + photo capture + ScanPage integration
 - [ ] 06-03-PLAN.md — Web: Authenticated signature capture with react-signature-canvas + receiver detection
 - [ ] 06-04-PLAN.md — API + Web: Unauthenticated signature link flow (token + standalone page + admin button)
@@ -184,7 +184,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 3. Shipment Creation | 3/3 | Complete   | 2026-04-01 |
 | 4. QR Code Generation & Label Printing | 3/3 | Complete   | 2026-04-01 |
 | 5. Scan Processing & Status Workflow | 3/3 | Complete   | 2026-04-01 |
-| 6. Enhanced Scanning Features | 0/? | Not started | - |
+| 6. Enhanced Scanning Features | 1/4 | In Progress|  |
 | 7. Real-Time Dashboard | 0/? | Not started | - |
 | 8. Notifications & Aged Reports | 0/? | Not started | - |
 | 9. History, Search & Audit | 0/? | Not started | - |

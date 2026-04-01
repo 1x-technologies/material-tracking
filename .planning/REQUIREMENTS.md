@@ -36,9 +36,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SCAN-04**: Each piece is tracked individually within multi-piece shipments
 - [x] **SCAN-05**: Shipment status is derived from piece statuses (e.g., "Partially Delivered 3/5")
 - [x] **SCAN-06**: Every scan records who scanned, what piece was scanned, and timestamp
-- [ ] **SCAN-07**: Driver can use batch scan mode to scan multiple pieces and confirm all at once
+- [x] **SCAN-07**: Driver can use batch scan mode to scan multiple pieces and confirm all at once
 - [ ] **SCAN-08**: Signature can be captured at delivery and pickup scan points
-- [ ] **SCAN-09**: Photo can be attached during shipment creation or at scan points
+- [x] **SCAN-09**: Photo can be attached during shipment creation or at scan points
 
 ### Dashboard & Visibility
 
@@ -136,9 +136,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCAN-04 | Phase 5: Scan Processing & Status Workflow | Complete |
 | SCAN-05 | Phase 5: Scan Processing & Status Workflow | Complete |
 | SCAN-06 | Phase 5: Scan Processing & Status Workflow | Complete |
-| SCAN-07 | Phase 6: Enhanced Scanning Features | Pending |
+| SCAN-07 | Phase 6: Enhanced Scanning Features | Complete |
 | SCAN-08 | Phase 6: Enhanced Scanning Features | Pending |
-| SCAN-09 | Phase 6: Enhanced Scanning Features | Pending |
+| SCAN-09 | Phase 6: Enhanced Scanning Features | Complete |
 | DASH-01 | Phase 7: Real-Time Dashboard | Pending |
 | DASH-02 | Phase 7: Real-Time Dashboard | Pending |
 | DASH-03 | Phase 7: Real-Time Dashboard | Pending |
