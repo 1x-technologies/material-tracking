@@ -31,10 +31,11 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export const ShipmentCategory = {
-  PARTS: "parts",
   DOCUMENTS: "documents",
-  SUPPLIES: "supplies",
+  PARTS: "parts",
+  SAMPLES: "samples",
   EQUIPMENT: "equipment",
+  PERSONAL: "personal",
   OTHER: "other",
 } as const;
 export type ShipmentCategory = (typeof ShipmentCategory)[keyof typeof ShipmentCategory];
