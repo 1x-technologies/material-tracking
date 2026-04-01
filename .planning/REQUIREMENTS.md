@@ -44,7 +44,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **DASH-01**: Real-time dashboard shows all active shipments with live status updates
 - [x] **DASH-02**: Dashboard highlights exceptions: stalled shipments, overdue deliveries, aged packages
-- [ ] **DASH-03**: Driver trip view shows grouped pickup and delivery tasks for the current day
+- [x] **DASH-03**: Driver trip view shows grouped pickup and delivery tasks for the current day
 
 ### Notifications
 
@@ -141,7 +141,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCAN-09 | Phase 6: Enhanced Scanning Features | Complete |
 | DASH-01 | Phase 7: Real-Time Dashboard | Complete |
 | DASH-02 | Phase 7: Real-Time Dashboard | Complete |
-| DASH-03 | Phase 7: Real-Time Dashboard | Pending |
+| DASH-03 | Phase 7: Real-Time Dashboard | Complete |
 | NOTF-01 | Phase 8: Notifications & Aged Reports | Pending |
 | NOTF-02 | Phase 8: Notifications & Aged Reports | Pending |
 | NOTF-03 | Phase 8: Notifications & Aged Reports | Pending |

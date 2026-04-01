@@ -137,7 +137,7 @@ Plans:
 Plans:
 - [x] 07-01-PLAN.md — Data hooks (onSnapshot subscription), exception classification utils, badge components
 - [x] 07-02-PLAN.md — Dashboard status board with filter tabs, sortable table, exception highlights
-- [ ] 07-03-PLAN.md — Driver trip view (My Tasks tab) with grouped pickup/deliver sections
+- [x] 07-03-PLAN.md — Driver trip view (My Tasks tab) with grouped pickup/deliver sections
 **UI hint**: yes
 
 ### Phase 8: Notifications & Aged Reports
