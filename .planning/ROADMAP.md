@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Shipment Creation** - Tablet-optimized shipment creation form with directory lookup and lifecycle management (completed 2026-04-01)
 - [x] **Phase 4: QR Code Generation & Label Printing** - QR generation, label preview, and Zebra printer integration (completed 2026-04-01)
 - [x] **Phase 5: Scan Processing & Status Workflow** - RF scanner and camera-based scanning with four-stage status lifecycle (completed 2026-04-01)
-- [ ] **Phase 6: Enhanced Scanning Features** - Batch scan mode, signature capture, and photo attachments
+- [x] **Phase 6: Enhanced Scanning Features** - Batch scan mode, signature capture, and photo attachments (completed 2026-04-01)
 - [ ] **Phase 7: Real-Time Dashboard** - Live status board with exception alerts and driver trip view
 - [ ] **Phase 8: Notifications & Aged Reports** - Status change notifications and automated aged package reminders
 - [ ] **Phase 9: History, Search & Audit** - Searchable shipment history with full event timeline and audit trail
@@ -121,7 +121,7 @@ Plans:
 Plans:
 - [x] 06-01-PLAN.md — API: Schema extension, scan core extraction, batch endpoint, piece-level field writes, tests
 - [x] 06-02-PLAN.md — Web: Batch scan mode UI + photo capture + ScanPage integration
-- [ ] 06-03-PLAN.md — Web: Authenticated signature capture with react-signature-canvas + receiver detection
+- [x] 06-03-PLAN.md — Web: Authenticated signature capture with react-signature-canvas + receiver detection
 - [x] 06-04-PLAN.md — API + Web: Unauthenticated signature link flow (token + standalone page + admin button)
 **UI hint**: yes
 
@@ -184,7 +184,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 3. Shipment Creation | 3/3 | Complete   | 2026-04-01 |
 | 4. QR Code Generation & Label Printing | 3/3 | Complete   | 2026-04-01 |
 | 5. Scan Processing & Status Workflow | 3/3 | Complete   | 2026-04-01 |
-| 6. Enhanced Scanning Features | 1/4 | In Progress|  |
+| 6. Enhanced Scanning Features | 4/4 | Complete   | 2026-04-01 |
 | 7. Real-Time Dashboard | 0/? | Not started | - |
 | 8. Notifications & Aged Reports | 0/? | Not started | - |
 | 9. History, Search & Audit | 0/? | Not started | - |
