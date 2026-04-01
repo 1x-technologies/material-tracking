@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { CancelShipmentButton } from "../components/shipment/CancelShipmentButton";
 import { PieceEventsList } from "../components/shipment/PieceEventsList";
@@ -52,6 +52,9 @@ export function ShipmentFormPage() {
 
   const [showPrintDialog, setShowPrintDialog] = useState(false);
   const [showReprintDialog, setShowReprintDialog] = useState(false);
+  const [sigLinkCopied, setSigLinkCopied] = useState(false);
+
+  const signatureLinkMutation = trpc.scan.requestSignatureLink.useMutation();
 
   const locationsQuery = trpc.locations.list.useQuery();
 
@@ -157,6 +160,27 @@ export function ShipmentFormPage() {
       description: s.description as string,
     }));
   }, [shipmentQuery.data, piecesQuery.data]);
+
+  const firstUnsignedDeliveredPiece = useMemo(() => {
+    if (!piecesQuery.data) return null;
+    return piecesQuery.data.find((p: Record<string, unknown>) =>
+      p.status === "delivered" && !p.deliverySignatureUrl
+    ) as Record<string, unknown> | undefined ?? null;
+  }, [piecesQuery.data]);
+
+  const handleSendSignatureLink = useCallback(async () => {
+    if (!shipmentId || !firstUnsignedDeliveredPiece) return;
+    const pieceId = firstUnsignedDeliveredPiece.id as string;
+    try {
+      const result = await signatureLinkMutation.mutateAsync({ shipmentId, pieceId });
+      const fullUrl = `${window.location.origin}${result.url}`;
+      await navigator.clipboard.writeText(fullUrl);
+      setSigLinkCopied(true);
+      setTimeout(() => setSigLinkCopied(false), 3000);
+    } catch {
+      // mutation error handled by tRPC
+    }
+  }, [shipmentId, firstUnsignedDeliveredPiece, signatureLinkMutation]);
 
   const shipmentStatus = mode === "edit" ? ((shipmentQuery.data as Record<string, unknown>)?.status as string) : null;
   const isReadOnly = mode === "edit" && (!isEditRoute || (!!shipmentStatus && shipmentStatus !== "created"));
@@ -286,6 +310,20 @@ export function ShipmentFormPage() {
               className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition-colors"
             >
               Edit Shipment
+            </button>
+          )}
+          {appUser?.role === "admin" && firstUnsignedDeliveredPiece && (
+            <button
+              type="button"
+              onClick={handleSendSignatureLink}
+              disabled={signatureLinkMutation.isPending}
+              className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition-colors disabled:opacity-60"
+            >
+              {sigLinkCopied
+                ? "Link Copied!"
+                : signatureLinkMutation.isPending
+                  ? "Generating\u2026"
+                  : "Send Signature Link"}
             </button>
           )}
         </div>
