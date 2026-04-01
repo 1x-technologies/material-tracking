@@ -149,7 +149,10 @@ Plans:
   2. Sender and receiver are notified when a shipment is picked up by receiver
   3. Users can opt in to receive in-transit stage notifications
   4. System automatically flags packages sitting 24+ hours post-delivery and sends reminders to receiver
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 08-01-PLAN.md — Notification infrastructure + status change email trigger (NOTF-01/02/03)
+- [ ] 08-02-PLAN.md — Aged package reminders + notification unit tests (NOTF-04)
 **UI hint**: no
 
 ### Phase 9: History, Search & Audit
