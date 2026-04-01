@@ -6,7 +6,7 @@ import { AuthProvider, useAuthContext } from "./context/AuthContext";
 import { AccessDeniedPage } from "./pages/AccessDeniedPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { ScanStubPage } from "./pages/ScanStubPage";
+import { ScanPage } from "./pages/ScanPage";
 import { ShipmentFormPage } from "./pages/ShipmentFormPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TRPCProvider } from "./trpc";
@@ -64,14 +64,7 @@ function AppRoutes() {
                 </RequireRole>
               }
             />
-            <Route
-              path="scan"
-              element={
-                <RequireRole allowedRoles={["driver", "admin"]}>
-                  <ScanStubPage />
-                </RequireRole>
-              }
-            />
+            <Route path="scan" element={<ScanPage />} />
             <Route path="access-denied" element={<AccessDeniedPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
