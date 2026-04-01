@@ -13,7 +13,8 @@ import { Spinner } from "../components/ui/Spinner";
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const { shipments, loading, error } = useShipmentsSubscription({ showCompleted: true });
+  const [daysBack, setDaysBack] = useState(30);
+  const { shipments, loading, error } = useShipmentsSubscription({ showCompleted: true, daysBack });
 
   const [activeTab, setActiveTab] = useState("all");
   const [sortField, setSortField] = useState<SortField>("createdAt");
@@ -116,6 +117,19 @@ export function DashboardPage() {
         sortDirection={sortDirection}
         onSort={handleSort}
       />
+
+      <div className="flex flex-col items-center gap-2 py-6">
+        <p className="text-xs text-neutral-400">
+          Showing last {daysBack} days
+        </p>
+        <button
+          type="button"
+          onClick={() => setDaysBack((d) => d + 30)}
+          className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors"
+        >
+          Show Older Shipments
+        </button>
+      </div>
     </div>
   );
 }

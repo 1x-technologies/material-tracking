@@ -14,6 +14,7 @@ export type ShipmentWithId = Shipment & { id: string };
 
 export interface UseShipmentsSubscriptionOptions {
   showCompleted?: boolean;
+  daysBack?: number;
 }
 
 export interface UseShipmentsSubscriptionResult {
@@ -32,13 +33,14 @@ export function useShipmentsSubscription(
   const [error, setError] = useState<Error | null>(null);
 
   const showCompleted = options?.showCompleted ?? false;
+  const daysBack = options?.daysBack ?? 30;
 
   useEffect(() => {
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const cutoff = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);
 
     const q = query(
       collection(firestore, "shipments"),
-      where("createdAt", ">", Timestamp.fromDate(thirtyDaysAgo)),
+      where("createdAt", ">", Timestamp.fromDate(cutoff)),
       orderBy("createdAt", "desc"),
     );
 
@@ -67,7 +69,7 @@ export function useShipmentsSubscription(
     );
 
     return unsubscribe;
-  }, [showCompleted]);
+  }, [showCompleted, daysBack]);
 
   return { shipments, loading, error };
 }
