@@ -128,6 +128,13 @@ describe("shipment.create", () => {
     expect(shipmentSetCall).toBeDefined();
     expect(shipmentSetCall![1].status).toBe("created");
     expect(shipmentSetCall![1].pieceCount).toBe(2);
+
+    const pieceCalls = setCalls.filter((call) => call[1]?.pieceNumber != null);
+    expect(pieceCalls).toHaveLength(2);
+    for (const call of pieceCalls) {
+      expect(call[1].qrCode).not.toContain("pending:");
+      expect(call[1].qrCode).toBe(call[0].id);
+    }
   });
 
   it("rejects drivers from creating shipments", async () => {
@@ -200,6 +207,80 @@ describe("shipment.cancel", () => {
     await expect(
       shipmentCaller(staffCtx()).shipment.cancel({ shipmentId: "ship-1" }),
     ).rejects.toThrow("SHIPMENT_NOT_CANCELLABLE");
+  });
+});
+
+describe("shipment.listPieces", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    const mockDb = vi.mocked(db);
+    mockDb.doc.mockReturnValue({
+      id: "auto-id-123",
+      get: mockGet,
+      update: mockUpdate,
+    } as any);
+  });
+
+  it("returns ordered pieces for an existing shipment", async () => {
+    mockGet.mockResolvedValue({
+      exists: true,
+      id: "ship-1",
+      data: () => ({ shipmentNumber: "SH-20260401-0001", status: "created" }),
+    });
+
+    const mockPieceDocs = [
+      { id: "piece-a", data: () => ({ pieceNumber: 1, qrCode: "piece-a", status: "created" }) },
+      { id: "piece-b", data: () => ({ pieceNumber: 2, qrCode: "piece-b", status: "created" }) },
+    ];
+
+    const mockDb = vi.mocked(db);
+    mockDb.collection.mockReturnValue({
+      orderBy: vi.fn().mockReturnValue({
+        get: vi.fn().mockResolvedValue({ docs: mockPieceDocs }),
+      }),
+    } as any);
+
+    const result = await shipmentCaller(staffCtx()).shipment.listPieces({
+      shipmentId: "ship-1",
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result[0]).toMatchObject({ id: "piece-a", pieceNumber: 1, qrCode: "piece-a" });
+    expect(result[1]).toMatchObject({ id: "piece-b", pieceNumber: 2, qrCode: "piece-b" });
+  });
+
+  it("throws NOT_FOUND for missing shipment", async () => {
+    mockGet.mockResolvedValue({ exists: false, data: () => undefined });
+
+    await expect(
+      shipmentCaller(staffCtx()).shipment.listPieces({ shipmentId: "missing" }),
+    ).rejects.toThrow(expect.objectContaining({ code: "NOT_FOUND" }));
+  });
+
+  it("allows drivers to list pieces", async () => {
+    mockGet.mockResolvedValue({
+      exists: true,
+      id: "ship-1",
+      data: () => ({ shipmentNumber: "SH-20260401-0001", status: "created" }),
+    });
+
+    const mockPieceDocs = [
+      { id: "piece-x", data: () => ({ pieceNumber: 1, qrCode: "piece-x", status: "created" }) },
+    ];
+
+    const mockDb = vi.mocked(db);
+    mockDb.collection.mockReturnValue({
+      orderBy: vi.fn().mockReturnValue({
+        get: vi.fn().mockResolvedValue({ docs: mockPieceDocs }),
+      }),
+    } as any);
+
+    const result = await shipmentCaller(driverCtx()).shipment.listPieces({
+      shipmentId: "ship-1",
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ id: "piece-x", pieceNumber: 1, qrCode: "piece-x" });
   });
 });
 
