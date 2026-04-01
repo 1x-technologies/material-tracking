@@ -9,6 +9,8 @@ import { ScanInput } from "../components/scan/ScanInput";
 import { ScannedPiecesList } from "../components/scan/ScannedPiecesList";
 import { SignatureDialog } from "../components/scan/SignatureDialog";
 import { playErrorBuzz, playSuccessBeep } from "../components/scan/scanSounds";
+import { useAuthContext } from "../context/AuthContext";
+import { isReceiver } from "../lib/receiver-detect";
 import { uploadScanPhoto, uploadSignaturePng } from "../lib/storage";
 import { trpc } from "../trpc";
 
@@ -29,6 +31,7 @@ interface PendingScan {
 }
 
 export function ScanPage() {
+  const { user } = useAuthContext();
   const [selectedAction, setSelectedAction] = useState("in_transit");
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
   const [error, setError] = useState<string | null>(null);
