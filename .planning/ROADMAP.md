@@ -102,7 +102,11 @@ Plans:
   3. Each piece follows the lifecycle: Created → In Transit → Delivered → Picked Up
   4. Shipment status automatically derives from piece statuses (e.g., "Partially Delivered 3/5")
   5. Every scan records who scanned, which piece, and timestamp
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 05-01-PLAN.md — API: scan.process mutation with collection group lookup, transition validation, event recording, shipment status derivation
+- [ ] 05-02-PLAN.md — Web: ScanPage with RF input, camera overlay, action selector, audio/toast feedback, route wiring
+- [ ] 05-03-PLAN.md — Web: Shipment detail events list (D-11) for scan history visibility
 **UI hint**: yes
 
 ### Phase 6: Enhanced Scanning Features
