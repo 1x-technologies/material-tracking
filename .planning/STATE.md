@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-04-01T21:09:46.951Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-04-01T21:11:27.611Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
   completed_phases: 6
   total_plans: 25
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 07 (real-time-dashboard) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -74,6 +74,7 @@ Progress: [███░░░░░░░] Phase 3 planned; execution not starte
 | Phase 06 P04 | 2min | 2 tasks | 5 files |
 | Phase 06 P03 | 2min | 2 tasks | 4 files |
 | Phase 07 P01 | 1min | 2 tasks | 5 files |
+| Phase 07 P02 | 1min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -139,6 +140,8 @@ Recent decisions affecting current work:
 - [Phase 06]: Batch signature is single capture — one signature covers all items in a delivery batch
 - [Phase 07]: Client-side status filtering for showCompleted — avoids Firestore not-in + inequality compound query limitation
 - [Phase 07]: Exception thresholds as inline constants — stalled 4h, overdue 24h, aged 24h per D-07
+- [Phase 07]: showCompleted: true on dashboard hook — dashboard needs all statuses, client-side tabs handle filtering
+- [Phase 07]: sortShipments exported as utility — DashboardPage applies sorting in useMemo for filtered+sorted pipeline
 
 ### Pending Todos
 
@@ -152,6 +155,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T21:09:46.948Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-04-01T21:11:27.608Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
