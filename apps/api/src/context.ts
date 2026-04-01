@@ -1,6 +1,8 @@
+import { firestoreUserProfileSchema } from "@material-tracking/shared";
 import type { UserRole } from "@material-tracking/shared";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
-import { auth } from "./lib/firebase";
+import { FieldValue } from "firebase-admin/firestore";
+import { auth, db } from "./lib/firebase";
 
 export interface AuthUser {
   uid: string;
@@ -19,12 +21,41 @@ export async function createContext({ req }: CreateExpressContextOptions): Promi
 
   try {
     const decoded = await auth.verifyIdToken(token);
+    const userRef = db.collection("users").doc(decoded.uid);
+    let snap = await userRef.get();
+
+    if (!snap.exists) {
+      try {
+        await userRef.create({
+          role: "staff",
+          email: decoded.email ?? "",
+          displayName: decoded.name ?? "",
+          department: "",
+          locationId: "",
+          fcmTokens: [],
+          notificationPrefs: { onDelivery: true, onPickup: true, onTransit: false },
+          createdAt: FieldValue.serverTimestamp(),
+          lastLoginAt: FieldValue.serverTimestamp(),
+        });
+      } catch (err: unknown) {
+        if ((err as { code?: number }).code === 6) {
+          // ALREADY_EXISTS — another writer created the doc between get and create
+          // Re-fetch to get the actual data
+        } else {
+          throw err;
+        }
+      }
+      snap = await userRef.get();
+    }
+
+    const parsed = firestoreUserProfileSchema.parse(snap.data());
+
     return {
       user: {
         uid: decoded.uid,
         email: decoded.email,
-        role: (decoded.role as UserRole) ?? "staff",
-        name: decoded.name,
+        name: parsed.displayName || decoded.name,
+        role: parsed.role,
       },
     };
   } catch {
