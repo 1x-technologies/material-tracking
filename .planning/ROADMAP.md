@@ -88,7 +88,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 04-01-PLAN.md — API: Fix qrCode = pieceRef.id in create transaction + add listPieces query
-- [ ] 04-02-PLAN.md — Web: Label infrastructure (formatters, preview card, ZPL builder, Zebra wrapper)
+- [x] 04-02-PLAN.md — Web: Label infrastructure (formatters, preview card, ZPL builder, Zebra wrapper)
 - [ ] 04-03-PLAN.md — Web: Print/Reprint dialogs + detail route + button wiring
 **UI hint**: yes
 
@@ -173,7 +173,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Project Scaffolding & Firebase Infrastructure | 0/? | Not started | - |
 | 2. Authentication & User Roles | 0/? | Not started | - |
 | 3. Shipment Creation | 3/3 | Complete   | 2026-04-01 |
-| 4. QR Code Generation & Label Printing | 0/? | Not started | - |
+| 4. QR Code Generation & Label Printing | 2/3 | In Progress|  |
 | 5. Scan Processing & Status Workflow | 0/? | Not started | - |
 | 6. Enhanced Scanning Features | 0/? | Not started | - |
 | 7. Real-Time Dashboard | 0/? | Not started | - |
