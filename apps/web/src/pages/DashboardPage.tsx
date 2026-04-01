@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useShipmentsSubscription } from "../hooks/useShipmentsSubscription";
+import { useAuthContext } from "../context/AuthContext";
 import { classifyAllExceptions } from "../utils/exceptions";
 import { FilterTabs } from "../components/dashboard/FilterTabs";
 import {
@@ -9,14 +10,18 @@ import {
   type SortField,
   type SortDirection,
 } from "../components/dashboard/ShipmentTable";
+import { DriverTripView } from "../components/dashboard/DriverTripView";
 import { Spinner } from "../components/ui/Spinner";
 
 export function DashboardPage() {
   const navigate = useNavigate();
+  const { appUser } = useAuthContext();
+  const isDriver = appUser?.role === "driver";
+
   const [daysBack, setDaysBack] = useState(30);
   const { shipments, loading, error } = useShipmentsSubscription({ showCompleted: true, daysBack });
 
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState(() => isDriver ? "my_tasks" : "all");
   const [sortField, setSortField] = useState<SortField>("createdAt");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
@@ -38,15 +43,30 @@ export function DashboardPage() {
     return count;
   }, [exceptionsMap]);
 
+  const driverTaskCount = useMemo(() => {
+    if (!isDriver || !appUser) return 0;
+    return shipments.filter(
+      (s) =>
+        (s.origin.locationId === appUser.locationId && s.status === "created") ||
+        (s.destination.locationId === appUser.locationId && s.status === "in_transit"),
+    ).length;
+  }, [shipments, isDriver, appUser]);
+
   const tabs = useMemo(
-    () => [
-      { id: "all", label: "All", count: shipments.length },
-      { id: "in_transit", label: "In Transit", count: shipments.filter((s) => s.status === "in_transit").length },
-      { id: "delivered", label: "Delivered", count: shipments.filter((s) => s.status === "delivered" || s.status === "partially_delivered").length },
-      { id: "picked_up", label: "Picked Up", count: shipments.filter((s) => s.status === "picked_up").length },
-      { id: "exceptions", label: "Exceptions", count: exceptionCount },
-    ],
-    [shipments, exceptionCount],
+    () => {
+      const baseTabs = [
+        { id: "all", label: "All", count: shipments.length },
+        { id: "in_transit", label: "In Transit", count: shipments.filter((s) => s.status === "in_transit").length },
+        { id: "delivered", label: "Delivered", count: shipments.filter((s) => s.status === "delivered" || s.status === "partially_delivered").length },
+        { id: "picked_up", label: "Picked Up", count: shipments.filter((s) => s.status === "picked_up").length },
+        { id: "exceptions", label: "Exceptions", count: exceptionCount },
+      ];
+      if (isDriver) {
+        baseTabs.unshift({ id: "my_tasks", label: "My Tasks", count: driverTaskCount });
+      }
+      return baseTabs;
+    },
+    [shipments, exceptionCount, isDriver, driverTaskCount],
   );
 
   const filteredShipments = useMemo(() => {
@@ -109,27 +129,33 @@ export function DashboardPage() {
 
       <FilterTabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <ShipmentTable
-        shipments={sortedShipments}
-        exceptionsMap={exceptionsMap}
-        onRowClick={handleRowClick}
-        sortField={sortField}
-        sortDirection={sortDirection}
-        onSort={handleSort}
-      />
+      {activeTab === "my_tasks" ? (
+        <DriverTripView shipments={shipments} locationId={appUser?.locationId ?? ""} />
+      ) : (
+        <>
+          <ShipmentTable
+            shipments={sortedShipments}
+            exceptionsMap={exceptionsMap}
+            onRowClick={handleRowClick}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSort={handleSort}
+          />
 
-      <div className="flex flex-col items-center gap-2 py-6">
-        <p className="text-xs text-neutral-400">
-          Showing last {daysBack} days
-        </p>
-        <button
-          type="button"
-          onClick={() => setDaysBack((d) => d + 30)}
-          className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors"
-        >
-          Show Older Shipments
-        </button>
-      </div>
+          <div className="flex flex-col items-center gap-2 py-6">
+            <p className="text-xs text-neutral-400">
+              Showing last {daysBack} days
+            </p>
+            <button
+              type="button"
+              onClick={() => setDaysBack((d) => d + 30)}
+              className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors"
+            >
+              Show Older Shipments
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
