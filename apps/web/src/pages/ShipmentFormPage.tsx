@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { CancelShipmentButton } from "../components/shipment/CancelShipmentButton";
+import { PieceEventsList } from "../components/shipment/PieceEventsList";
 import type { LabelData } from "../components/shipment/LabelPreviewCard";
 import { PrintLabelsDialog } from "../components/shipment/PrintLabelsDialog";
 import { ReprintLabelsDialog } from "../components/shipment/ReprintLabelsDialog";
@@ -310,6 +311,18 @@ export function ShipmentFormPage() {
           <DetailField label="Receiver" value={receiver ? `${receiver.name}${receiver.company ? ` · ${receiver.company}` : ""} (${receiver.email})` : "—"} />
           <DetailField label="Pieces" value={String(pieceCount)} />
         </div>
+
+        {isReadOnly && piecesQuery.data && (
+          <div className="mt-8 max-w-2xl">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Scan History</h3>
+            <PieceEventsList
+              pieces={piecesQuery.data.map((p: Record<string, unknown>) => ({
+                pieceNumber: p.pieceNumber as number,
+                events: (p.events as Array<Record<string, unknown>>) ?? [],
+              }))}
+            />
+          </div>
+        )}
       ) : (
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
         <div>
