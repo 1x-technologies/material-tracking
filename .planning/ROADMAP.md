@@ -152,7 +152,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 08-01-PLAN.md — Notification infrastructure + status change email trigger (NOTF-01/02/03)
-- [ ] 08-02-PLAN.md — Aged package reminders + notification unit tests (NOTF-04)
+- [x] 08-02-PLAN.md — Aged package reminders + notification unit tests (NOTF-04)
 **UI hint**: no
 
 ### Phase 9: History, Search & Audit
