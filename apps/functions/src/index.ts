@@ -2,4 +2,5 @@ export { checkAgedShipments } from "./scheduled/agedReport";
 export { cleanupStaleData } from "./scheduled/cleanupStale";
 export { onPieceStatusChange } from "./triggers/onPieceUpdate";
 export { onShipmentCreated } from "./triggers/onShipmentCreate";
+export { onShipmentStatusChange } from "./triggers/onShipmentStatusChange";
 export { onStorageFileUploaded } from "./triggers/onStorageUpload";
