@@ -7,7 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
 import { db } from "../lib/firebase";
-import { staffProcedure } from "../middleware/auth";
+import { protectedProcedure, staffProcedure } from "../middleware/auth";
 import { router } from "../trpc";
 
 function padSeq(n: number): string {
@@ -83,7 +83,7 @@ export const shipmentRouter = router({
         tx.set(pieceRef, {
           shipmentId,
           pieceNumber: i,
-          qrCode: `pending:${shipmentId}:${i}`,
+          qrCode: pieceRef.id,
           status: "created",
           events: [],
           currentLocation: origin,
@@ -175,4 +175,23 @@ export const shipmentRouter = router({
 
     return { success: true };
   }),
+
+  listPieces: protectedProcedure
+    .input(z.object({ shipmentId: z.string().min(1) }))
+    .query(async ({ input }) => {
+      const shipmentSnap = await db.doc(`shipments/${input.shipmentId}`).get();
+      if (!shipmentSnap.exists) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Shipment not found" });
+      }
+
+      const piecesSnap = await db
+        .collection(`shipments/${input.shipmentId}/pieces`)
+        .orderBy("pieceNumber", "asc")
+        .get();
+
+      return piecesSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    }),
 });
