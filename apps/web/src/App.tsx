@@ -7,7 +7,7 @@ import { AccessDeniedPage } from "./pages/AccessDeniedPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ScanStubPage } from "./pages/ScanStubPage";
-import { ShipmentCreateStubPage } from "./pages/ShipmentCreateStubPage";
+import { ShipmentFormPage } from "./pages/ShipmentFormPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TRPCProvider } from "./trpc";
 
@@ -44,7 +44,15 @@ function AppRoutes() {
               path="shipments/new"
               element={
                 <RequireRole allowedRoles={["staff", "admin"]}>
-                  <ShipmentCreateStubPage />
+                  <ShipmentFormPage />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="shipments/:shipmentId/edit"
+              element={
+                <RequireRole allowedRoles={["staff", "admin"]}>
+                  <ShipmentFormPage />
                 </RequireRole>
               }
             />
