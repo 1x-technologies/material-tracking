@@ -1,19 +1,34 @@
+import type { UserRole } from "@material-tracking/shared";
 import { NavLink } from "react-router";
+import { useAuthContext } from "../../context/AuthContext";
 
 interface NavItem {
   label: string;
   path: string;
   icon: string;
+  roles: UserRole[];
 }
 
-const navItems: NavItem[] = [{ label: "Dashboard", path: "/dashboard", icon: "\u{1F4CA}" }];
+const allRoles: UserRole[] = ["admin", "driver", "staff"];
+
+const navItems: NavItem[] = [
+  { label: "Dashboard", path: "/dashboard", icon: "📊", roles: allRoles },
+  { label: "New Shipment", path: "/shipments/new", icon: "📦", roles: ["staff", "admin"] },
+  { label: "Scan", path: "/scan", icon: "📷", roles: ["driver", "admin"] },
+];
 
 export function Sidebar() {
+  const { appUser } = useAuthContext();
+
+  const visibleItems = navItems.filter(
+    (item) => appUser && item.roles.includes(appUser.role),
+  );
+
   return (
     <aside className="hidden md:flex flex-col bg-white border-r border-neutral-200 w-18 lg:w-64 transition-all duration-200">
       <nav className="flex-1 py-4">
         <ul className="space-y-1 px-2">
-          {navItems.map((item) => (
+          {visibleItems.map((item) => (
             <li key={item.path}>
               <NavLink
                 to={item.path}

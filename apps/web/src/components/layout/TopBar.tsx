@@ -1,7 +1,13 @@
 import { useAuthContext } from "../../context/AuthContext";
 
+const roleLabelMap: Record<string, string> = {
+  admin: "Admin",
+  driver: "Driver",
+  staff: "Staff",
+};
+
 export function TopBar() {
-  const { user, signOutUser } = useAuthContext();
+  const { user, appUser, signOutUser } = useAuthContext();
 
   return (
     <header className="h-16 border-b border-neutral-200 bg-white flex items-center justify-between px-6">
@@ -9,8 +15,13 @@ export function TopBar() {
 
       {user && (
         <div className="flex items-center gap-3">
+          {appUser?.role && (
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600">
+              {roleLabelMap[appUser.role] ?? appUser.role}
+            </span>
+          )}
           <span className="text-sm text-neutral-700 hidden sm:block">
-            {user.displayName || user.email}
+            {appUser?.displayName || user.displayName || user.email}
           </span>
           {user.photoURL ? (
             <img
