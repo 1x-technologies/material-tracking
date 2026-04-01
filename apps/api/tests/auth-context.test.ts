@@ -81,6 +81,7 @@ describe("createContext", () => {
       email: "test@1x.tech",
       name: "Test User",
       role: "admin",
+      locationId: "",
     });
     expect(mockAuth.verifyIdToken).toHaveBeenCalledWith("valid-token");
   });
@@ -120,6 +121,7 @@ describe("createContext", () => {
       email: "new@1x.tech",
       name: "New User",
       role: "staff",
+      locationId: "",
     });
     expect(mockCreate).toHaveBeenCalledOnce();
     expect(mockCreate.mock.calls[0][0]).toMatchObject({ role: "staff" });
