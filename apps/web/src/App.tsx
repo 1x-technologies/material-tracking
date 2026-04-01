@@ -8,12 +8,15 @@ import { SignInPage } from "./pages/SignInPage";
 import { TRPCProvider } from "./trpc";
 
 function AuthGate({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuthContext();
+  const { user, loading, profileLoading } = useAuthContext();
 
-  if (loading) {
+  if (loading || (user && profileLoading)) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner />
+      <div className="flex items-center justify-center min-h-screen" aria-live="polite">
+        <div className="flex flex-col items-center gap-3">
+          <Spinner />
+          <p className="text-sm text-neutral-500">Loading session…</p>
+        </div>
       </div>
     );
   }

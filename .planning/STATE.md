@@ -2,16 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 01-06-PLAN.md
-last_updated: "2026-03-31T23:21:50.554Z"
-last_activity: 2026-03-31
+status: executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-04-01T00:03:02.773Z"
+last_activity: 2026-04-01
 progress:
   total_phases: 10
   completed_phases: 1
-  total_plans: 6
-  completed_plans: 6
-  percent: 0
+  total_plans: 9
+  completed_plans: 7
 ---
 
 # Project State
@@ -21,16 +20,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Every non-inventory package is trackable end-to-end — from creation to pickup confirmation — with zero manual data entry after the initial shipment creation.
-**Current focus:** Phase 01 — project-scaffolding-firebase-infrastructure
+**Current focus:** Phase 02 — authentication-user-roles
 
 ## Current Position
 
-Phase: 01 (project-scaffolding-firebase-infrastructure) — EXECUTING
-Plan: 6 of 6
-Status: Phase complete — ready for verification
-Last activity: 2026-03-31
+Phase: 02 (authentication-user-roles) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
+Last activity: 2026-04-01
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░] Phase 2 planned (0/3 executed)
 
 ## Performance Metrics
 
@@ -58,6 +57,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P03 | 2min | 2 tasks | 15 files |
 | Phase 01 P05 | 2min | 2 tasks | 20 files |
 | Phase 01 P06 | 4min | 2 tasks | 42 files |
+| Phase 02 P01 | 1min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -82,6 +82,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Added AppRouter type re-export from api/index.ts for web tRPC client consumption
 - [Phase 01]: Biome dist exclusion pattern changed from !dist to !**/dist to cover nested app dist directories
 - [Phase 01]: Tailwind CSS parser directives enabled in Biome to support @theme syntax
+- [Phase 02]: Firestore create() for lazy provision — fails on ALREADY_EXISTS to avoid clobbering admin docs (D-03)
+- [Phase 02]: requireRole factory function takes UserRole[] for flexible role combinations per procedure
 
 ### Pending Todos
 
@@ -95,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T23:21:50.552Z
-Stopped at: Completed 01-06-PLAN.md
+Last session: 2026-04-01T00:03:02.770Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None

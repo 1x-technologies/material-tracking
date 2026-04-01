@@ -52,7 +52,11 @@ Plans:
   1. User can sign in with Google Workspace SSO and access is restricted to company domain
   2. User session persists across browser refresh without requiring re-login
   3. Users are assigned one of three roles (Admin, Driver, Staff) and see only role-appropriate UI
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [x] 02-01-PLAN.md — API: Firestore `users/{uid}` context, lazy Staff provision, role middleware, Vitest
+- [ ] 02-02-PLAN.md — Web: `hd: 1x.tech`, profile load, session restore UX, SignIn UI-SPEC, Vitest for `hd`
+- [ ] 02-03-PLAN.md — Web: role routes, Access denied, nav chrome; API: staff/driver procedure examples
 **UI hint**: yes
 
 ### Phase 3: Shipment Creation
