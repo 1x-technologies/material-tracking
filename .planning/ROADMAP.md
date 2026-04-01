@@ -85,7 +85,11 @@ Plans:
   2. User can preview labels before printing, showing all label details and multi-piece notation (1/5, 2/5, etc.)
   3. Labels print correctly on networked Zebra printers
   4. User can reprint labels for any existing shipment
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 04-01-PLAN.md — API: Fix qrCode = pieceRef.id in create transaction + add listPieces query
+- [ ] 04-02-PLAN.md — Web: Label infrastructure (formatters, preview card, ZPL builder, Zebra wrapper)
+- [ ] 04-03-PLAN.md — Web: Print/Reprint dialogs + detail route + button wiring
 **UI hint**: yes
 
 ### Phase 5: Scan Processing & Status Workflow
