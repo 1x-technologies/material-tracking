@@ -9,6 +9,7 @@ export interface AuthUser {
   email: string | undefined;
   role: UserRole;
   name: string | undefined;
+  locationId: string;
 }
 
 export interface Context {
@@ -56,6 +57,7 @@ export async function createContext({ req }: CreateExpressContextOptions): Promi
         email: decoded.email,
         name: parsed.displayName || decoded.name,
         role: parsed.role,
+        locationId: parsed.locationId ?? "",
       },
     };
   } catch {

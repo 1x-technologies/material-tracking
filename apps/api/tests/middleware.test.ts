@@ -35,7 +35,7 @@ const testRouter = t.router({
 const caller = t.createCallerFactory(testRouter);
 
 function makeUser(role: "admin" | "driver" | "staff"): AuthUser {
-  return { uid: "test-uid", email: "test@1x.tech", name: "Test", role };
+  return { uid: "test-uid", email: "test@1x.tech", name: "Test", role, locationId: "HA" };
 }
 
 describe("protectedProcedure", () => {

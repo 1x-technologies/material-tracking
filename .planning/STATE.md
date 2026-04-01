@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 planned — ready for execute-phase
-last_updated: "2026-04-01T00:46:40Z"
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-04-01T15:47:05.651Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
   completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 12
+  completed_plans: 10
 ---
 
 # Project State
@@ -24,9 +24,9 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 ## Current Position
 
-Phase: 3
-Plan: 03-01 / 03-02 / 03-03 (3 waves)
-Status: Planning complete — RESEARCH + VALIDATION + PLAN.md; next `/gsd-execute-phase 3`
+Phase: 03 (shipment-creation) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
 Last activity: 2026-04-01
 
 Progress: [███░░░░░░░] Phase 3 planned; execution not started
@@ -60,6 +60,7 @@ Progress: [███░░░░░░░] Phase 3 planned; execution not starte
 | Phase 02 P01 | 1min | 3 tasks | 6 files |
 | Phase 02 P02 | 2min | 3 tasks | 4 files |
 | Phase 02 P03 | 1min | 3 tasks | 9 files |
+| Phase 03 P01 | 1min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,9 @@ Recent decisions affecting current work:
 - [Phase 02]: Kept user as Firebase User and added appUser for Firestore profile — minimal disruption
 - [Phase 02]: One-shot getDoc for profile over onSnapshot — profile rarely changes mid-session
 - [Phase 02]: RequireRole renders AccessDeniedPage inline rather than redirect — preserves URL for debugging
+- [Phase 03]: Discriminated union on isExternal for receiver — compile-time enforcement of company+email for external contacts
+- [Phase 03]: Extracted Zod sub-schemas (sender, receiver, notificationPrefs) for reuse across create and update
+- [Phase 03]: pieceCount omitted from updateShipmentInputSchema — immutable after creation per Phase 3 spec
 
 ### Pending Todos
 
@@ -102,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T00:46:40Z
-Stopped at: Phase 3 planned — ready for execute-phase
-Resume file: `.planning/phases/03-shipment-creation/03-01-PLAN.md`
+Last session: 2026-04-01T15:47:05.649Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: None

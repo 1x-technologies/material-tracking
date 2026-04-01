@@ -71,7 +71,7 @@ Plans:
   5. Adding a new location requires configuration only — no code changes
 **Plans**: 3 plans
 Plans:
-- [ ] 03-01-PLAN.md — Shared: ShipmentCategory, create/update/cancel Zod, receiver union (D-03/D-05)
+- [x] 03-01-PLAN.md — Shared: ShipmentCategory, create/update/cancel Zod, receiver union (D-03/D-05)
 - [ ] 03-02-PLAN.md — API: shipment CRUD + counter + pieces, locations.list, directory stub, seed HA/SC, Vitest
 - [ ] 03-03-PLAN.md — Web: single-page form, autocomplete, priority visuals, edit/cancel routes, locationId profile
 **UI hint**: yes

@@ -15,7 +15,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Shipment Creation
 
-- [ ] **SHIP-01**: User can create shipment with sender, receiver, description, category, priority, origin, destination, and piece count
+- [x] **SHIP-01**: User can create shipment with sender, receiver, description, category, priority, origin, destination, and piece count
 - [ ] **SHIP-02**: User can search company directory for sender/receiver with free text fallback for external contacts
 - [ ] **SHIP-03**: User can set priority level on shipment (Urgent, Standard, Low) with visual indicators
 - [ ] **SHIP-04**: User can edit shipment details after creation (before first scan)
@@ -71,7 +71,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **INFR-01**: Three Firebase/GCP environments: dev, staging, production
 - [x] **INFR-02**: GitHub repository under 1x-technologies org (ERP Team) with CI/CD pipeline
-- [ ] **INFR-03**: Location model supports adding new locations via configuration without code changes
+- [x] **INFR-03**: Location model supports adding new locations via configuration without code changes
 - [x] **INFR-04**: Firestore data model with nested subcollections (pieces under shipments)
 - [x] **INFR-05**: Cloud Run for containerized backend services (report generation/export, bulk operations)
 - [x] **INFR-06**: Secret Manager for API keys and credentials management
@@ -121,7 +121,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-01 | Phase 2: Authentication & User Roles | Complete |
 | AUTH-02 | Phase 2: Authentication & User Roles | Complete |
 | AUTH-03 | Phase 2: Authentication & User Roles | Complete |
-| SHIP-01 | Phase 3: Shipment Creation | Pending |
+| SHIP-01 | Phase 3: Shipment Creation | Complete |
 | SHIP-02 | Phase 3: Shipment Creation | Pending |
 | SHIP-03 | Phase 3: Shipment Creation | Pending |
 | SHIP-04 | Phase 3: Shipment Creation | Pending |
@@ -156,7 +156,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMN-05 | Phase 9: History, Search & Audit | Pending |
 | INFR-01 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-02 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
-| INFR-03 | Phase 3: Shipment Creation | Pending |
+| INFR-03 | Phase 3: Shipment Creation | Complete |
 | INFR-04 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-05 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-06 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
