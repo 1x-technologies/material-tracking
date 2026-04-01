@@ -117,7 +117,12 @@ Plans:
   1. Driver can enter batch scan mode, scan multiple pieces, and confirm all at once
   2. Signature can be captured at delivery and pickup scan points
   3. Photos can be attached during shipment creation or at scan points
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 06-01-PLAN.md — API: Schema extension, scan core extraction, batch endpoint, piece-level field writes, tests
+- [ ] 06-02-PLAN.md — Web: Batch scan mode UI + photo capture + ScanPage integration
+- [ ] 06-03-PLAN.md — Web: Authenticated signature capture with react-signature-canvas + receiver detection
+- [ ] 06-04-PLAN.md — API + Web: Unauthenticated signature link flow (token + standalone page + admin button)
 **UI hint**: yes
 
 ### Phase 7: Real-Time Dashboard
