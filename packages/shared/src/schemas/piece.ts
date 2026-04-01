@@ -12,7 +12,7 @@ export const pieceEventSchema = z.object({
     })
     .optional(),
   signatureUrl: z.string().url().optional(),
-  photoUrl: z.string().url().optional(),
+  photoUrls: z.array(z.string().url()).max(10).optional(),
 });
 
 export type PieceEventInput = z.infer<typeof pieceEventSchema>;

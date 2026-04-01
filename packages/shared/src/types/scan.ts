@@ -4,7 +4,7 @@ export interface ScanInput {
   qrCode: string;
   action: ScanAction;
   signatureUrl?: string;
-  photoUrl?: string;
+  photoUrls?: string[];
 }
 
 export interface ScanResult {

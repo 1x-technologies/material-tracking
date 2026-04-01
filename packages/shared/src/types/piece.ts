@@ -9,7 +9,7 @@ export interface PieceEvent {
   userName: string;
   location?: LocationRef;
   signatureUrl?: string;
-  photoUrl?: string;
+  photoUrls?: string[];
 }
 
 export interface Piece {
