@@ -292,37 +292,47 @@ export function ShipmentFormPage() {
       )}
 
       {isReadOnly && mode === "edit" ? (
-        <div className="space-y-5 max-w-2xl">
-          <DetailField label="Description" value={description} />
-          <DetailField label="Category" value={CATEGORIES.find((c) => c.value === category)?.label ?? category} />
-          <div>
-            <span className="block text-sm font-medium text-neutral-700 mb-1">Priority</span>
-            <span className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${
-              priority === "urgent" ? "bg-red-100 text-red-700" :
-              priority === "low" ? "bg-slate-100 text-slate-700" :
-              "bg-neutral-100 text-neutral-700"
-            }`}>{priority.charAt(0).toUpperCase() + priority.slice(1)}</span>
+        <>
+          <div className="space-y-5 max-w-2xl">
+            <DetailField label="Description" value={description} />
+            <DetailField label="Category" value={CATEGORIES.find((c) => c.value === category)?.label ?? category} />
+            <div>
+              <span className="block text-sm font-medium text-neutral-700 mb-1">Priority</span>
+              <span className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${
+                priority === "urgent" ? "bg-red-100 text-red-700" :
+                priority === "low" ? "bg-slate-100 text-slate-700" :
+                "bg-neutral-100 text-neutral-700"
+              }`}>{priority.charAt(0).toUpperCase() + priority.slice(1)}</span>
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <DetailField label="Origin" value={locationsQuery.data?.find((l) => l.id === originId)?.name ? `${locationsQuery.data.find((l) => l.id === originId)!.name} — ${locationsQuery.data.find((l) => l.id === originId)!.fullName}` : originId} />
+              <DetailField label="Destination" value={locationsQuery.data?.find((l) => l.id === destinationId)?.name ? `${locationsQuery.data.find((l) => l.id === destinationId)!.name} — ${locationsQuery.data.find((l) => l.id === destinationId)!.fullName}` : destinationId} />
+            </div>
+            <DetailField label="Sender" value={sender ? `${sender.name} (${sender.email})` : "—"} />
+            <DetailField label="Receiver" value={receiver ? `${receiver.name}${receiver.company ? ` · ${receiver.company}` : ""} (${receiver.email})` : "—"} />
+            <DetailField label="Pieces" value={String(pieceCount)} />
           </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <DetailField label="Origin" value={locationsQuery.data?.find((l) => l.id === originId)?.name ? `${locationsQuery.data.find((l) => l.id === originId)!.name} — ${locationsQuery.data.find((l) => l.id === originId)!.fullName}` : originId} />
-            <DetailField label="Destination" value={locationsQuery.data?.find((l) => l.id === destinationId)?.name ? `${locationsQuery.data.find((l) => l.id === destinationId)!.name} — ${locationsQuery.data.find((l) => l.id === destinationId)!.fullName}` : destinationId} />
-          </div>
-          <DetailField label="Sender" value={sender ? `${sender.name} (${sender.email})` : "—"} />
-          <DetailField label="Receiver" value={receiver ? `${receiver.name}${receiver.company ? ` · ${receiver.company}` : ""} (${receiver.email})` : "—"} />
-          <DetailField label="Pieces" value={String(pieceCount)} />
-        </div>
 
-        {isReadOnly && piecesQuery.data && (
-          <div className="mt-8 max-w-2xl">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Scan History</h3>
-            <PieceEventsList
-              pieces={piecesQuery.data.map((p: Record<string, unknown>) => ({
-                pieceNumber: p.pieceNumber as number,
-                events: (p.events as Array<Record<string, unknown>>) ?? [],
-              }))}
-            />
-          </div>
-        )}
+          {piecesQuery.data && (
+            <div className="mt-8 max-w-2xl">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Scan History</h3>
+              <PieceEventsList
+                pieces={piecesQuery.data.map((p: Record<string, unknown>) => ({
+                  pieceNumber: p.pieceNumber as number,
+                  events: ((p.events as unknown[]) ?? []).map((e) => {
+                    const ev = e as Record<string, unknown>;
+                    return {
+                      action: ev.action as string,
+                      timestamp: ev.timestamp,
+                      userId: (ev.userId as string) ?? "",
+                      userName: (ev.userName as string) ?? "",
+                    };
+                  }),
+                }))}
+              />
+            </div>
+          )}
+        </>
       ) : (
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
         <div>
