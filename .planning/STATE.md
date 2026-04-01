@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-04-01T18:45:12.655Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-04-01T18:45:29.762Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 05 (scan-processing-status-workflow) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -67,6 +67,7 @@ Progress: [███░░░░░░░] Phase 3 planned; execution not starte
 | Phase 04 P02 | 1min | 3 tasks | 8 files |
 | Phase 04 P03 | 1min | 2 tasks | 4 files |
 | Phase 05 P01 | 1min | 2 tasks | 4 files |
+| Phase 05 P03 | 1min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -117,6 +118,8 @@ Recent decisions affecting current work:
 - [Phase 05]: Pure function extraction for validateTransition and deriveShipmentStatus — testable without Firestore
 - [Phase 05]: Collection group lookup outside transaction for pieceRef, transaction for read-modify-write
 - [Phase 05]: Optimistic status mapping in allStatuses array — use newStatus for current piece since tx.update hasn't flushed
+- [Phase 05]: Flattened events across all pieces into single reverse-chronological list rather than per-piece grouping
+- [Phase 05]: Fragment wrapper for read-only detail view to support sibling sections in ternary
 
 ### Pending Todos
 
@@ -130,6 +133,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T18:45:12.652Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-04-01T18:45:29.759Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
