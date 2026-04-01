@@ -103,6 +103,9 @@ importers:
       '@material-tracking/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@schie/fluent-zpl':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@tanstack/react-query':
         specifier: ^5.96.0
         version: 5.96.0(react@19.2.4)
@@ -115,6 +118,9 @@ importers:
       firebase:
         specifier: ^12.11.0
         version: 12.11.0
+      qrcode.react:
+        specifier: ^4.2.0
+        version: 4.2.0(react@19.2.4)
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -1352,6 +1358,10 @@ packages:
     resolution: {integrity: sha512-lWMnixq/QzxyhTV6NjQJ4SFo1J6PvOX8vUx5Wb4bBPsEb+8xZ89Bz6kOXpfXj9ak9AHTQVQzlgzBEc1SyM27xQ==}
     cpu: [x64]
     os: [win32]
+
+  '@schie/fluent-zpl@1.0.0':
+    resolution: {integrity: sha512-BU4jrxAIiauj0BaesJG+koTlTL5GzggxZlGEp6lXCL/K2MWFF7ozO9URj/bUZKRVQGdt2NyDOIQGZ1gRB4qcrw==}
+    engines: {node: '>=20.0.0'}
 
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
@@ -3699,6 +3709,11 @@ packages:
     resolution: {integrity: sha512-l1jNAspIBSFqbT+y+5FosojNpVpF94nlI+wDUpqP9enwOTfHx9f0gh5nB96vl+6yTpsJsypeNrwfzPrKuHB41A==}
     engines: {node: '>=8'}
 
+  qrcode.react@4.2.0:
+    resolution: {integrity: sha512-QpgqWi8rD9DsS9EP3z7BT+5lY5SFhsqGjpgW5DY/i3mK4M9DTBNz3ErMi8BWYEfI3L0d8GIbGmcdFAS1uIRGjA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   qs@6.14.2:
     resolution: {integrity: sha512-V/yCWTTF7VJ9hIh18Ugr2zhJMP01MY7c5kh4J870L7imm6/DIzBsNLTXzMwUA3yZ5b/KBqLx8Kp3uRvd7xSe3Q==}
     engines: {node: '>=0.6'}
@@ -5763,6 +5778,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.60.1':
     optional: true
+
+  '@schie/fluent-zpl@1.0.0': {}
 
   '@sindresorhus/is@4.6.0': {}
 
@@ -8388,6 +8405,10 @@ snapshots:
   pupa@2.1.1:
     dependencies:
       escape-goat: 2.1.1
+
+  qrcode.react@4.2.0(react@19.2.4):
+    dependencies:
+      react: 19.2.4
 
   qs@6.14.2:
     dependencies:
