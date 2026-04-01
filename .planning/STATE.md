@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-04-01T15:47:05.651Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-04-01T15:51:19.572Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
   completed_phases: 2
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 03 (shipment-creation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -61,6 +61,7 @@ Progress: [███░░░░░░░] Phase 3 planned; execution not starte
 | Phase 02 P02 | 2min | 3 tasks | 4 files |
 | Phase 02 P03 | 1min | 3 tasks | 9 files |
 | Phase 03 P01 | 1min | 3 tasks | 3 files |
+| Phase 03 P02 | 3min | 6 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,10 @@ Recent decisions affecting current work:
 - [Phase 03]: Discriminated union on isExternal for receiver — compile-time enforcement of company+email for external contacts
 - [Phase 03]: Extracted Zod sub-schemas (sender, receiver, notificationPrefs) for reuse across create and update
 - [Phase 03]: pieceCount omitted from updateShipmentInputSchema — immutable after creation per Phase 3 spec
+- [Phase 03]: protectedProcedure for locations.list — any authenticated user can list locations
+- [Phase 03]: Shipment number format SH-YYYYMMDD-NNNN via Firestore transaction counter at counters/shipments
+- [Phase 03]: pieceCount immutable after creation — excluded from update mutation in Phase 3
+- [Phase 03]: Directory stub returns 3 deterministic users; PRECONDITION_FAILED when DIRECTORY_STUB not set
 
 ### Pending Todos
 
@@ -106,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T15:47:05.649Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-04-01T15:51:19.569Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None

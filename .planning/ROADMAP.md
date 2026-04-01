@@ -72,7 +72,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 03-01-PLAN.md — Shared: ShipmentCategory, create/update/cancel Zod, receiver union (D-03/D-05)
-- [ ] 03-02-PLAN.md — API: shipment CRUD + counter + pieces, locations.list, directory stub, seed HA/SC, Vitest
+- [x] 03-02-PLAN.md — API: shipment CRUD + counter + pieces, locations.list, directory stub, seed HA/SC, Vitest
 - [ ] 03-03-PLAN.md — Web: single-page form, autocomplete, priority visuals, edit/cancel routes, locationId profile
 **UI hint**: yes
 
@@ -168,7 +168,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. Project Scaffolding & Firebase Infrastructure | 0/? | Not started | - |
 | 2. Authentication & User Roles | 0/? | Not started | - |
-| 3. Shipment Creation | 0/? | Not started | - |
+| 3. Shipment Creation | 2/3 | In Progress|  |
 | 4. QR Code Generation & Label Printing | 0/? | Not started | - |
 | 5. Scan Processing & Status Workflow | 0/? | Not started | - |
 | 6. Enhanced Scanning Features | 0/? | Not started | - |
