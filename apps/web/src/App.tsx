@@ -57,6 +57,14 @@ function AppRoutes() {
               }
             />
             <Route
+              path="shipments/:shipmentId"
+              element={
+                <RequireRole allowedRoles={["staff", "admin"]}>
+                  <ShipmentFormPage />
+                </RequireRole>
+              }
+            />
+            <Route
               path="scan"
               element={
                 <RequireRole allowedRoles={["driver", "admin"]}>

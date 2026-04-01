@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { CancelShipmentButton } from "../components/shipment/CancelShipmentButton";
+import type { LabelData } from "../components/shipment/LabelPreviewCard";
+import { PrintLabelsDialog } from "../components/shipment/PrintLabelsDialog";
+import { ReprintLabelsDialog } from "../components/shipment/ReprintLabelsDialog";
 import {
   DirectoryAutocomplete,
   type DirectoryPerson,
@@ -28,6 +31,17 @@ export function ShipmentFormPage() {
   const mode = shipmentId ? "edit" : "create";
   const { user, appUser } = useAuthContext();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isEditRoute = location.pathname.endsWith("/edit");
+  const pageTitle =
+    mode === "create"
+      ? "New Shipment"
+      : isEditRoute
+        ? "Edit Shipment"
+        : "Shipment Details";
+
+  const [showPrintDialog, setShowPrintDialog] = useState(false);
+  const [showReprintDialog, setShowReprintDialog] = useState(false);
 
   const locationsQuery = trpc.locations.list.useQuery();
 
@@ -104,6 +118,35 @@ export function ShipmentFormPage() {
 
     setEditInitialized(true);
   }
+
+  const piecesQuery = trpc.shipment.listPieces.useQuery(
+    { shipmentId: shipmentId! },
+    { enabled: !!shipmentId },
+  );
+
+  const labels: LabelData[] = useMemo(() => {
+    if (!shipmentQuery.data || !piecesQuery.data) return [];
+    const s = shipmentQuery.data as Record<string, unknown>;
+    const senderObj = s.sender as { name: string };
+    const receiverObj = s.receiver as { name: string };
+    const originObj = s.origin as { name: string };
+    const destinationObj = s.destination as { name: string };
+    const pieceCount = s.pieceCount as number;
+
+    return piecesQuery.data.map((piece: Record<string, unknown>) => ({
+      qrCode: piece.qrCode as string,
+      shipmentNumber: s.shipmentNumber as string,
+      pieceNumber: piece.pieceNumber as number,
+      pieceCount,
+      senderName: senderObj.name,
+      receiverName: receiverObj.name,
+      originName: originObj.name,
+      destinationName: destinationObj.name,
+      priority: s.priority as string,
+      category: s.category as string,
+      description: s.description as string,
+    }));
+  }, [shipmentQuery.data, piecesQuery.data]);
 
   const shipmentStatus = mode === "edit" ? ((shipmentQuery.data as Record<string, unknown>)?.status as string) : null;
   const isReadOnly = mode === "edit" && !!shipmentStatus && shipmentStatus !== "created";
@@ -193,7 +236,7 @@ export function ShipmentFormPage() {
     <div className="flex flex-col min-h-0 py-6">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-neutral-900">
-          {mode === "create" ? "New Shipment" : "Edit Shipment"}
+          {pageTitle}
         </h2>
         {mode === "edit" && shipmentQuery.data && (
           <p className="mt-1 text-sm text-neutral-500">
@@ -207,6 +250,25 @@ export function ShipmentFormPage() {
           <p className="text-sm font-medium text-amber-800">
             This shipment can no longer be edited.
           </p>
+        </div>
+      )}
+
+      {shipmentId && shipmentStatus !== "cancelled" && piecesQuery.data && (
+        <div className="mb-6 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowPrintDialog(true)}
+            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-brand-700 transition-colors"
+          >
+            Print Labels
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowReprintDialog(true)}
+            className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition-colors"
+          >
+            Reprint Labels
+          </button>
         </div>
       )}
 
@@ -289,6 +351,17 @@ export function ShipmentFormPage() {
           <p className="text-sm text-green-600">Changes saved successfully.</p>
         )}
       </form>
+
+      <PrintLabelsDialog
+        open={showPrintDialog}
+        onClose={() => setShowPrintDialog(false)}
+        labels={labels}
+      />
+      <ReprintLabelsDialog
+        open={showReprintDialog}
+        onClose={() => setShowReprintDialog(false)}
+        labels={labels}
+      />
     </div>
   );
 }
