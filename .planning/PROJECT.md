@@ -26,12 +26,13 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 - [x] Generate and print QR code labels via networked Zebra printers with multi-piece support (1/5, 2/5, etc.) — Validated in Phase 4
 - [x] Label preview before printing — Validated in Phase 4
 
+- [x] Scan QR codes via RF scanners and phone cameras to trigger status updates — Validated in Phase 5
+- [x] Individual piece-level tracking within multi-piece shipments — Validated in Phase 5
+- [x] Four-stage status lifecycle per piece: Created → In Transit → Delivered → Picked Up — Validated in Phase 5
+- [x] Derived shipment status from piece statuses (e.g., "Partially Delivered 3/5") — Validated in Phase 5
+- [x] Authenticated scanning — track who scanned what and when — Validated in Phase 5
+
 ### Active
-- [ ] Scan QR codes via RF scanners and phone cameras to trigger status updates
-- [ ] Individual piece-level tracking within multi-piece shipments
-- [ ] Four-stage status lifecycle per piece: Created → In Transit → Delivered → Picked Up
-- [ ] Derived shipment status from piece statuses (e.g., "Partially Delivered 3/5")
-- [ ] Authenticated scanning — track who scanned what and when
 - [ ] One-by-one and batch scan modes for drivers
 - [ ] Real-time dashboard with live status board and exception alerts
 - [ ] Notifications to sender and receiver on delivery and pickup, with opt-in for in-progress stages
@@ -110,4 +111,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 after Phase 4 completion*
+*Last updated: 2026-04-01 after Phase 5 completion*
