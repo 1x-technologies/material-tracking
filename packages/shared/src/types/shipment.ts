@@ -51,5 +51,6 @@ export interface Shipment {
   updatedAt: Timestamp;
   deliveredAt?: Timestamp;
   pickedUpAt?: Timestamp;
+  lastAgedReminderAt?: Timestamp;
   notificationPrefs: NotificationPrefs;
 }
