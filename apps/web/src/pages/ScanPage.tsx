@@ -7,8 +7,9 @@ import { CameraScanOverlay } from "../components/scan/CameraScanOverlay";
 import { PhotoCapture } from "../components/scan/PhotoCapture";
 import { ScanInput } from "../components/scan/ScanInput";
 import { ScannedPiecesList } from "../components/scan/ScannedPiecesList";
+import { SignatureDialog } from "../components/scan/SignatureDialog";
 import { playErrorBuzz, playSuccessBeep } from "../components/scan/scanSounds";
-import { uploadScanPhoto } from "../lib/storage";
+import { uploadScanPhoto, uploadSignaturePng } from "../lib/storage";
 import { trpc } from "../trpc";
 
 type ScanAction = "in_transit" | "delivered" | "picked_up";
@@ -22,6 +23,11 @@ interface ScannedItem {
   scannedAt: Date;
 }
 
+interface PendingScan {
+  qrCode: string;
+  photoUrls?: string[];
+}
+
 export function ScanPage() {
   const [selectedAction, setSelectedAction] = useState("in_transit");
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
@@ -33,6 +39,10 @@ export function ScanPage() {
   const [batchResults, setBatchResults] = useState<BatchResult[] | null>(null);
   const [pendingPhotos, setPendingPhotos] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+
+  const [signatureOpen, setSignatureOpen] = useState(false);
+  const [pendingScan, setPendingScan] = useState<PendingScan | null>(null);
+  const [batchSignatureUrl, setBatchSignatureUrl] = useState<string | undefined>();
 
   const processMutation = trpc.scan.process.useMutation({
     onSuccess(data) {
@@ -142,11 +152,56 @@ export function ScanPage() {
       }
     }
 
+    if (selectedAction === "delivered") {
+      setPendingScan({ qrCode, photoUrls });
+      setSignatureOpen(true);
+      return;
+    }
+
     processMutation.mutate({
       qrCode,
       action: selectedAction as ScanAction,
       photoUrls,
     });
+  }
+
+  async function handleSignatureConfirm(blob: Blob) {
+    if (!pendingScan) return;
+    setSignatureOpen(false);
+    try {
+      const signatureUrl = await uploadSignaturePng(blob, "pending", "pending");
+      processMutation.mutate({
+        qrCode: pendingScan.qrCode,
+        action: "delivered" as ScanAction,
+        signatureUrl,
+        photoUrls: pendingScan.photoUrls,
+      });
+    } catch {
+      toast.error("Signature upload failed");
+    }
+    setPendingScan(null);
+  }
+
+  function handleSignatureSkip() {
+    if (!pendingScan) return;
+    setSignatureOpen(false);
+    processMutation.mutate({
+      qrCode: pendingScan.qrCode,
+      action: "delivered" as ScanAction,
+      photoUrls: pendingScan.photoUrls,
+    });
+    setPendingScan(null);
+  }
+
+  async function handleBatchSignature(blob: Blob) {
+    try {
+      const url = await uploadSignaturePng(blob, "batch", "batch");
+      setBatchSignatureUrl(url);
+      setSignatureOpen(false);
+      toast.success("Signature captured for batch");
+    } catch {
+      toast.error("Signature upload failed");
+    }
   }
 
   function handleConfirmAll() {
@@ -155,8 +210,12 @@ export function ScanPage() {
         qrCode: item.qrCode,
         action: item.action as ScanAction,
         photoUrls: item.photoUrls,
+        ...(selectedAction === "delivered" && batchSignatureUrl
+          ? { signatureUrl: batchSignatureUrl }
+          : {}),
       })),
     });
+    setBatchSignatureUrl(undefined);
   }
 
   function handleRemove(id: string) {
@@ -221,6 +280,21 @@ export function ScanPage() {
       {batchMode ? (
         <div className="border-t border-neutral-200 pt-4">
           <h3 className="text-sm font-medium text-neutral-500 mb-3">Batch Queue</h3>
+          {selectedAction === "delivered" && batchQueue.length > 0 && (
+            <div className="mb-3">
+              {batchSignatureUrl ? (
+                <p className="text-sm text-green-700">Signature captured for batch</p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setSignatureOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+                >
+                  Capture Signature (optional)
+                </button>
+              )}
+            </div>
+          )}
           <BatchScanQueue
             items={batchQueue}
             onRemove={handleRemove}
@@ -235,6 +309,16 @@ export function ScanPage() {
           <ScannedPiecesList items={scannedItems} />
         </div>
       )}
+
+      <SignatureDialog
+        open={signatureOpen}
+        onConfirm={batchMode ? handleBatchSignature : handleSignatureConfirm}
+        onSkip={batchMode ? () => setSignatureOpen(false) : handleSignatureSkip}
+        onClose={() => {
+          setSignatureOpen(false);
+          if (!batchMode) setPendingScan(null);
+        }}
+      />
     </div>
   );
 }
