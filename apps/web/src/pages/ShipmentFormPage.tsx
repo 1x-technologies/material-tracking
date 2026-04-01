@@ -26,6 +26,15 @@ const CATEGORIES: { value: ShipmentCategory; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
+function DetailField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span className="block text-sm font-medium text-neutral-500 mb-0.5">{label}</span>
+      <span className="text-base text-neutral-900">{value}</span>
+    </div>
+  );
+}
+
 export function ShipmentFormPage() {
   const { shipmentId } = useParams<{ shipmentId?: string }>();
   const mode = shipmentId ? "edit" : "create";
@@ -149,10 +158,10 @@ export function ShipmentFormPage() {
   }, [shipmentQuery.data, piecesQuery.data]);
 
   const shipmentStatus = mode === "edit" ? ((shipmentQuery.data as Record<string, unknown>)?.status as string) : null;
-  const isReadOnly = mode === "edit" && !!shipmentStatus && shipmentStatus !== "created";
+  const isReadOnly = mode === "edit" && (!isEditRoute || (!!shipmentStatus && shipmentStatus !== "created"));
 
   const createMutation = trpc.shipment.create.useMutation({
-    onSuccess: (data) => navigate(`/shipments/${data.shipmentId}/edit`),
+    onSuccess: (data) => navigate(`/shipments/${data.shipmentId}`),
   });
 
   const updateMutation = trpc.shipment.update.useMutation();
@@ -245,7 +254,7 @@ export function ShipmentFormPage() {
         )}
       </div>
 
-      {isReadOnly && (
+      {isReadOnly && !!shipmentStatus && shipmentStatus !== "created" && (
         <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3">
           <p className="text-sm font-medium text-amber-800">
             This shipment can no longer be edited.
@@ -269,9 +278,39 @@ export function ShipmentFormPage() {
           >
             Reprint Labels
           </button>
+          {isReadOnly && shipmentStatus === "created" && (
+            <button
+              type="button"
+              onClick={() => navigate(`/shipments/${shipmentId}/edit`)}
+              className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition-colors"
+            >
+              Edit Shipment
+            </button>
+          )}
         </div>
       )}
 
+      {isReadOnly && mode === "edit" ? (
+        <div className="space-y-5 max-w-2xl">
+          <DetailField label="Description" value={description} />
+          <DetailField label="Category" value={CATEGORIES.find((c) => c.value === category)?.label ?? category} />
+          <div>
+            <span className="block text-sm font-medium text-neutral-700 mb-1">Priority</span>
+            <span className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${
+              priority === "urgent" ? "bg-red-100 text-red-700" :
+              priority === "low" ? "bg-slate-100 text-slate-700" :
+              "bg-neutral-100 text-neutral-700"
+            }`}>{priority.charAt(0).toUpperCase() + priority.slice(1)}</span>
+          </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <DetailField label="Origin" value={locationsQuery.data?.find((l) => l.id === originId)?.name ? `${locationsQuery.data.find((l) => l.id === originId)!.name} — ${locationsQuery.data.find((l) => l.id === originId)!.fullName}` : originId} />
+            <DetailField label="Destination" value={locationsQuery.data?.find((l) => l.id === destinationId)?.name ? `${locationsQuery.data.find((l) => l.id === destinationId)!.name} — ${locationsQuery.data.find((l) => l.id === destinationId)!.fullName}` : destinationId} />
+          </div>
+          <DetailField label="Sender" value={sender ? `${sender.name} (${sender.email})` : "—"} />
+          <DetailField label="Receiver" value={receiver ? `${receiver.name}${receiver.company ? ` · ${receiver.company}` : ""} (${receiver.email})` : "—"} />
+          <DetailField label="Pieces" value={String(pieceCount)} />
+        </div>
+      ) : (
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-1">
@@ -284,9 +323,8 @@ export function ShipmentFormPage() {
             required
             maxLength={500}
             rows={3}
-            disabled={isReadOnly}
             placeholder="What are you shipping?"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-xs focus:border-brand-500 focus:ring-1 focus:ring-brand-500 disabled:bg-neutral-50 disabled:text-neutral-400"
+            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-xs focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
           />
         </div>
 
@@ -298,8 +336,7 @@ export function ShipmentFormPage() {
             id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value as ShipmentCategory)}
-            disabled={isReadOnly}
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-xs focus:border-brand-500 focus:ring-1 focus:ring-brand-500 disabled:bg-neutral-50 disabled:text-neutral-400"
+            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-xs focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
           >
             {CATEGORIES.map((c) => (
               <option key={c.value} value={c.value}>
@@ -309,37 +346,35 @@ export function ShipmentFormPage() {
           </select>
         </div>
 
-        <PriorityField value={priority} onChange={setPriority} disabled={isReadOnly} />
+        <PriorityField value={priority} onChange={setPriority} />
 
         {mode === "create" && (
-          <PieceCountStepper value={pieceCount} onChange={setPieceCount} disabled={isReadOnly} />
+          <PieceCountStepper value={pieceCount} onChange={setPieceCount} />
         )}
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <LocationSelect label="Origin" value={originId} onChange={setOriginId} disabled={isReadOnly} />
-          <LocationSelect label="Destination" value={destinationId} onChange={setDestinationId} disabled={isReadOnly} />
+          <LocationSelect label="Origin" value={originId} onChange={setOriginId} />
+          <LocationSelect label="Destination" value={destinationId} onChange={setDestinationId} />
         </div>
 
-        <DirectoryAutocomplete label="Sender" value={sender} onChange={setSender} disabled={isReadOnly} />
-        <DirectoryAutocomplete label="Receiver" value={receiver} onChange={setReceiver} disabled={isReadOnly} />
+        <DirectoryAutocomplete label="Sender" value={sender} onChange={setSender} />
+        <DirectoryAutocomplete label="Receiver" value={receiver} onChange={setReceiver} />
 
-        {!isReadOnly && (
-          <div className="flex items-center gap-4 pt-4 border-t border-neutral-200">
-            <button
-              type="submit"
-              disabled={isPending}
-              className="rounded-md bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-700 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-60"
-            >
-              {isPending
-                ? mode === "create" ? "Creating…" : "Saving…"
-                : mode === "create" ? "Create Shipment" : "Save Changes"}
-            </button>
+        <div className="flex items-center gap-4 pt-4 border-t border-neutral-200">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="rounded-md bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-700 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-60"
+          >
+            {isPending
+              ? mode === "create" ? "Creating…" : "Saving…"
+              : mode === "create" ? "Create Shipment" : "Save Changes"}
+          </button>
 
-            {mode === "edit" && shipmentId && shipmentStatus === "created" && (
-              <CancelShipmentButton shipmentId={shipmentId} />
-            )}
-          </div>
-        )}
+          {mode === "edit" && shipmentId && shipmentStatus === "created" && (
+            <CancelShipmentButton shipmentId={shipmentId} />
+          )}
+        </div>
 
         {createMutation.isError && (
           <p className="text-sm text-red-600">Error: {createMutation.error.message}</p>
@@ -351,6 +386,7 @@ export function ShipmentFormPage() {
           <p className="text-sm text-green-600">Changes saved successfully.</p>
         )}
       </form>
+      )}
 
       <PrintLabelsDialog
         open={showPrintDialog}

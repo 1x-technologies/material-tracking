@@ -25,7 +25,7 @@ export function DirectoryAutocomplete({
   disabled = false,
 }: DirectoryAutocompleteProps) {
   const inputId = useId();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(value?.name ?? "");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isExternal, setIsExternal] = useState(value?.isExternal ?? false);
   const [showDropdown, setShowDropdown] = useState(false);

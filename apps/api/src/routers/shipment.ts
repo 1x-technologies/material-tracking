@@ -28,17 +28,18 @@ export const shipmentRouter = router({
 
     const result = await db.runTransaction(async (tx) => {
       const counterRef = db.doc("counters/shipments");
-      const counterSnap = await tx.get(counterRef);
+
+      const [counterSnap, originSnap, destSnap] = await Promise.all([
+        tx.get(counterRef),
+        tx.get(db.doc(`locations/${input.originId}`)),
+        tx.get(db.doc(`locations/${input.destinationId}`)),
+      ]);
+
       const last = counterSnap.exists ? (counterSnap.data()?.last as number) ?? 0 : 0;
       const next = last + 1;
       tx.set(counterRef, { last: next }, { merge: true });
 
       const shipmentNumber = `SH-${utcDateStr()}-${padSeq(next)}`;
-
-      const [originSnap, destSnap] = await Promise.all([
-        tx.get(db.doc(`locations/${input.originId}`)),
-        tx.get(db.doc(`locations/${input.destinationId}`)),
-      ]);
 
       if (!originSnap.exists || originSnap.data()?.active !== true) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "INVALID_LOCATION: origin not found or inactive" });

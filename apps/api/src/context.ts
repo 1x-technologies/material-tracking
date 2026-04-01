@@ -60,7 +60,8 @@ export async function createContext({ req }: CreateExpressContextOptions): Promi
         locationId: parsed.locationId ?? "",
       },
     };
-  } catch {
+  } catch (err) {
+    console.error("[auth] createContext failed:", (err as Error).message ?? err);
     return { user: null };
   }
 }

@@ -8,7 +8,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "GCLOUD_PROJECT=manufacturing-472518 DIRECTORY_STUB=1 tsx watch src/index.ts",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
