@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-04-01T00:03:02.773Z"
+status: verifying
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-04-01T00:06:17.313Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -25,8 +25,8 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 02 (authentication-user-roles) — EXECUTING
-Plan: 2 of 3
-Status: Ready to execute
+Plan: 3 of 3
+Status: Phase complete — ready for verification
 Last activity: 2026-04-01
 
 Progress: [██░░░░░░░░] Phase 2 planned (0/3 executed)
@@ -58,6 +58,7 @@ Progress: [██░░░░░░░░] Phase 2 planned (0/3 executed)
 | Phase 01 P05 | 2min | 2 tasks | 20 files |
 | Phase 01 P06 | 4min | 2 tasks | 42 files |
 | Phase 02 P01 | 1min | 3 tasks | 6 files |
+| Phase 02 P02 | 2min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Tailwind CSS parser directives enabled in Biome to support @theme syntax
 - [Phase 02]: Firestore create() for lazy provision — fails on ALREADY_EXISTS to avoid clobbering admin docs (D-03)
 - [Phase 02]: requireRole factory function takes UserRole[] for flexible role combinations per procedure
+- [Phase 02]: Kept user as Firebase User and added appUser for Firestore profile — minimal disruption
+- [Phase 02]: One-shot getDoc for profile over onSnapshot — profile rarely changes mid-session
 
 ### Pending Todos
 
@@ -97,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T00:03:02.770Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-04-01T00:06:17.310Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None

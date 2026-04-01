@@ -55,7 +55,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 02-01-PLAN.md — API: Firestore `users/{uid}` context, lazy Staff provision, role middleware, Vitest
-- [ ] 02-02-PLAN.md — Web: `hd: 1x.tech`, profile load, session restore UX, SignIn UI-SPEC, Vitest for `hd`
+- [x] 02-02-PLAN.md — Web: `hd: 1x.tech`, profile load, session restore UX, SignIn UI-SPEC, Vitest for `hd`
 - [ ] 02-03-PLAN.md — Web: role routes, Access denied, nav chrome; API: staff/driver procedure examples
 **UI hint**: yes
 

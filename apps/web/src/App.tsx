@@ -1,9 +1,13 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { RequireRole } from "./components/auth/RequireRole";
 import { AppLayout } from "./components/layout/AppLayout";
 import { Spinner } from "./components/ui/Spinner";
 import { AuthProvider, useAuthContext } from "./context/AuthContext";
+import { AccessDeniedPage } from "./pages/AccessDeniedPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { ScanStubPage } from "./pages/ScanStubPage";
+import { ShipmentCreateStubPage } from "./pages/ShipmentCreateStubPage";
 import { SignInPage } from "./pages/SignInPage";
 import { TRPCProvider } from "./trpc";
 
@@ -36,6 +40,23 @@ function AppRoutes() {
           <Route element={<AppLayout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
+            <Route
+              path="shipments/new"
+              element={
+                <RequireRole allowedRoles={["staff", "admin"]}>
+                  <ShipmentCreateStubPage />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="scan"
+              element={
+                <RequireRole allowedRoles={["driver", "admin"]}>
+                  <ScanStubPage />
+                </RequireRole>
+              }
+            />
+            <Route path="access-denied" element={<AccessDeniedPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

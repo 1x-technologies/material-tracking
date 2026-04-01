@@ -9,7 +9,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Authentication & Users
 
-- [ ] **AUTH-01**: User can sign in with Google Workspace SSO restricted to company domain
+- [x] **AUTH-01**: User can sign in with Google Workspace SSO restricted to company domain
 - [x] **AUTH-02**: User session persists across browser refresh
 - [x] **AUTH-03**: System supports three roles: Admin (full access), Driver (scan + view), Staff (create + view)
 
@@ -118,7 +118,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 2: Authentication & User Roles | Pending |
+| AUTH-01 | Phase 2: Authentication & User Roles | Complete |
 | AUTH-02 | Phase 2: Authentication & User Roles | Complete |
 | AUTH-03 | Phase 2: Authentication & User Roles | Complete |
 | SHIP-01 | Phase 3: Shipment Creation | Pending |
