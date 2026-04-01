@@ -30,8 +30,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Scanning & Status
 
-- [ ] **SCAN-01**: Driver can scan QR code via RF scanner (keyboard wedge input)
-- [ ] **SCAN-02**: Driver can scan QR code via phone camera as fallback
+- [x] **SCAN-01**: Driver can scan QR code via RF scanner (keyboard wedge input)
+- [x] **SCAN-02**: Driver can scan QR code via phone camera as fallback
 - [x] **SCAN-03**: Each piece follows four-stage lifecycle: Created → In Transit → Delivered → Picked Up
 - [x] **SCAN-04**: Each piece is tracked individually within multi-piece shipments
 - [x] **SCAN-05**: Shipment status is derived from piece statuses (e.g., "Partially Delivered 3/5")
@@ -130,8 +130,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QRPR-02 | Phase 4: QR Code Generation & Label Printing | Complete |
 | QRPR-03 | Phase 4: QR Code Generation & Label Printing | Complete |
 | QRPR-04 | Phase 4: QR Code Generation & Label Printing | Complete |
-| SCAN-01 | Phase 5: Scan Processing & Status Workflow | Pending |
-| SCAN-02 | Phase 5: Scan Processing & Status Workflow | Pending |
+| SCAN-01 | Phase 5: Scan Processing & Status Workflow | Complete |
+| SCAN-02 | Phase 5: Scan Processing & Status Workflow | Complete |
 | SCAN-03 | Phase 5: Scan Processing & Status Workflow | Complete |
 | SCAN-04 | Phase 5: Scan Processing & Status Workflow | Complete |
 | SCAN-05 | Phase 5: Scan Processing & Status Workflow | Complete |
