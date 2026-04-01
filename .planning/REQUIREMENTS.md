@@ -26,7 +26,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **QRPR-01**: System generates unique QR code for each piece in a shipment
 - [x] **QRPR-02**: User can preview labels before printing
 - [x] **QRPR-03**: Labels print to networked Zebra printers with multi-piece notation (1/5, 2/5, etc.)
-- [ ] **QRPR-04**: User can reprint labels for existing shipments
+- [x] **QRPR-04**: User can reprint labels for existing shipments
 
 ### Scanning & Status
 
@@ -129,7 +129,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QRPR-01 | Phase 4: QR Code Generation & Label Printing | Complete |
 | QRPR-02 | Phase 4: QR Code Generation & Label Printing | Complete |
 | QRPR-03 | Phase 4: QR Code Generation & Label Printing | Complete |
-| QRPR-04 | Phase 4: QR Code Generation & Label Printing | Pending |
+| QRPR-04 | Phase 4: QR Code Generation & Label Printing | Complete |
 | SCAN-01 | Phase 5: Scan Processing & Status Workflow | Pending |
 | SCAN-02 | Phase 5: Scan Processing & Status Workflow | Pending |
 | SCAN-03 | Phase 5: Scan Processing & Status Workflow | Pending |

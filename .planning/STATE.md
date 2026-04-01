@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-04-01T16:58:42.535Z"
+stopped_at: Completed 04-03-PLAN.md (checkpoint pending)
+last_updated: "2026-04-01T17:01:01.152Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 10
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 04 (qr-code-generation-label-printing) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -65,6 +65,7 @@ Progress: [███░░░░░░░] Phase 3 planned; execution not starte
 | Phase 03 P03 | 2min | 5 tasks | 10 files |
 | Phase 04 P01 | 1min | 2 tasks | 2 files |
 | Phase 04 P02 | 1min | 3 tasks | 8 files |
+| Phase 04 P03 | 1min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,9 @@ Recent decisions affecting current work:
 - [Phase 04]: fluent-zpl QRErrorCorrection.H for ZPL QR — native support in 1.0.0, no raw ZPL needed
 - [Phase 04]: Pure fetch wrapper for Browser Print — no vendor SDK, localhost:9100 with AbortController timeouts
 - [Phase 04]: LabelData interface in LabelPreviewCard — imported by ZPL builder for single source of truth
+- [Phase 04]: Inline modal dialog pattern (fixed overlay) — no external dialog library
+- [Phase 04]: Expanded label array for per-piece copies — flatMap each selected piece by copy count before buildBatchZpl
+- [Phase 04]: Detail route reuses ShipmentFormPage with isEditRoute pathname detection
 
 ### Pending Todos
 
@@ -122,6 +126,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T16:58:42.533Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-04-01T17:00:57.726Z
+Stopped at: Completed 04-03-PLAN.md (checkpoint pending)
 Resume file: None

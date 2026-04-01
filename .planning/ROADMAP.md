@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Project Scaffolding & Firebase Infrastructure** - Three Firebase environments, CI/CD, Firestore schema, GCP services provisioned
 - [ ] **Phase 2: Authentication & User Roles** - Google Workspace SSO with three-role access control
 - [x] **Phase 3: Shipment Creation** - Tablet-optimized shipment creation form with directory lookup and lifecycle management (completed 2026-04-01)
-- [ ] **Phase 4: QR Code Generation & Label Printing** - QR generation, label preview, and Zebra printer integration
+- [x] **Phase 4: QR Code Generation & Label Printing** - QR generation, label preview, and Zebra printer integration (completed 2026-04-01)
 - [ ] **Phase 5: Scan Processing & Status Workflow** - RF scanner and camera-based scanning with four-stage status lifecycle
 - [ ] **Phase 6: Enhanced Scanning Features** - Batch scan mode, signature capture, and photo attachments
 - [ ] **Phase 7: Real-Time Dashboard** - Live status board with exception alerts and driver trip view
@@ -89,7 +89,7 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md — API: Fix qrCode = pieceRef.id in create transaction + add listPieces query
 - [x] 04-02-PLAN.md — Web: Label infrastructure (formatters, preview card, ZPL builder, Zebra wrapper)
-- [ ] 04-03-PLAN.md — Web: Print/Reprint dialogs + detail route + button wiring
+- [x] 04-03-PLAN.md — Web: Print/Reprint dialogs + detail route + button wiring
 **UI hint**: yes
 
 ### Phase 5: Scan Processing & Status Workflow
@@ -173,7 +173,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Project Scaffolding & Firebase Infrastructure | 0/? | Not started | - |
 | 2. Authentication & User Roles | 0/? | Not started | - |
 | 3. Shipment Creation | 3/3 | Complete   | 2026-04-01 |
-| 4. QR Code Generation & Label Printing | 2/3 | In Progress|  |
+| 4. QR Code Generation & Label Printing | 3/3 | Complete   | 2026-04-01 |
 | 5. Scan Processing & Status Workflow | 0/? | Not started | - |
 | 6. Enhanced Scanning Features | 0/? | Not started | - |
 | 7. Real-Time Dashboard | 0/? | Not started | - |
