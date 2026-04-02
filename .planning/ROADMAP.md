@@ -164,7 +164,11 @@ Plans:
   2. Shipment history is retained indefinitely with no auto-purge
   3. User can view the full timeline of a shipment including all scan events with who/when
   4. All actions (creation, scans, edits, cancellations) are logged as a searchable audit trail
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 09-01-PLAN.md — API: `shipment.search` tRPC (date range, status, cursor pagination, HIST-02 retention check)
+- [ ] 09-02-PLAN.md — Web: `/history` filters, table, Load More, sidebar + route (depends 09-01)
+- [ ] 09-03-PLAN.md — Web: visual shipment timeline on detail (HIST-03, ADMN-05; wave 2 after 09-01, parallel 09-02)
 **UI hint**: yes
 
 ### Phase 10: Admin Panel & Reports
@@ -194,5 +198,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Enhanced Scanning Features | 4/4 | Complete   | 2026-04-01 |
 | 7. Real-Time Dashboard | 0/? | Not started | - |
 | 8. Notifications & Aged Reports | 0/? | Not started | - |
-| 9. History, Search & Audit | 0/? | Not started | - |
+| 9. History, Search & Audit | 0/3 | Not started | - |
 | 10. Admin Panel & Reports | 0/? | Not started | - |
