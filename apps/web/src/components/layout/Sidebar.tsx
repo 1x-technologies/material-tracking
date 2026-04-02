@@ -13,6 +13,7 @@ const allRoles: UserRole[] = ["admin", "driver", "staff"];
 
 const navItems: NavItem[] = [
   { label: "Dashboard", path: "/dashboard", icon: "📊", roles: allRoles },
+  { label: "History", path: "/history", icon: "📋", roles: ["staff", "admin"] },
   { label: "New Shipment", path: "/shipments/new", icon: "📦", roles: ["staff", "admin"] },
   { label: "Scan", path: "/scan", icon: "📷", roles: ["driver", "admin"] },
 ];

@@ -5,6 +5,7 @@ import { Spinner } from "./components/ui/Spinner";
 import { AuthProvider, useAuthContext } from "./context/AuthContext";
 import { AccessDeniedPage } from "./pages/AccessDeniedPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { HistoryPage } from "./pages/HistoryPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ScanPage } from "./pages/ScanPage";
 import { ShipmentFormPage } from "./pages/ShipmentFormPage";
@@ -40,6 +41,14 @@ function AuthenticatedRoutes() {
         <Route element={<AppLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route
+            path="history"
+            element={
+              <RequireRole allowedRoles={["staff", "admin"]}>
+                <HistoryPage />
+              </RequireRole>
+            }
+          />
           <Route
             path="shipments/new"
             element={
