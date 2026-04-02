@@ -417,6 +417,112 @@ describe("shipment.search", () => {
       shipmentCaller(driverCtx()).shipment.search({}),
     ).rejects.toThrow(expect.objectContaining({ code: "FORBIDDEN" }));
   });
+
+  it("returns empty result for no matching documents", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    const result = await shipmentCaller(staffCtx()).shipment.search({
+      status: "picked_up",
+    });
+
+    expect(result.items).toHaveLength(0);
+    expect(result.hasMore).toBe(false);
+    expect(result.nextCursor).toBeNull();
+  });
+
+  it("returns exactly 50 items when exactly 50 docs returned", async () => {
+    const docs = Array.from({ length: 50 }, (_, i) =>
+      makeDoc(`s${i}`, {
+        shipmentNumber: `SH-20260401-${String(i).padStart(4, "0")}`,
+        status: "created",
+        createdAt: makeTimestamp("2026-04-01T10:00:00Z"),
+      }),
+    );
+    mockQueryGet.mockResolvedValue({ docs });
+
+    const result = await shipmentCaller(staffCtx()).shipment.search({});
+
+    expect(result.items).toHaveLength(50);
+    expect(result.hasMore).toBe(false);
+    expect(result.nextCursor).toBeNull();
+  });
+
+  it("combines status and date range filters with AND semantics", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    await shipmentCaller(staffCtx()).shipment.search({
+      status: "in_transit",
+      dateFrom: "2026-03-15T00:00:00.000Z",
+      dateTo: "2026-03-20T23:59:59.999Z",
+    });
+
+    // Status filter + two date range filters = 3 where calls
+    expect(mockWhere).toHaveBeenCalledTimes(3);
+    expect(mockWhere).toHaveBeenCalledWith("status", "==", "in_transit");
+    expect(mockWhere).toHaveBeenCalledWith("createdAt", ">=", expect.anything());
+    expect(mockWhere).toHaveBeenCalledWith("createdAt", "<=", expect.anything());
+  });
+
+  it("nextCursor contains last item createdAt and id for page 2", async () => {
+    const lastTs = "2026-04-01T05:30:00.000Z";
+    const docs = Array.from({ length: 51 }, (_, i) => {
+      const ts = i < 50 ? `2026-04-01T${String(10 - Math.floor(i / 6)).padStart(2, "0")}:00:00Z` : lastTs;
+      return makeDoc(`doc-${i}`, {
+        status: "created",
+        createdAt: makeTimestamp(i === 49 ? lastTs : ts),
+      });
+    });
+    mockQueryGet.mockResolvedValue({ docs });
+
+    const result = await shipmentCaller(staffCtx()).shipment.search({});
+
+    expect(result.nextCursor).toEqual({
+      createdAt: new Date(lastTs).toISOString(),
+      id: "doc-49",
+    });
+  });
+
+  it("passes cursor values into startAfter for second page", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    const cursor = {
+      createdAt: "2026-04-01T05:30:00.000Z",
+      id: "doc-49",
+    };
+    await shipmentCaller(staffCtx()).shipment.search({ cursor });
+
+    expect(mockStartAfter).toHaveBeenCalledTimes(1);
+    // First arg is a Timestamp mock, second is the document ID
+    const [tsArg, idArg] = mockStartAfter.mock.calls[0];
+    expect(tsArg).toHaveProperty("_seconds");
+    expect(idArg).toBe("doc-49");
+  });
+
+  it("does not call startAfter when no cursor provided", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    await shipmentCaller(staffCtx()).shipment.search({});
+
+    expect(mockStartAfter).not.toHaveBeenCalled();
+  });
+
+  it("does not call where when no status or dates provided", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    await shipmentCaller(staffCtx()).shipment.search({});
+
+    expect(mockWhere).not.toHaveBeenCalled();
+  });
+
+  it("orders by createdAt desc then documentId desc", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    await shipmentCaller(staffCtx()).shipment.search({});
+
+    expect(mockOrderBy).toHaveBeenCalledTimes(2);
+    expect(mockOrderBy).toHaveBeenCalledWith("createdAt", "desc");
+    expect(mockOrderBy).toHaveBeenCalledWith("__name__", "desc");
+  });
 });
 
 describe("directory.search", () => {
