@@ -1,3 +1,4 @@
+import { adminRouter } from "./routers/admin";
 import { directoryRouter } from "./routers/directory";
 import { healthRouter } from "./routers/health";
 import { locationsRouter } from "./routers/locations";
@@ -7,6 +8,7 @@ import { userRouter } from "./routers/user";
 import { router } from "./trpc";
 
 export const appRouter = router({
+  admin: adminRouter,
   directory: directoryRouter,
   health: healthRouter,
   locations: locationsRouter,

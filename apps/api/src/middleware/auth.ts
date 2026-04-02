@@ -11,7 +11,7 @@ const isAuthed = middleware(({ ctx, next }) => {
 
 const requireRole = (allowed: UserRole[]) =>
   middleware(({ ctx, next }) => {
-    if (!ctx.user || !allowed.includes(ctx.user.role)) {
+    if (!ctx.user || !ctx.user.role || !allowed.includes(ctx.user.role)) {
       throw new TRPCError({ code: "FORBIDDEN", message: "Insufficient permissions" });
     }
     return next({ ctx: { user: ctx.user } });

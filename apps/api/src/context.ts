@@ -7,7 +7,7 @@ import { auth, db } from "./lib/firebase";
 export interface AuthUser {
   uid: string;
   email: string | undefined;
-  role: UserRole;
+  role: UserRole | null;
   name: string | undefined;
   locationId: string;
 }
@@ -28,7 +28,7 @@ export async function createContext({ req }: CreateExpressContextOptions): Promi
     if (!snap.exists) {
       try {
         await userRef.create({
-          role: "staff",
+          role: null,
           email: decoded.email ?? "",
           displayName: decoded.name ?? "",
           department: "",
@@ -56,7 +56,7 @@ export async function createContext({ req }: CreateExpressContextOptions): Promi
         uid: decoded.uid,
         email: decoded.email,
         name: parsed.displayName || decoded.name,
-        role: parsed.role,
+        role: parsed.role ?? null,
         locationId: parsed.locationId ?? "",
       },
     };
