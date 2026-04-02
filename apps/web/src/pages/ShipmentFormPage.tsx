@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { CancelShipmentButton } from "../components/shipment/CancelShipmentButton";
-import { PieceEventsList } from "../components/shipment/PieceEventsList";
+import { ShipmentTimeline } from "../components/shipment/ShipmentTimeline";
 import type { LabelData } from "../components/shipment/LabelPreviewCard";
 import { PrintLabelsDialog } from "../components/shipment/PrintLabelsDialog";
 import { ReprintLabelsDialog } from "../components/shipment/ReprintLabelsDialog";
@@ -351,10 +351,14 @@ export function ShipmentFormPage() {
             <DetailField label="Pieces" value={String(pieceCount)} />
           </div>
 
-          {piecesQuery.data && (
+          {piecesQuery.data && shipmentQuery.data && (
             <div className="mt-8 max-w-2xl">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Scan History</h3>
-              <PieceEventsList
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Activity</h3>
+              <ShipmentTimeline
+                createdBy={(shipmentQuery.data as Record<string, unknown>).createdBy as { uid: string; name: string }}
+                createdAt={(shipmentQuery.data as Record<string, unknown>).createdAt}
+                status={(shipmentQuery.data as Record<string, unknown>).status as string}
+                updatedAt={(shipmentQuery.data as Record<string, unknown>).updatedAt}
                 pieces={piecesQuery.data.map((p: Record<string, unknown>) => ({
                   pieceNumber: p.pieceNumber as number,
                   events: ((p.events as unknown[]) ?? []).map((e) => {
@@ -364,6 +368,8 @@ export function ShipmentFormPage() {
                       timestamp: ev.timestamp,
                       userId: (ev.userId as string) ?? "",
                       userName: (ev.userName as string) ?? "",
+                      signatureUrl: (ev.signatureUrl as string) ?? undefined,
+                      photoUrls: (ev.photoUrls as string[]) ?? undefined,
                     };
                   }),
                 }))}
