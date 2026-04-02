@@ -27,6 +27,16 @@ vi.mock("firebase-admin/firestore", () => ({
   FieldValue: {
     serverTimestamp: vi.fn(() => "SERVER_TIMESTAMP"),
   },
+  FieldPath: {
+    documentId: vi.fn(() => "__name__"),
+  },
+  Timestamp: {
+    fromDate: vi.fn((d: Date) => ({
+      toDate: () => d,
+      toMillis: () => d.getTime(),
+      _seconds: Math.floor(d.getTime() / 1000),
+    })),
+  },
 }));
 
 import { db } from "../src/lib/firebase";
@@ -281,6 +291,131 @@ describe("shipment.listPieces", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({ id: "piece-x", pieceNumber: 1, qrCode: "piece-x" });
+  });
+});
+
+describe("shipment.search", () => {
+  const mockWhere = vi.fn();
+  const mockOrderBy = vi.fn();
+  const mockLimit = vi.fn();
+  const mockStartAfter = vi.fn();
+  const mockQueryGet = vi.fn();
+
+  function setupQueryChain() {
+    const chain = {
+      where: mockWhere,
+      orderBy: mockOrderBy,
+      limit: mockLimit,
+      startAfter: mockStartAfter,
+      get: mockQueryGet,
+    };
+    // Each method returns the chain for fluent API
+    mockWhere.mockReturnValue(chain);
+    mockOrderBy.mockReturnValue(chain);
+    mockLimit.mockReturnValue(chain);
+    mockStartAfter.mockReturnValue(chain);
+    return chain;
+  }
+
+  function makeDoc(id: string, data: Record<string, unknown>) {
+    return {
+      id,
+      data: () => data,
+    };
+  }
+
+  function makeTimestamp(iso: string) {
+    return {
+      toDate: () => new Date(iso),
+      toMillis: () => new Date(iso).getTime(),
+    };
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    const chain = setupQueryChain();
+    const mockDb = vi.mocked(db);
+    mockDb.collection.mockReturnValue(chain as any);
+  });
+
+  it("returns items with hasMore=false when fewer than 51 docs", async () => {
+    const docs = [
+      makeDoc("s1", { shipmentNumber: "SH-20260401-0001", status: "created", createdAt: makeTimestamp("2026-04-01T10:00:00Z") }),
+      makeDoc("s2", { shipmentNumber: "SH-20260401-0002", status: "in_transit", createdAt: makeTimestamp("2026-04-01T09:00:00Z") }),
+    ];
+    mockQueryGet.mockResolvedValue({ docs });
+
+    const result = await shipmentCaller(staffCtx()).shipment.search({});
+
+    expect(result.items).toHaveLength(2);
+    expect(result.hasMore).toBe(false);
+    expect(result.nextCursor).toBeNull();
+    expect(mockLimit).toHaveBeenCalledWith(51);
+  });
+
+  it("returns hasMore=true and nextCursor when 51 docs returned", async () => {
+    const docs = Array.from({ length: 51 }, (_, i) =>
+      makeDoc(`s${i}`, {
+        shipmentNumber: `SH-20260401-${String(i).padStart(4, "0")}`,
+        status: "created",
+        createdAt: makeTimestamp(`2026-04-01T${String(10 - Math.floor(i / 6)).padStart(2, "0")}:${String(i % 60).padStart(2, "0")}:00Z`),
+      }),
+    );
+    mockQueryGet.mockResolvedValue({ docs });
+
+    const result = await shipmentCaller(staffCtx()).shipment.search({});
+
+    expect(result.items).toHaveLength(50);
+    expect(result.hasMore).toBe(true);
+    expect(result.nextCursor).not.toBeNull();
+    expect(result.nextCursor).toHaveProperty("createdAt");
+    expect(result.nextCursor).toHaveProperty("id");
+  });
+
+  it("applies status filter via where clause", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    await shipmentCaller(staffCtx()).shipment.search({ status: "delivered" });
+
+    expect(mockWhere).toHaveBeenCalledWith("status", "==", "delivered");
+  });
+
+  it("applies date range filters", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    await shipmentCaller(staffCtx()).shipment.search({
+      dateFrom: "2026-03-01T00:00:00.000Z",
+      dateTo: "2026-03-31T23:59:59.999Z",
+    });
+
+    expect(mockWhere).toHaveBeenCalledTimes(2);
+    expect(mockWhere).toHaveBeenCalledWith("createdAt", ">=", expect.anything());
+    expect(mockWhere).toHaveBeenCalledWith("createdAt", "<=", expect.anything());
+  });
+
+  it("applies cursor via startAfter", async () => {
+    mockQueryGet.mockResolvedValue({ docs: [] });
+
+    await shipmentCaller(staffCtx()).shipment.search({
+      cursor: {
+        createdAt: "2026-04-01T08:00:00.000Z",
+        id: "last-doc-id",
+      },
+    });
+
+    expect(mockStartAfter).toHaveBeenCalledWith(expect.anything(), "last-doc-id");
+  });
+
+  it("rejects unauthenticated calls", async () => {
+    await expect(
+      shipmentCaller({ user: null }).shipment.search({}),
+    ).rejects.toThrow(expect.objectContaining({ code: "UNAUTHORIZED" }));
+  });
+
+  it("rejects drivers (staff-only procedure)", async () => {
+    await expect(
+      shipmentCaller(driverCtx()).shipment.search({}),
+    ).rejects.toThrow(expect.objectContaining({ code: "FORBIDDEN" }));
   });
 });
 

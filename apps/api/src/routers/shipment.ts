@@ -1,10 +1,12 @@
 import {
   cancelShipmentInputSchema,
   createShipmentSchema,
+  shipmentSearchInputSchema,
   updateShipmentInputSchema,
 } from "@material-tracking/shared";
+import type { SearchCursor } from "@material-tracking/shared";
 import { TRPCError } from "@trpc/server";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, FieldPath, Timestamp } from "firebase-admin/firestore";
 import { z } from "zod";
 import { db } from "../lib/firebase";
 import { protectedProcedure, staffProcedure } from "../middleware/auth";
@@ -107,6 +109,69 @@ export const shipmentRouter = router({
         throw new TRPCError({ code: "NOT_FOUND", message: "Shipment not found" });
       }
       return { id: snap.id, ...snap.data() };
+    }),
+
+  /**
+   * Paginated shipment search with optional status and date range filters.
+   * Returns at most 50 items per page with cursor-based pagination (requests 51 to detect hasMore).
+   * Sender/receiver/keyword filtering is client-side per D-03.
+   *
+   * Shipment documents are retained indefinitely; no server-side purge (HIST-02).
+   */
+  search: staffProcedure
+    .input(shipmentSearchInputSchema)
+    .query(async ({ input }) => {
+      const PAGE_SIZE = 50;
+      let query: FirebaseFirestore.Query = db
+        .collection("shipments")
+        .orderBy("createdAt", "desc")
+        .orderBy(FieldPath.documentId(), "desc");
+
+      // Apply status filter (AND with date range when both provided)
+      if (input.status) {
+        query = query.where("status", "==", input.status);
+      }
+
+      // Apply date range filters (createdAt stored as Firestore Timestamp)
+      if (input.dateFrom) {
+        query = query.where("createdAt", ">=", Timestamp.fromDate(new Date(input.dateFrom)));
+      }
+      if (input.dateTo) {
+        query = query.where("createdAt", "<=", Timestamp.fromDate(new Date(input.dateTo)));
+      }
+
+      // Apply cursor for pagination (startAfter with both orderBy values)
+      if (input.cursor) {
+        const cursorTimestamp = Timestamp.fromDate(new Date(input.cursor.createdAt));
+        query = query.startAfter(cursorTimestamp, input.cursor.id);
+      }
+
+      // Request PAGE_SIZE + 1 to detect if more pages exist
+      query = query.limit(PAGE_SIZE + 1);
+
+      const snapshot = await query.get();
+      const docs = snapshot.docs;
+
+      const hasMore = docs.length > PAGE_SIZE;
+      const itemDocs = hasMore ? docs.slice(0, PAGE_SIZE) : docs;
+
+      const items = itemDocs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      let nextCursor: SearchCursor | null = null;
+      if (hasMore && itemDocs.length > 0) {
+        const lastDoc = itemDocs[itemDocs.length - 1];
+        const lastData = lastDoc.data();
+        const lastCreatedAt = lastData.createdAt as FirebaseFirestore.Timestamp;
+        nextCursor = {
+          createdAt: lastCreatedAt.toDate().toISOString(),
+          id: lastDoc.id,
+        };
+      }
+
+      return { items, nextCursor, hasMore };
     }),
 
   update: staffProcedure
