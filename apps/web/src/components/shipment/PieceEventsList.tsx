@@ -1,3 +1,9 @@
+/**
+ * @deprecated Use ShipmentTimeline instead for full shipment activity view.
+ * This component is retained for transitional compatibility and will be
+ * removed once ShipmentFormPage migrates to ShipmentTimeline.
+ */
+
 const ACTION_LABELS: Record<string, string> = {
   created: "Created",
   in_transit: "In Transit",
