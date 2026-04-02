@@ -61,10 +61,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Admin
 
-- [ ] **ADMN-01**: Admin can manage users (create, assign roles, deactivate)
-- [ ] **ADMN-02**: Admin can manage locations (add, edit, deactivate)
-- [ ] **ADMN-03**: Admin can configure system settings (aging threshold, notification preferences)
-- [ ] **ADMN-04**: Admin can generate and export reports: delivery times, volume trends, driver performance
+- [x] **ADMN-01**: Admin can manage users (create, assign roles, deactivate)
+- [x] **ADMN-02**: Admin can manage locations (add, edit, deactivate)
+- [x] **ADMN-03**: Admin can configure system settings (aging threshold, notification preferences)
+- [x] **ADMN-04**: Admin can generate and export reports: delivery times, volume trends, driver performance
 - [x] **ADMN-05**: System logs all actions as an audit trail (creation, scans, edits, cancellations)
 
 ### Infrastructure
@@ -149,10 +149,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HIST-01 | Phase 9: History, Search & Audit | Complete |
 | HIST-02 | Phase 9: History, Search & Audit | Complete |
 | HIST-03 | Phase 9: History, Search & Audit | Complete |
-| ADMN-01 | Phase 10: Admin Panel & Reports | Pending |
-| ADMN-02 | Phase 10: Admin Panel & Reports | Pending |
-| ADMN-03 | Phase 10: Admin Panel & Reports | Pending |
-| ADMN-04 | Phase 10: Admin Panel & Reports | Pending |
+| ADMN-01 | Phase 10: Admin Panel & Reports | Complete |
+| ADMN-02 | Phase 10: Admin Panel & Reports | Complete |
+| ADMN-03 | Phase 10: Admin Panel & Reports | Complete |
+| ADMN-04 | Phase 10: Admin Panel & Reports | Complete |
 | ADMN-05 | Phase 9: History, Search & Audit | Complete |
 | INFR-01 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-02 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |

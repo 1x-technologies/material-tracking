@@ -182,7 +182,7 @@ Plans:
   4. Admin can generate and export reports: delivery times, volume trends, driver performance
 **Plans**: 3 plans
 Plans:
-- [ ] 10-01-PLAN.md — Shared schemas + pending user auth flow + admin API router (user/location CRUD, settings, reports, audit log)
+- [x] 10-01-PLAN.md — Shared schemas + pending user auth flow + admin API router (user/location CRUD, settings, reports, audit log)
 - [ ] 10-02-PLAN.md — Web: admin page shell, reusable components, PendingApprovalPage, user management tab
 - [ ] 10-03-PLAN.md — Web: location management, settings form, reports with Recharts charts + CSV export, audit log
 **UI hint**: yes
@@ -203,4 +203,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 7. Real-Time Dashboard | 0/? | Not started | - |
 | 8. Notifications & Aged Reports | 0/? | Not started | - |
 | 9. History, Search & Audit | 0/3 | Not started | - |
-| 10. Admin Panel & Reports | 0/3 | Not started | - |
+| 10. Admin Panel & Reports | 1/3 | In Progress|  |
