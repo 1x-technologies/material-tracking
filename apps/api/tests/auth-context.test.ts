@@ -86,7 +86,7 @@ describe("createContext", () => {
     expect(mockAuth.verifyIdToken).toHaveBeenCalledWith("valid-token");
   });
 
-  it("lazily creates staff profile when Firestore document is missing", async () => {
+  it("lazily creates pending profile when Firestore document is missing", async () => {
     mockAuth.verifyIdToken.mockResolvedValue({
       uid: "new-user",
       email: "new@1x.tech",
@@ -103,7 +103,7 @@ describe("createContext", () => {
       return Promise.resolve({
         exists: true,
         data: () => ({
-          role: "staff",
+          role: null,
           email: "new@1x.tech",
           displayName: "New User",
         }),
@@ -120,11 +120,11 @@ describe("createContext", () => {
       uid: "new-user",
       email: "new@1x.tech",
       name: "New User",
-      role: "staff",
+      role: null,
       locationId: "",
     });
     expect(mockCreate).toHaveBeenCalledOnce();
-    expect(mockCreate.mock.calls[0][0]).toMatchObject({ role: "staff" });
+    expect(mockCreate.mock.calls[0][0]).toMatchObject({ role: null });
   });
 
   it("handles race condition when another writer creates the doc between get and create", async () => {
