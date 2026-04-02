@@ -167,7 +167,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 09-01-PLAN.md — API: `shipment.search` tRPC (date range, status, cursor pagination, HIST-02 retention check)
-- [ ] 09-02-PLAN.md — Web: `/history` filters, table, Load More, sidebar + route (depends 09-01)
+- [x] 09-02-PLAN.md — Web: `/history` filters, table, Load More, sidebar + route (depends 09-01)
 - [ ] 09-03-PLAN.md — Web: visual shipment timeline on detail (HIST-03, ADMN-05; wave 2 after 09-01, parallel 09-02)
 **UI hint**: yes
 
