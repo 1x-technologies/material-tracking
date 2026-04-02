@@ -57,7 +57,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **HIST-01**: User can search shipment history by date range, sender, receiver, status, and description
 - [x] **HIST-02**: Shipment history is retained indefinitely with no auto-purge
-- [ ] **HIST-03**: User can view full timeline of a shipment including all scan events with who/when
+- [x] **HIST-03**: User can view full timeline of a shipment including all scan events with who/when
 
 ### Admin
 
@@ -65,7 +65,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **ADMN-02**: Admin can manage locations (add, edit, deactivate)
 - [ ] **ADMN-03**: Admin can configure system settings (aging threshold, notification preferences)
 - [ ] **ADMN-04**: Admin can generate and export reports: delivery times, volume trends, driver performance
-- [ ] **ADMN-05**: System logs all actions as an audit trail (creation, scans, edits, cancellations)
+- [x] **ADMN-05**: System logs all actions as an audit trail (creation, scans, edits, cancellations)
 
 ### Infrastructure
 
@@ -148,12 +148,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NOTF-04 | Phase 8: Notifications & Aged Reports | Complete |
 | HIST-01 | Phase 9: History, Search & Audit | Complete |
 | HIST-02 | Phase 9: History, Search & Audit | Complete |
-| HIST-03 | Phase 9: History, Search & Audit | Pending |
+| HIST-03 | Phase 9: History, Search & Audit | Complete |
 | ADMN-01 | Phase 10: Admin Panel & Reports | Pending |
 | ADMN-02 | Phase 10: Admin Panel & Reports | Pending |
 | ADMN-03 | Phase 10: Admin Panel & Reports | Pending |
 | ADMN-04 | Phase 10: Admin Panel & Reports | Pending |
-| ADMN-05 | Phase 9: History, Search & Audit | Pending |
+| ADMN-05 | Phase 9: History, Search & Audit | Complete |
 | INFR-01 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-02 | Phase 1: Project Scaffolding & Firebase Infrastructure | Complete |
 | INFR-03 | Phase 3: Shipment Creation | Complete |

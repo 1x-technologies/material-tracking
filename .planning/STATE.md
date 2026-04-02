@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-04-02T15:27:52Z"
-last_activity: 2026-04-02 -- Completed 09-01-PLAN.md
+stopped_at: Completed 09-03-PLAN.md
+last_updated: "2026-04-02T15:37:59.371Z"
+last_activity: 2026-04-02
 progress:
   total_phases: 10
-  completed_phases: 8
-  total_plans: 30
-  completed_plans: 28
+  completed_phases: 2
+  total_plans: 21
+  completed_plans: 18
 ---
 
 # Project State
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 09 (history-search-audit) — EXECUTING
-Plan: 2 of 3
-Status: Executing Phase 09
-Last activity: 2026-04-02 -- Completed 09-01-PLAN.md
+Plan: 3 of 3
+Status: Ready to execute
+Last activity: 2026-04-02
 
 Progress: [████░░░░░░] Plan 1 of 3 complete
 
@@ -79,6 +79,7 @@ Progress: [████░░░░░░] Plan 1 of 3 complete
 | Phase 08 P01 | 1min | 2 tasks | 5 files |
 | Phase 08 P02 | 1min | 2 tasks | 2 files |
 | Phase 09 P01 | 4min | 2 tasks | 5 files |
+| Phase 09 P03 | 4min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -157,6 +158,9 @@ Recent decisions affecting current work:
 - [Phase 09]: orderBy createdAt desc + documentId desc for deterministic pagination
 - [Phase 09]: No sender/receiver/keyword server filter per D-03 -- client-side only in Plan 09-02
 - [Phase 09]: HIST-02 satisfied by policy: no TTL/purge code exists in codebase
+- [Phase 09]: Ascending chronological order (oldest-first) for timeline — story-from-start convention
+- [Phase 09]: Cancellation actor shown as System — no dedicated cancel-actor field on shipment doc (D-09)
+- [Phase 09]: Inline relative time formatter over date-fns — keeps bundle lean, no new dependency
 
 ### Pending Todos
 
@@ -170,6 +174,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T15:27:52Z
-Stopped at: Completed 09-01-PLAN.md
-Resume file: .planning/phases/09-history-search-audit/09-01-SUMMARY.md
+Last session: 2026-04-02T15:37:59.368Z
+Stopped at: Completed 09-03-PLAN.md
+Resume file: None
