@@ -12,7 +12,8 @@ export interface User {
   email: string;
   displayName: string;
   department: string;
-  role: UserRole;
+  role: UserRole | null;
+  active?: boolean;
   locationId: string;
   fcmTokens: string[];
   notificationPrefs: NotificationSettings;

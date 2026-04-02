@@ -1,4 +1,5 @@
 export * from "./enums";
+export * from "./schemas/admin";
 export * from "./schemas/piece";
 export * from "./schemas/scan";
 export * from "./schemas/shipment";
@@ -7,5 +8,6 @@ export * from "./schemas/user";
 export * from "./types/location";
 export * from "./types/piece";
 export * from "./types/scan";
+export * from "./types/settings";
 export * from "./types/shipment";
 export * from "./types/user";

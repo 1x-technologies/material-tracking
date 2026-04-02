@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const firestoreUserProfileSchema = z.object({
-  role: z.enum(["admin", "driver", "staff"]),
+  role: z.enum(["admin", "driver", "staff"]).nullable().optional(),
   email: z.string().default(""),
   displayName: z.string().default(""),
   department: z.string().default(""),
