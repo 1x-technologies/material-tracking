@@ -11,7 +11,7 @@ import type { UserRole } from "@material-tracking/shared";
 import { firebaseAuth, firestore } from "../firebase";
 
 export interface AppUser {
-  role: UserRole;
+  role: UserRole | null;
   displayName: string;
   email: string;
   locationId: string;
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (userDoc.exists()) {
         const data = userDoc.data();
         setAppUser({
-          role: data.role as UserRole,
+          role: (data.role as UserRole) ?? null,
           displayName: data.displayName || firebaseUser.displayName || "",
           email: data.email || firebaseUser.email || "",
           locationId: (data.locationId as string) ?? "",

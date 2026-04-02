@@ -10,7 +10,7 @@ interface RequireRoleProps {
 export function RequireRole({ allowedRoles, children }: RequireRoleProps) {
   const { appUser } = useAuthContext();
 
-  if (!appUser || !allowedRoles.includes(appUser.role)) {
+  if (!appUser || !appUser.role || !allowedRoles.includes(appUser.role)) {
     return <AccessDeniedPage />;
   }
 

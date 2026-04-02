@@ -16,13 +16,14 @@ const navItems: NavItem[] = [
   { label: "History", path: "/history", icon: "📋", roles: ["staff", "admin"] },
   { label: "New Shipment", path: "/shipments/new", icon: "📦", roles: ["staff", "admin"] },
   { label: "Scan", path: "/scan", icon: "📷", roles: ["driver", "admin"] },
+  { label: "Admin", path: "/admin", icon: "\u2699\uFE0F", roles: ["admin"] },
 ];
 
 export function Sidebar() {
   const { appUser } = useAuthContext();
 
   const visibleItems = navItems.filter(
-    (item) => appUser && item.roles.includes(appUser.role),
+    (item) => appUser && appUser.role && item.roles.includes(appUser.role),
   );
 
   return (

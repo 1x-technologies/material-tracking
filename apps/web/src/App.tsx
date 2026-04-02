@@ -4,9 +4,11 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { Spinner } from "./components/ui/Spinner";
 import { AuthProvider, useAuthContext } from "./context/AuthContext";
 import { AccessDeniedPage } from "./pages/AccessDeniedPage";
+import { AdminPage } from "./pages/AdminPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { PendingApprovalPage } from "./pages/PendingApprovalPage";
 import { ScanPage } from "./pages/ScanPage";
 import { ShipmentFormPage } from "./pages/ShipmentFormPage";
 import { SignInPage } from "./pages/SignInPage";
@@ -14,7 +16,7 @@ import { SignPiecePage } from "./pages/SignPiecePage";
 import { TRPCProvider } from "./trpc";
 
 function AuthGate({ children }: { children: React.ReactNode }) {
-  const { user, loading, profileLoading } = useAuthContext();
+  const { user, appUser, loading, profileLoading } = useAuthContext();
 
   if (loading || (user && profileLoading)) {
     return (
@@ -29,6 +31,10 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     return <SignInPage />;
+  }
+
+  if (appUser && appUser.role === null) {
+    return <PendingApprovalPage />;
   }
 
   return <>{children}</>;
@@ -74,6 +80,14 @@ function AuthenticatedRoutes() {
             }
           />
           <Route path="scan" element={<ScanPage />} />
+          <Route
+            path="admin"
+            element={
+              <RequireRole allowedRoles={["admin"]}>
+                <AdminPage />
+              </RequireRole>
+            }
+          />
           <Route path="access-denied" element={<AccessDeniedPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
