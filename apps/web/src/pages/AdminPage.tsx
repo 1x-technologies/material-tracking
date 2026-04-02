@@ -3,6 +3,8 @@ import { AdminTabs } from "../components/admin/AdminTabs";
 import { UserTable } from "../components/admin/UserTable";
 import { LocationTable } from "../components/admin/LocationTable";
 import { SettingsForm } from "../components/admin/SettingsForm";
+import { ReportsView } from "../components/admin/ReportsView";
+import { AuditLog } from "../components/admin/AuditLog";
 import { trpc } from "../trpc";
 
 export function AdminPage() {
@@ -49,13 +51,9 @@ export function AdminPage() {
       {activeTab === "users" && <UserTable />}
       {activeTab === "locations" && <LocationTable />}
       {activeTab === "settings" && <SettingsForm />}
-      {activeTab === "reports" && (
-        <div className="py-12 text-center text-sm text-neutral-500">
-          Reports loading...
-        </div>
-      )}
+      {activeTab === "reports" && <ReportsView />}
 
-      {/* AuditLog will be wired in Task 2 */}
+      <AuditLog />
     </div>
   );
 }
