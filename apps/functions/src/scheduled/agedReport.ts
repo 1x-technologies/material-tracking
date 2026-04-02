@@ -11,12 +11,18 @@ export const checkAgedShipments = onSchedule(
     region: "us-central1",
   },
   async () => {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    // Read configurable threshold from settings/global
+    const settingsSnap = await db.doc("settings/global").get();
+    const agedThresholdHours: number = settingsSnap.exists
+      ? ((settingsSnap.data()?.agedThresholdHours as number) ?? 24)
+      : 24;
+
+    const agedCutoff = new Date(Date.now() - agedThresholdHours * 60 * 60 * 1000);
 
     const agedSnap = await db
       .collection("shipments")
       .where("status", "==", "delivered")
-      .where("deliveredAt", "<=", Timestamp.fromDate(twentyFourHoursAgo))
+      .where("deliveredAt", "<=", Timestamp.fromDate(agedCutoff))
       .get();
 
     let sent = 0;

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { AdminTabs } from "../components/admin/AdminTabs";
 import { UserTable } from "../components/admin/UserTable";
+import { LocationTable } from "../components/admin/LocationTable";
+import { SettingsForm } from "../components/admin/SettingsForm";
 import { trpc } from "../trpc";
 
 export function AdminPage() {
@@ -45,23 +47,15 @@ export function AdminPage() {
       </div>
 
       {activeTab === "users" && <UserTable />}
-      {activeTab === "locations" && (
-        <div className="py-12 text-center text-sm text-neutral-500">
-          Locations tab coming in Plan 03
-        </div>
-      )}
-      {activeTab === "settings" && (
-        <div className="py-12 text-center text-sm text-neutral-500">
-          Settings tab coming in Plan 03
-        </div>
-      )}
+      {activeTab === "locations" && <LocationTable />}
+      {activeTab === "settings" && <SettingsForm />}
       {activeTab === "reports" && (
         <div className="py-12 text-center text-sm text-neutral-500">
-          Reports tab coming in Plan 03
+          Reports loading...
         </div>
       )}
 
-      {/* AuditLog will be added in Plan 03 */}
+      {/* AuditLog will be wired in Task 2 */}
     </div>
   );
 }
