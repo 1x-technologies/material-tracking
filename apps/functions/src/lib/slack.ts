@@ -12,6 +12,11 @@ export async function getSlackClient(): Promise<WebClient> {
   return slackClient;
 }
 
+/** Reset cached client -- for testing only */
+export function _resetClient(): void {
+  slackClient = null;
+}
+
 export async function lookupSlackUser(
   email: string,
 ): Promise<string | null> {
