@@ -5,6 +5,7 @@ import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { z } from "zod";
 import { db, storage } from "../lib/firebase";
 import { processOneScan } from "../lib/scan-process";
+import { sendSlackDM } from "../lib/slack";
 import { protectedProcedure } from "../middleware/auth";
 import { publicProcedure, router } from "../trpc";
 
@@ -56,6 +57,48 @@ export const scanRouter = router({
         expiresAt: new Date(Date.now() + SIGNATURE_TOKEN_EXPIRY_MS),
         consumedAt: null,
       });
+
+      // Send Slack DM to receiver with Sign Now button (D-06)
+      const shipmentSnap = await db.doc(`shipments/${input.shipmentId}`).get();
+      const shipmentData = shipmentSnap.data();
+      if (shipmentData?.receiver?.email) {
+        const BASE_URL = process.env.APP_BASE_URL || "https://manufacturing-472518.web.app";
+        const signUrl = `${BASE_URL}/sign/${token}`;
+
+        const message = {
+          text: `Signature requested for shipment ${shipmentData.shipmentNumber}`,
+          blocks: [
+            {
+              type: "header" as const,
+              text: { type: "plain_text" as const, text: "Signature Requested" },
+            },
+            {
+              type: "section" as const,
+              text: {
+                type: "mrkdwn" as const,
+                text: `Shipment *${shipmentData.shipmentNumber}* has been delivered to *${shipmentData.receiver.name}*. Please sign to confirm receipt.`,
+              },
+            },
+            {
+              type: "actions" as const,
+              elements: [
+                {
+                  type: "button" as const,
+                  text: { type: "plain_text" as const, text: "Sign Now" },
+                  url: signUrl,
+                  style: "primary" as const,
+                  action_id: "sign_shipment",
+                },
+              ],
+            },
+          ],
+        };
+
+        // Best-effort: don't await or block on Slack failure
+        sendSlackDM(shipmentData.receiver.email, message).catch((err) =>
+          console.error("[slack] Failed to send signature request DM:", err),
+        );
+      }
 
       return { token, url: `/sign/${token}` };
     }),

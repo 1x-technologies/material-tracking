@@ -7,7 +7,7 @@ export default defineConfig({
   outDir: "dist",
   clean: true,
   sourcemap: true,
-  external: ["firebase-admin", "express", "cors", "@google-cloud/pubsub", "@trpc/server", "zod"],
+  external: ["firebase-admin", "express", "cors", "@google-cloud/pubsub", "@trpc/server", "zod", "@slack/web-api", "@google-cloud/secret-manager"],
   noExternal: ["@material-tracking/shared"],
   onSuccess: async () => {
     const pkg = {
@@ -22,6 +22,8 @@ export default defineConfig({
         "@google-cloud/pubsub": "^5.3.0",
         "@trpc/server": "^11.16.0",
         zod: "^4.3.6",
+        "@slack/web-api": "^7.15.0",
+        "@google-cloud/secret-manager": "^6.1.1",
       },
     };
     const fs = await import("node:fs");
