@@ -32,15 +32,23 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 - [x] Derived shipment status from piece statuses (e.g., "Partially Delivered 3/5") — Validated in Phase 5
 - [x] Authenticated scanning — track who scanned what and when — Validated in Phase 5
 
+- [x] One-by-one and batch scan modes for drivers — Validated in Phase 6
+- [x] Signature capture at delivery/pickup — Validated in Phase 6
+- [x] Package photo attachments — Validated in Phase 6
+- [x] Token-based unauthenticated signature capture via standalone page — Validated in Phase 6
+- [x] Real-time dashboard with live status board and exception alerts — Validated in Phase 7
+- [x] Driver trip view with grouped pickup/delivery tasks — Validated in Phase 7
+- [x] Notifications to sender and receiver on delivery and pickup via Slack DM — Validated in Phase 8 + 11
+- [x] Opt-in in-transit notifications — Validated in Phase 8 + 11
+- [x] Aged report: Slack reminder for packages 24+ hours post-delivery — Validated in Phase 8 + 11
+- [x] Signature-to-complete: auto-complete shipment on signature submission — Validated in Phase 11
+- [x] Unlimited searchable shipment history with cursor pagination — Validated in Phase 9
+- [x] Full audit trail with connected-dot timeline visualization — Validated in Phase 9
+- [x] Admin panel: user management, location management, system settings, reports — Validated in Phase 10
+
 ### Active
-- [ ] One-by-one and batch scan modes for drivers
-- [ ] Real-time dashboard with live status board and exception alerts
-- [ ] Notifications to sender and receiver on delivery and pickup, with opt-in for in-progress stages
-- [ ] Aged report: flag packages sitting 24+ hours post-delivery, auto-remind receiver to pick up
-- [ ] Signature capture at delivery/pickup
-- [ ] Package photo attachments
-- [ ] Unlimited searchable shipment history
-- [ ] Full admin panel: user management, location management, system settings, reports
+
+(No active v1 requirements remaining -- all shipped. See v2 Requirements in REQUIREMENTS archive.)
 
 ### Out of Scope
 
@@ -52,17 +60,20 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 
 ## Context
 
-**Current state:** Non-inventory items are labeled with handwritten stickers (description, sender, receiver), logged in a drive with photos, loaded onto delivery vehicles, and signed off by receiving team. This process is time-consuming, error-prone, lacks real-time visibility, and has limited delivery confirmation tracking.
+**Current state (v1.0 shipped 2026-04-07):** Full digital tracking system deployed. Shipments are created on tablets, QR labels printed via Zebra printers, pieces scanned through four-stage lifecycle (Created -> In Transit -> Delivered -> Completed) via RF scanners or phone cameras, monitored on a real-time dashboard with exception alerts, and notifications delivered via Slack DMs. Signatures auto-complete shipments. Admin panel provides user/location management, reporting, and audit logging.
 
-**Scale:** 20-100 shipments/day across two locations (HA ↔ SC), with potential expansion to additional locations.
+**Scale:** 20-100 shipments/day across two locations (HA and SC), with expandable location model.
 
-**Infrastructure already in place:**
-- Networked Zebra label printers at both HA and SC
-- Dedicated RF scanners (with phone camera as fallback)
-- Stationary tablets at each location for shipment creation
-- Reliable WiFi/cellular at all scan points
+**Codebase:** ~29,200 LOC TypeScript across 3 packages (web, api, functions) + shared types. 127 automated tests.
 
-**Reference system:** QTrak — the desired solution mirrors QTrak's core functionality: unique trackable IDs, scan-triggered status updates, real-time visibility, automated data logging, full traceability, and standardized workflows.
+**Tech stack:** React 19 + Vite 8 + Tailwind v4 (web), tRPC + Express on Cloud Run (api), Cloud Functions v2 + tsup (functions), Firestore + Firebase Auth + Storage (data), Slack Web API (notifications).
+
+**Infrastructure:**
+- Networked Zebra label printers at HA and SC
+- Dedicated RF scanners (phone camera fallback)
+- Stationary tablets at each location
+- Three Firebase environments (dev/staging/prod) with CI/CD
+- Slack app "Material Tracking" for notifications
 
 ## Constraints
 
@@ -83,7 +94,7 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 | Firebase full stack | Managed infrastructure, fast development, real-time capabilities built-in | Validated (Phase 1) |
 | Nested subcollections for pieces | Pieces are always accessed in context of their parent shipment | Validated (Phase 1) |
 | Cloud Functions v2 + Cloud Run split | Functions for triggers/events/scheduled, Cloud Run for heavy/long-running tasks | Validated (Phase 1) |
-| Firestore real-time over websockets | onSnapshot listeners handle live dashboard updates, no websocket server needed | — Pending |
+| Firestore real-time over websockets | onSnapshot listeners handle live dashboard updates, no websocket server needed | Validated (Phase 7) |
 | Individual piece tracking | Supports partial delivery workflows where pieces arrive separately | Validated (Phase 1) |
 | Three environments (dev/staging/prod) | Proper deployment pipeline with staging for QA | Validated (Phase 1) |
 | Google SSO only | All users are company employees with Google Workspace accounts | Validated (Phase 2) |
@@ -110,5 +121,8 @@ This document evolves at phase transitions and milestone boundaries.
 3. Audit Out of Scope — reasons still valid?
 4. Update Context with current state
 
+| Slack DMs over email for notifications | Slack is where the team already communicates; avoids email fatigue | Validated (Phase 11) |
+| Signature-to-complete auto-transition | Reduces steps for receivers; signature = acknowledgment = completion | Validated (Phase 11) |
+
 ---
-*Last updated: 2026-04-01 after Phase 5 completion*
+*Last updated: 2026-04-07 after v1.0 milestone*
