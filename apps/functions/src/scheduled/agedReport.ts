@@ -1,7 +1,7 @@
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { onSchedule } from "firebase-functions/v2/scheduler";
-import { sendNotificationEmail } from "../lib/email";
-import { buildAgedReminderEmail, shipmentDetailUrl } from "../lib/emailTemplates";
+import { sendSlackDM } from "../lib/slack";
+import { buildAgedReminderSlackMessage, shipmentDetailUrl } from "../lib/slackTemplates";
 import { db } from "../lib/firebase";
 
 export const checkAgedShipments = onSchedule(
@@ -49,7 +49,7 @@ export const checkAgedShipments = onSchedule(
       const deliveredAt = data.deliveredAt as Timestamp;
       const hoursAged = Math.floor((Date.now() - deliveredAt.toMillis()) / (1000 * 60 * 60));
 
-      const emailContent = buildAgedReminderEmail({
+      const slackMessage = buildAgedReminderSlackMessage({
         shipmentNumber,
         status: data.status,
         pieceCount: data.pieceCount,
@@ -59,11 +59,7 @@ export const checkAgedShipments = onSchedule(
         hoursAged,
       });
 
-      await sendNotificationEmail({
-        to: receiverEmail,
-        subject: emailContent.subject,
-        html: emailContent.html,
-      });
+      await sendSlackDM(receiverEmail, slackMessage);
 
       await doc.ref.update({
         lastAgedReminderAt: FieldValue.serverTimestamp(),

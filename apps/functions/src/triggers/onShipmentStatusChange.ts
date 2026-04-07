@@ -1,12 +1,12 @@
 import { onDocumentUpdated } from "firebase-functions/v2/firestore";
-import { sendNotificationEmail } from "../lib/email";
+import { sendSlackDM } from "../lib/slack";
 import {
-  type ShipmentEmailData,
-  buildDeliveredEmail,
-  buildInTransitEmail,
-  buildPickedUpEmail,
+  type SlackNotificationData,
+  buildCompletedSlackMessage,
+  buildDeliveredSlackMessage,
+  buildInTransitSlackMessage,
   shipmentDetailUrl,
-} from "../lib/emailTemplates";
+} from "../lib/slackTemplates";
 
 export const onShipmentStatusChange = onDocumentUpdated(
   {
@@ -22,7 +22,7 @@ export const onShipmentStatusChange = onDocumentUpdated(
     const newStatus = after.status as string;
     const shipmentId = event.params.shipmentId;
 
-    const emailData: ShipmentEmailData = {
+    const notifData: SlackNotificationData = {
       shipmentNumber: after.shipmentNumber,
       status: newStatus,
       pieceCount: after.pieceCount,
@@ -31,14 +31,14 @@ export const onShipmentStatusChange = onDocumentUpdated(
       detailUrl: shipmentDetailUrl(shipmentId),
     };
 
-    let email: { subject: string; html: string } | null = null;
+    let message: { text: string; blocks: object[] } | null = null;
 
     if (newStatus === "delivered" && after.notificationPrefs?.onDelivery) {
-      email = buildDeliveredEmail(emailData);
+      message = buildDeliveredSlackMessage(notifData);
     } else if (newStatus === "picked_up" && after.notificationPrefs?.onPickup) {
-      email = buildPickedUpEmail(emailData);
+      message = buildCompletedSlackMessage(notifData);
     } else if (newStatus === "in_transit" && after.notificationPrefs?.onTransit) {
-      email = buildInTransitEmail(emailData);
+      message = buildInTransitSlackMessage(notifData);
     } else {
       return;
     }
@@ -50,13 +50,11 @@ export const onShipmentStatusChange = onDocumentUpdated(
     const uniqueRecipients = [...new Set(recipients.filter(Boolean))];
 
     console.log(
-      `Sending ${newStatus} notification for ${after.shipmentNumber} to ${uniqueRecipients.length} recipients`,
+      `Sending ${newStatus} Slack notification for ${after.shipmentNumber} to ${uniqueRecipients.length} recipients`,
     );
 
-    await Promise.all(
-      uniqueRecipients.map((to) =>
-        sendNotificationEmail({ to, subject: email!.subject, html: email!.html }),
-      ),
+    await Promise.allSettled(
+      uniqueRecipients.map((email) => sendSlackDM(email, message!)),
     );
   },
 );
