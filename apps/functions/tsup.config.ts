@@ -7,7 +7,7 @@ export default defineConfig({
   outDir: "dist",
   clean: true,
   sourcemap: true,
-  external: ["firebase-admin", "firebase-functions", "@google-cloud/secret-manager"],
+  external: ["firebase-admin", "firebase-functions", "@google-cloud/secret-manager", "@slack/web-api"],
   noExternal: ["@material-tracking/shared"],
   onSuccess: async () => {
     const pkg = {
@@ -18,6 +18,7 @@ export default defineConfig({
         "firebase-admin": "^13.7.0",
         "firebase-functions": "^7.2.2",
         "@google-cloud/secret-manager": "^6.1.1",
+        "@slack/web-api": "^7.15.0",
       },
     };
     const fs = await import("node:fs");
