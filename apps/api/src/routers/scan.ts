@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { batchScanSchema, processScanSchema } from "@material-tracking/shared";
 import { TRPCError } from "@trpc/server";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { z } from "zod";
 import { db, storage } from "../lib/firebase";
 import { processOneScan } from "../lib/scan-process";
@@ -98,6 +98,36 @@ export const scanRouter = router({
       await db.collection("signatureRequests").doc(input.token).update({
         consumedAt: FieldValue.serverTimestamp(),
       });
+
+      // --- Signature-to-Complete: transition all pieces to completed (D-11) ---
+      const piecesSnap = await db.collection(`shipments/${shipmentId}/pieces`).get();
+      const batch = db.batch();
+      const serverTs = FieldValue.serverTimestamp();
+
+      for (const pieceDoc of piecesSnap.docs) {
+        if (pieceDoc.data().status !== "completed") {
+          batch.update(pieceDoc.ref, {
+            status: "completed",
+            completedAt: serverTs,
+            events: FieldValue.arrayUnion({
+              action: "completed",
+              timestamp: Timestamp.now(),
+              userId: "signature-flow",
+              userName: "Signature",
+            }),
+            updatedAt: serverTs,
+          });
+        }
+      }
+
+      // Set shipment to completed -- triggers onShipmentStatusChange -> Slack notification (D-13)
+      batch.update(db.doc(`shipments/${shipmentId}`), {
+        status: "completed",
+        completedAt: serverTs,
+        updatedAt: serverTs,
+      });
+
+      await batch.commit();
 
       return { success: true };
     }),
