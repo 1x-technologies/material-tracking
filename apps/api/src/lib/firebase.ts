@@ -4,10 +4,13 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 
+const projectId = process.env.GCLOUD_PROJECT || process.env.FIREBASE_PROJECT_ID || undefined;
+
 const app =
   getApps().length === 0
     ? initializeApp({
-        projectId: process.env.GCLOUD_PROJECT || process.env.FIREBASE_PROJECT_ID || undefined,
+        projectId,
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || (projectId ? `${projectId}.firebasestorage.app` : undefined),
       })
     : getApps()[0];
 

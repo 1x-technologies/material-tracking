@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown } from "@untitledui/icons";
 import { trpc } from "../../trpc";
 
 function formatRelativeTime(timestamp: string | null): string {
@@ -58,59 +59,85 @@ function formatActionDescription(entry: {
   }
 }
 
+const actionColors: Record<string, string> = {
+  update_user: "bg-utility-brand-500",
+  bulk_assign_role: "bg-utility-purple-500",
+  create_location: "bg-utility-green-500",
+  update_location: "bg-utility-blue-500",
+  update_settings: "bg-utility-orange-500",
+};
+
 export function AuditLog() {
   const { data: entries } = trpc.admin.listAuditLog.useQuery();
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white mt-6">
+    <div className="mt-8 rounded-xl border border-secondary bg-primary">
       {/* Header */}
       <button
         type="button"
         onClick={() => setExpanded((e) => !e)}
-        className="w-full p-4 flex items-center justify-between cursor-pointer hover:bg-neutral-50 transition-colors"
+        className="flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-primary_hover"
       >
-        <h2 className="text-lg font-semibold text-neutral-900">Recent Activity</h2>
-        <svg
-          className={`size-5 text-neutral-400 transition-transform ${expanded ? "rotate-180" : ""}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-        </svg>
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-semibold text-primary">Recent Activity</h2>
+          {entries && entries.length > 0 && (
+            <span className="rounded-full bg-secondary_subtle px-2 py-0.5 text-xs font-medium text-tertiary ring-1 ring-secondary ring-inset">
+              {entries.length}
+            </span>
+          )}
+        </div>
+        <ChevronDown
+          className={`size-5 text-fg-quaternary transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+        />
       </button>
 
-      {/* Entries */}
+      {/* Timeline entries */}
       {expanded && (
-        <div>
+        <div className="border-t border-secondary">
           {!entries || entries.length === 0 ? (
-            <p className="text-sm text-neutral-400 p-4">No recent activity</p>
+            <p className="px-6 py-8 text-center text-sm text-quaternary">No recent activity</p>
           ) : (
-            entries.map((entry) => (
-              <div
-                key={entry.id}
-                className="px-4 py-3 border-b border-neutral-100 last:border-b-0 flex items-start justify-between gap-4"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-neutral-900">
-                    {entry.adminName || "Admin"}
-                  </p>
-                  <p className="text-sm text-neutral-600">
-                    {formatActionDescription({
-                      action: entry.action,
-                      targetId: entry.targetId,
-                      before: entry.before as Record<string, unknown>,
-                      after: entry.after as Record<string, unknown>,
-                    })}
-                  </p>
-                </div>
-                <span className="text-xs text-neutral-400 whitespace-nowrap flex-shrink-0">
-                  {formatRelativeTime(entry.timestamp)}
-                </span>
-              </div>
-            ))
+            <div className="px-6 py-4">
+              {entries.map((entry, index) => {
+                const isLast = index === entries.length - 1;
+                const dotColor = actionColors[entry.action] ?? "bg-utility-neutral-400";
+
+                return (
+                  <div key={entry.id} className="relative flex gap-4 pb-6 last:pb-0">
+                    {/* Timeline line + dot */}
+                    <div className="flex flex-col items-center">
+                      <div className={`size-2.5 shrink-0 rounded-full ${dotColor} mt-1.5 ring-4 ring-primary`} />
+                      {!isLast && (
+                        <div className="w-px flex-1 bg-secondary" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="min-w-0 flex-1 pb-2">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-primary">
+                            {entry.adminName || "Admin"}
+                          </p>
+                          <p className="mt-0.5 text-sm text-tertiary">
+                            {formatActionDescription({
+                              action: entry.action,
+                              targetId: entry.targetId,
+                              before: entry.before as Record<string, unknown>,
+                              after: entry.after as Record<string, unknown>,
+                            })}
+                          </p>
+                        </div>
+                        <span className="shrink-0 whitespace-nowrap text-xs text-quaternary">
+                          {formatRelativeTime(entry.timestamp)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       )}

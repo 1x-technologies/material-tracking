@@ -3,7 +3,7 @@ export const ShipmentStatus = {
   IN_TRANSIT: "in_transit",
   PARTIALLY_DELIVERED: "partially_delivered",
   DELIVERED: "delivered",
-  PICKED_UP: "picked_up",
+  COMPLETED: "completed",
   CANCELLED: "cancelled",
 } as const;
 export type ShipmentStatus = (typeof ShipmentStatus)[keyof typeof ShipmentStatus];
@@ -12,7 +12,7 @@ export const PieceStatus = {
   CREATED: "created",
   IN_TRANSIT: "in_transit",
   DELIVERED: "delivered",
-  PICKED_UP: "picked_up",
+  COMPLETED: "completed",
 } as const;
 export type PieceStatus = (typeof PieceStatus)[keyof typeof PieceStatus];
 
@@ -44,6 +44,6 @@ export const ScanAction = {
   CREATED: "created",
   IN_TRANSIT: "in_transit",
   DELIVERED: "delivered",
-  PICKED_UP: "picked_up",
+  COMPLETED: "completed",
 } as const;
 export type ScanAction = (typeof ScanAction)[keyof typeof ScanAction];

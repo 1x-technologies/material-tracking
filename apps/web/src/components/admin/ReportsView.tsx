@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { toast } from "sonner";
+import { Download01, CalendarDate } from "@untitledui/icons";
 import { trpc } from "../../trpc";
 import { exportCsv } from "../../lib/exportCsv";
 import { Spinner } from "../ui/Spinner";
 import { DeliveryTimeChart } from "./charts/DeliveryTimeChart";
 import { VolumeChart } from "./charts/VolumeChart";
 import { DriverActivityTable } from "./charts/DriverActivityTable";
+import { Button } from "@/components/base/buttons/button";
 
 function formatDate(date: Date): string {
   return date.toISOString().split("T")[0];
@@ -20,6 +23,11 @@ export function ReportsView() {
   const [appliedTo, setAppliedTo] = useState(`${formatDate(today)}T23:59:59.999Z`);
 
   const handleApply = () => {
+    // Validate that the start date is not after the end date
+    if (dateFrom > dateTo) {
+      toast.error("'From' date cannot be after 'To' date. Please fix the date range.");
+      return;
+    }
     setAppliedFrom(`${dateFrom}T00:00:00.000Z`);
     setAppliedTo(`${dateTo}T23:59:59.999Z`);
   };
@@ -73,110 +81,113 @@ export function ReportsView() {
   };
 
   return (
-    <div className="py-4">
+    <div>
       {/* Date filter bar */}
-      <div className="rounded-lg border border-neutral-200 bg-white p-4 mb-6">
+      <div className="mb-6 rounded-xl border border-secondary bg-primary p-4">
         <div className="flex flex-wrap items-end gap-4">
           <div>
-            <label htmlFor="report-from" className="block text-xs font-medium text-neutral-600 mb-1">
+            <label htmlFor="report-from" className="mb-1.5 block text-sm font-medium text-secondary">
               From
             </label>
-            <input
-              id="report-from"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
+            <div className="relative">
+              <input
+                id="report-from"
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="w-full appearance-none rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary shadow-xs outline-hidden ring-1 ring-primary ring-inset transition duration-100 ease-linear focus-visible:ring-2 focus-visible:ring-brand"
+              />
+            </div>
           </div>
           <div>
-            <label htmlFor="report-to" className="block text-xs font-medium text-neutral-600 mb-1">
+            <label htmlFor="report-to" className="mb-1.5 block text-sm font-medium text-secondary">
               To
             </label>
-            <input
-              id="report-to"
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
+            <div className="relative">
+              <input
+                id="report-to"
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="w-full appearance-none rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary shadow-xs outline-hidden ring-1 ring-primary ring-inset transition duration-100 ease-linear focus-visible:ring-2 focus-visible:ring-brand"
+              />
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={handleApply}
-            className="bg-brand-600 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-brand-700 transition-colors"
-          >
+          <Button size="sm" color="primary" iconLeading={CalendarDate} onClick={handleApply}>
             Apply Filter
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Report card grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Delivery Time Chart Card */}
-        <div className="rounded-lg border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-secondary bg-primary p-6">
           {deliveryTime.isLoading ? (
-            <div className="flex items-center justify-center h-[300px]">
+            <div className="flex h-[300px] items-center justify-center">
               <Spinner />
             </div>
           ) : (
             <>
               <DeliveryTimeChart data={deliveryTime.data ?? []} />
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
+              <div className="mt-4 flex justify-end">
+                <Button
+                  size="xs"
+                  color="secondary"
+                  iconLeading={Download01}
                   onClick={handleExportDeliveryTime}
-                  disabled={!deliveryTime.data?.length}
-                  className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  isDisabled={!deliveryTime.data?.length}
                 >
                   Export CSV
-                </button>
+                </Button>
               </div>
             </>
           )}
         </div>
 
         {/* Volume Chart Card */}
-        <div className="rounded-lg border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-secondary bg-primary p-6">
           {volume.isLoading ? (
-            <div className="flex items-center justify-center h-[300px]">
+            <div className="flex h-[300px] items-center justify-center">
               <Spinner />
             </div>
           ) : (
             <>
               <VolumeChart data={volume.data ?? []} />
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
+              <div className="mt-4 flex justify-end">
+                <Button
+                  size="xs"
+                  color="secondary"
+                  iconLeading={Download01}
                   onClick={handleExportVolume}
-                  disabled={!volume.data?.length}
-                  className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  isDisabled={!volume.data?.length}
                 >
                   Export CSV
-                </button>
+                </Button>
               </div>
             </>
           )}
         </div>
 
         {/* Driver Activity Table Card */}
-        <div className="col-span-full rounded-lg border border-neutral-200 bg-white p-6">
+        <div className="col-span-full rounded-xl border border-secondary bg-primary p-6">
           {driverActivity.isLoading ? (
-            <div className="flex items-center justify-center h-[200px]">
+            <div className="flex h-[200px] items-center justify-center">
               <Spinner />
             </div>
           ) : (
             <>
               <DriverActivityTable data={driverActivity.data ?? []} />
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
+              <div className="mt-4 flex justify-end">
+                <Button
+                  size="xs"
+                  color="secondary"
+                  iconLeading={Download01}
                   onClick={handleExportDriverActivity}
-                  disabled={!driverActivity.data?.length}
-                  className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  isDisabled={!driverActivity.data?.length}
                 >
                   Export CSV
-                </button>
+                </Button>
               </div>
             </>
           )}

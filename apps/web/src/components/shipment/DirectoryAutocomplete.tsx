@@ -1,4 +1,8 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { SearchSm } from "@untitledui/icons";
+import { Button } from "@/components/base/buttons/button";
+import { Input } from "@/components/base/input/input";
+import { Checkbox } from "@/components/base/checkbox/checkbox";
 import { trpc } from "../../trpc";
 import { ExternalReceiverFields } from "./ExternalReceiverFields";
 
@@ -92,17 +96,14 @@ export function DirectoryAutocomplete({
     return (
       <div ref={containerRef}>
         <div className="flex items-center justify-between mb-2">
-          <span className="block text-sm font-medium text-neutral-700">{label}</span>
-          <label className="flex items-center gap-1.5 text-xs text-neutral-500 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={isExternal}
-              onChange={(e) => handleToggleExternal(e.target.checked)}
-              disabled={disabled}
-              className="rounded border-neutral-300"
-            />
-            External contact
-          </label>
+          <span className="block text-sm font-medium text-secondary">{label}</span>
+          <Checkbox
+            isSelected={isExternal}
+            onChange={(checked) => handleToggleExternal(checked)}
+            isDisabled={disabled}
+            label="External contact"
+            size="sm"
+          />
         </div>
         <ExternalReceiverFields
           value={{
@@ -119,28 +120,24 @@ export function DirectoryAutocomplete({
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="flex items-center justify-between mb-1">
-        <label htmlFor={inputId} className="block text-sm font-medium text-neutral-700">
+      <div className="flex items-center justify-between mb-1.5">
+        <label htmlFor={inputId} className="block text-sm font-medium text-secondary">
           {label}
         </label>
-        <label className="flex items-center gap-1.5 text-xs text-neutral-500 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={isExternal}
-            onChange={(e) => handleToggleExternal(e.target.checked)}
-            disabled={disabled}
-            className="rounded border-neutral-300"
-          />
-          External contact
-        </label>
+        <Checkbox
+          isSelected={isExternal}
+          onChange={(checked) => handleToggleExternal(checked)}
+          isDisabled={disabled}
+          label="External contact"
+          size="sm"
+        />
       </div>
 
-      <input
-        id={inputId}
-        type="text"
+      <Input
+        aria-label={`Search ${label.toLowerCase()}`}
         value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
+        onChange={(v) => {
+          setQuery(v);
           setShowDropdown(true);
           if (value && !value.isExternal) {
             onChange(null);
@@ -149,38 +146,40 @@ export function DirectoryAutocomplete({
         onFocus={() => {
           if (debouncedQuery.length >= 2) setShowDropdown(true);
         }}
-        placeholder="Search by name or email…"
-        disabled={disabled}
-        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-xs focus:border-brand-500 focus:ring-1 focus:ring-brand-500 disabled:bg-neutral-50 disabled:text-neutral-400"
+        placeholder="Search by name or email..."
+        isDisabled={disabled}
+        icon={SearchSm}
+        size="sm"
       />
 
       {value && !value.isExternal && value.name && (
-        <p className="mt-1 text-xs text-neutral-500">
+        <p className="mt-1 text-xs text-tertiary">
           Selected: {value.name} ({value.email})
         </p>
       )}
 
       {showDropdown && debouncedQuery.length >= 2 && (
-        <ul className="absolute z-10 mt-1 w-full rounded-md border border-neutral-200 bg-white shadow-lg max-h-48 overflow-y-auto">
+        <ul className="absolute z-10 mt-1 w-full rounded-lg border border-secondary bg-primary shadow-lg max-h-48 overflow-y-auto">
           {searchResult.isLoading && (
-            <li className="px-3 py-2 text-sm text-neutral-400">Searching…</li>
+            <li className="px-3 py-2 text-sm text-tertiary">Searching...</li>
           )}
           {searchResult.data?.length === 0 && (
-            <li className="px-3 py-2 text-sm text-neutral-400">No results found</li>
+            <li className="px-3 py-2 text-sm text-tertiary">No results found</li>
           )}
           {searchResult.data?.map((person) => (
             <li key={person.uid}>
-              <button
-                type="button"
+              <Button
+                color="tertiary"
+                size="sm"
                 onClick={() => handleSelect(person)}
-                className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-50 focus:bg-neutral-50"
+                className="w-full justify-start rounded-none px-3 py-3 min-h-[44px]"
               >
-                <span className="font-medium text-neutral-900">{person.name}</span>
-                <span className="ml-2 text-neutral-500">{person.email}</span>
+                <span className="font-medium text-primary">{person.name}</span>
+                <span className="ml-2 text-tertiary">{person.email}</span>
                 {person.department && (
-                  <span className="ml-2 text-neutral-400">· {person.department}</span>
+                  <span className="ml-2 text-quaternary">-- {person.department}</span>
                 )}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

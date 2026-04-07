@@ -20,11 +20,11 @@ re_verification: false
 |---|-----------|--------|----------|
 | 1 | `scan.process` tRPC mutation with `protectedProcedure` | **PASS** | ```10:12:apps/api/src/routers/scan.ts``` — `process: protectedProcedure.input(processScanSchema).mutation(...)` |
 | 2 | Collection group query on `pieces` by `qrCode` | **PASS** | ```15:19:apps/api/src/routers/scan.ts``` — `collectionGroup("pieces").where("qrCode", "==", qr).limit(2)` |
-| 3 | Strict sequential lifecycle (`validateTransition`) | **PASS** | ```20:41:apps/api/src/lib/shipment-status.ts``` — map `created→in_transit`, `in_transit→delivered`, `delivered→picked_up`; invalid key → `INVALID_TRANSITION`; order guard → `ALREADY_AT_STATUS` |
+| 3 | Strict sequential lifecycle (`validateTransition`) | **PASS** | ```20:41:apps/api/src/lib/shipment-status.ts``` — map `created→in_transit`, `in_transit→delivered`, `delivered→completed`; invalid key → `INVALID_TRANSITION`; order guard → `ALREADY_AT_STATUS` |
 | 4 | `deriveShipmentStatus` with `partially_delivered` logic | **PASS** | ```78:83:apps/api/src/lib/shipment-status.ts``` — `atLeastDelivered > 0` and not all delivered/picked up → `partially_delivered` with `deliveredCount` / `pieceCount` |
 | 5 | `PieceEvent` via `arrayUnion` in scan transaction | **PASS** | ```62:84:apps/api/src/routers/scan.ts``` — event object + `events: FieldValue.arrayUnion(event)` inside `runTransaction` |
 | 6 | `ScanPage` + auto-focus input + html5-qrcode camera | **PASS** | ```13:15:apps/web/src/components/scan/ScanInput.tsx``` `useEffect` + `focus()`; ```1:34:apps/web/src/components/scan/CameraScanOverlay.tsx``` `Html5Qrcode`, `facingMode: "environment"` |
-| 7 | Action selector (`in_transit`, `delivered`, `picked_up`) | **PASS** | ```1:5:apps/web/src/components/scan/ActionSelector.tsx```; wired in ```47:47:apps/web/src/pages/ScanPage.tsx``` |
+| 7 | Action selector (`in_transit`, `delivered`, `completed`) | **PASS** | ```1:5:apps/web/src/components/scan/ActionSelector.tsx```; wired in ```47:47:apps/web/src/pages/ScanPage.tsx``` |
 | 8 | Audio feedback (Web Audio / oscillator) | **PASS** | ```10:27:apps/web/src/components/scan/scanSounds.ts``` — `createOscillator`, 440Hz sine / 200Hz square, `AudioContext` + suspended resume |
 | 9 | Sonner toast integration | **PASS** | ```2:2:apps/web/src/pages/ScanPage.tsx``` `toast.success`; ```2:18:apps/web/src/components/layout/AppLayout.tsx``` `<Toaster position="top-right" richColors />` |
 | 10 | `/scan` route: any authenticated user (no `RequireRole`) | **PASS** | ```67:67:apps/web/src/App.tsx``` — `<Route path="scan" element={<ScanPage />} />` inside `AuthGate` only |

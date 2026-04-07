@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ActionSelector } from "../components/scan/ActionSelector";
 import type { BatchItem, BatchResult } from "../components/scan/BatchScanQueue";
@@ -13,8 +13,13 @@ import { useAuthContext } from "../context/AuthContext";
 import { isReceiver as _isReceiver } from "../lib/receiver-detect";
 import { uploadScanPhoto, uploadSignaturePng } from "../lib/storage";
 import { trpc } from "../trpc";
+import { Button } from "@/components/base/buttons/button";
+import { Toggle } from "@/components/base/toggle/toggle";
+import { Badge } from "@/components/base/badges/badges";
+import { Camera01, Edit01, CheckCircle } from "@untitledui/icons";
 
-type ScanAction = "in_transit" | "delivered" | "picked_up";
+type ScanAction = "in_transit" | "delivered" | "completed";
+type ScanMode = "auto" | ScanAction;
 
 interface ScannedItem {
   pieceId: string;
@@ -23,6 +28,10 @@ interface ScannedItem {
   shipmentNumber: string;
   pieceNumber: number;
   scannedAt: Date;
+  origin?: string | null;
+  destination?: string | null;
+  description?: string | null;
+  totalPieces?: number;
 }
 
 interface PendingScan {
@@ -30,12 +39,15 @@ interface PendingScan {
   photoUrls?: string[];
 }
 
+const COOLDOWN_MS = 30_000;
+
 export function ScanPage() {
   const { user: _user } = useAuthContext();
-  const [selectedAction, setSelectedAction] = useState("in_transit");
+  const [selectedAction, setSelectedAction] = useState<ScanMode>("auto");
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
+  const recentScansRef = useRef<Map<string, number>>(new Map());
 
   const [batchMode, setBatchMode] = useState(false);
   const [batchQueue, setBatchQueue] = useState<BatchItem[]>([]);
@@ -48,16 +60,36 @@ export function ScanPage() {
   const [batchSignatureUrl, setBatchSignatureUrl] = useState<string | undefined>();
 
   const processMutation = trpc.scan.process.useMutation({
-    onSuccess(data) {
+    onSuccess(data, variables) {
       playSuccessBeep();
+      recentScansRef.current.set(variables.qrCode, Date.now());
       setScannedItems((prev) => [{ ...data, scannedAt: new Date() }, ...prev]);
-      toast.success(`Piece ${data.pieceNumber} → ${data.newStatus.replace(/_/g, " ")}`);
+
+      const status = data.newStatus.replace(/_/g, " ");
+      const route = [data.origin, data.destination].filter(Boolean).join(" → ");
+      const context = route ? ` (${route})` : "";
+      toast.success(`${data.shipmentNumber} piece ${data.pieceNumber}/${data.totalPieces} → ${status}${context}`);
+
       setError(null);
       setPendingPhotos([]);
     },
     onError(err) {
       playErrorBuzz();
-      setError(err.message);
+      const msg = err.message;
+      if (msg.includes("ALREADY_AT_STATUS")) {
+        const status = msg.split("already ")[1] ?? "this status";
+        setError(`Already scanned -- piece is ${status.replace(/_/g, " ")}`);
+      } else if (msg.includes("NO_NEXT_ACTION")) {
+        setError("This piece has already completed its journey");
+      } else if (msg.includes("UNKNOWN_QR")) {
+        setError("QR code not recognized -- check the label and try again");
+      } else if (msg.includes("INVALID_TRANSITION")) {
+        setError("Cannot perform this action on the piece in its current state");
+      } else if (msg.includes("SHIPMENT_CANCELLED")) {
+        setError("This shipment has been cancelled");
+      } else {
+        setError(msg);
+      }
     },
   });
 
@@ -120,6 +152,20 @@ export function ScanPage() {
   async function handleScan(qrCode: string) {
     setError(null);
 
+    // Client-side cooldown: block same QR code within 30 seconds.
+    // Applied in all scan modes (auto, in_transit, delivered, completed) to
+    // prevent accidental double-scans regardless of the selected action.
+    const lastScan = recentScansRef.current.get(qrCode);
+    if (lastScan) {
+      const elapsed = Date.now() - lastScan;
+      if (elapsed < COOLDOWN_MS) {
+        const remaining = Math.ceil((COOLDOWN_MS - elapsed) / 1000);
+        playErrorBuzz();
+        setError(`Just scanned this piece ${Math.floor(elapsed / 1000)}s ago. Wait ${remaining}s before scanning again.`);
+        return;
+      }
+    }
+
     if (batchMode) {
       let photoUrls: string[] | undefined;
       if (pendingPhotos.length > 0) {
@@ -163,7 +209,7 @@ export function ScanPage() {
 
     processMutation.mutate({
       qrCode,
-      action: selectedAction as ScanAction,
+      action: selectedAction === "auto" ? undefined : (selectedAction as ScanAction),
       photoUrls,
     });
   }
@@ -211,7 +257,7 @@ export function ScanPage() {
     batchMutation.mutate({
       scans: batchQueue.map((item) => ({
         qrCode: item.qrCode,
-        action: item.action as ScanAction,
+        action: item.action === "auto" ? undefined : (item.action as ScanAction),
         photoUrls: item.photoUrls,
         ...(selectedAction === "delivered" && batchSignatureUrl
           ? { signatureUrl: batchSignatureUrl }
@@ -237,64 +283,54 @@ export function ScanPage() {
   }
 
   return (
-    <div className="py-8 space-y-6">
-      <h2 className="text-2xl font-semibold text-neutral-900">Scan</h2>
+    <div className="py-8 space-y-6 max-w-2xl">
+      <h2 className="text-2xl font-semibold text-primary">Scan</h2>
 
       <ActionSelector value={selectedAction} onChange={setSelectedAction} />
 
-      <div className="flex items-center gap-3">
-        <label htmlFor="batch-toggle" className="text-sm font-medium text-neutral-700">
-          Batch Mode
-        </label>
-        <button
-          id="batch-toggle"
-          type="button"
-          role="switch"
-          aria-checked={batchMode}
-          onClick={toggleBatchMode}
-          className={[
-            "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors",
-            batchMode ? "bg-brand-600" : "bg-neutral-200",
-          ].join(" ")}
-        >
-          <span
-            className={[
-              "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform",
-              batchMode ? "translate-x-5" : "translate-x-0",
-            ].join(" ")}
-          />
-        </button>
-      </div>
+      <Toggle
+        size="sm"
+        label="Batch Mode"
+        isSelected={batchMode}
+        onChange={toggleBatchMode}
+      />
 
       <ScanInput onScan={handleScan} disabled={isBusy} error={error} />
 
       <PhotoCapture onPhotosChange={setPendingPhotos} disabled={isBusy} />
 
-      <button
-        type="button"
+      <Button
+        size="md"
+        color="secondary"
+        iconLeading={Camera01}
         onClick={() => setCameraOpen(true)}
-        className="mt-3 inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+        className="min-h-[44px]"
       >
-        📷 Scan with Camera
-      </button>
+        Scan with Camera
+      </Button>
 
       <CameraScanOverlay open={cameraOpen} onScan={handleScan} onClose={() => setCameraOpen(false)} />
 
       {batchMode ? (
-        <div className="border-t border-neutral-200 pt-4">
-          <h3 className="text-sm font-medium text-neutral-500 mb-3">Batch Queue</h3>
+        <div className="border-t border-secondary pt-4">
+          <h3 className="text-sm font-medium text-tertiary mb-3">Batch Queue</h3>
           {selectedAction === "delivered" && batchQueue.length > 0 && (
             <div className="mb-3">
               {batchSignatureUrl ? (
-                <p className="text-sm text-green-700">Signature captured for batch</p>
+                <Badge type="pill-color" size="md" color="success">
+                  <span className="inline-flex items-center gap-1">
+                    <CheckCircle className="size-3" /> Signature captured for batch
+                  </span>
+                </Badge>
               ) : (
-                <button
-                  type="button"
+                <Button
+                  size="sm"
+                  color="secondary"
+                  iconLeading={Edit01}
                   onClick={() => setSignatureOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
                 >
                   Capture Signature (optional)
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -307,8 +343,8 @@ export function ScanPage() {
           />
         </div>
       ) : (
-        <div className="border-t border-neutral-200 pt-4">
-          <h3 className="text-sm font-medium text-neutral-500 mb-3">Scanned this session</h3>
+        <div className="border-t border-secondary pt-4">
+          <h3 className="text-sm font-medium text-tertiary mb-3">Scanned this session</h3>
           <ScannedPiecesList items={scannedItems} />
         </div>
       )}

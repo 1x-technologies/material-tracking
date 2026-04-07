@@ -22,6 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 8: Notifications & Aged Reports** - Status change notifications and automated aged package reminders
 - [ ] **Phase 9: History, Search & Audit** - Searchable shipment history with full event timeline and audit trail
 - [x] **Phase 10: Admin Panel & Reports** - User, location, and settings management with operational reporting (completed 2026-04-02)
+- [ ] **Phase 11: Slack Notifications & Signature-to-Complete** - Replace email notifications with Slack app, send signature requests via Slack, auto-complete shipment on signature
 
 ## Phase Details
 
@@ -99,7 +100,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Driver can scan a QR code via RF scanner (keyboard wedge input) and the piece status advances to the next stage
   2. Driver can scan a QR code via phone camera as a fallback
-  3. Each piece follows the lifecycle: Created → In Transit → Delivered → Picked Up
+  3. Each piece follows the lifecycle: Created → In Transit → Delivered → Completed
   4. Shipment status automatically derives from piece statuses (e.g., "Partially Delivered 3/5")
   5. Every scan records who scanned, which piece, and timestamp
 **Plans**: 3 plans
@@ -187,10 +188,27 @@ Plans:
 - [x] 10-03-PLAN.md — Web: location management, settings form, reports with Recharts charts + CSV export, audit log
 **UI hint**: yes
 
+### Phase 11: Slack Notifications & Signature-to-Complete
+**Goal**: Replace email notifications with a Slack app that sends status updates, signature requests via Slack, and auto-completes shipments when signed
+**Depends on**: Phase 8
+**Requirements**: NOTF-01, NOTF-02, NOTF-03, NOTF-04
+**Success Criteria** (what must be TRUE):
+  1. Shipment status changes (in-transit, delivered, completed) send Slack messages to sender and receiver
+  2. Signature requests are sent via Slack with a clickable link to the signing page
+  3. Submitting a signature automatically transitions the shipment to Completed status
+  4. Aged package reminders are sent via Slack instead of email
+  5. Firebase Trigger Email extension is no longer required
+**Plans**: 3 plans
+Plans:
+- [x] 11-01-PLAN.md — Slack infrastructure: @slack/web-api install, WebClient wrapper, Block Kit template builders, unit tests
+- [ ] 11-02-PLAN.md — Email-to-Slack migration: rewrite triggers + scheduler, delete email code
+- [x] 11-03-PLAN.md — Signature-to-complete: auto-complete pieces on signature, Slack DM from requestSignatureLink
+**UI hint**: no
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -204,3 +222,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 8. Notifications & Aged Reports | 0/? | Not started | - |
 | 9. History, Search & Audit | 0/3 | Not started | - |
 | 10. Admin Panel & Reports | 2/3 | Complete    | 2026-04-02 |
+| 11. Slack Notifications & Signature-to-Complete | 2/3 | In Progress|  |

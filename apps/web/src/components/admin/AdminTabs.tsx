@@ -1,3 +1,6 @@
+import { Tabs, TabList, Tab } from "@/components/application/tabs/tabs";
+import type { Key } from "react-aria-components";
+
 interface AdminTab {
   id: string;
   label: string;
@@ -12,30 +15,21 @@ interface AdminTabsProps {
 
 export function AdminTabs({ tabs, activeTab, onTabChange }: AdminTabsProps) {
   return (
-    <div role="tablist" className="flex gap-1 border-b border-neutral-200 mb-4">
-      {tabs.map((tab) => {
-        const isActive = tab.id === activeTab;
-        return (
-          <button
+    <Tabs
+      selectedKey={activeTab}
+      onSelectionChange={(key: Key) => onTabChange(String(key))}
+    >
+      <TabList type="underline" size="sm" fullWidth={false}>
+        {tabs.map((tab) => (
+          <Tab
             key={tab.id}
-            role="tab"
-            aria-selected={isActive}
-            onClick={() => onTabChange(tab.id)}
-            className={`px-4 py-2.5 text-sm whitespace-nowrap transition-colors ${
-              isActive
-                ? "border-b-2 border-brand-600 text-brand-700 font-semibold"
-                : "text-neutral-500 hover:text-neutral-700"
-            }`}
+            id={tab.id}
+            badge={tab.count !== undefined && tab.count > 0 ? tab.count : undefined}
           >
             {tab.label}
-            {tab.count !== undefined && tab.count > 0 && (
-              <span className="bg-neutral-100 text-neutral-600 rounded-full px-2 py-0.5 text-xs font-medium ml-1.5">
-                {tab.count}
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
+          </Tab>
+        ))}
+      </TabList>
+    </Tabs>
   );
 }

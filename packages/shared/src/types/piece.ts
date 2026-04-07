@@ -25,6 +25,6 @@ export interface Piece {
   pickupSignatureUrl?: string;
   photoUrls: string[];
   deliveredAt?: Timestamp;
-  pickedUpAt?: Timestamp;
+  completedAt?: Timestamp;
   updatedAt: Timestamp;
 }

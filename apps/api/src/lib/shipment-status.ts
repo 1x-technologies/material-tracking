@@ -7,15 +7,25 @@ type TransitionResult =
 const TRANSITION_MAP: Record<string, PieceStatus | undefined> = {
   "created->in_transit": "in_transit" as PieceStatus,
   "in_transit->delivered": "delivered" as PieceStatus,
-  "delivered->picked_up": "picked_up" as PieceStatus,
+  "delivered->completed": "completed" as PieceStatus,
 };
 
 const STATUS_ORDER: Record<string, number> = {
   created: 0,
   in_transit: 1,
   delivered: 2,
-  picked_up: 3,
+  completed: 3,
 };
+
+const NEXT_ACTION: Record<string, ScanAction | undefined> = {
+  created: "in_transit" as ScanAction,
+  in_transit: "delivered" as ScanAction,
+  delivered: "completed" as ScanAction,
+};
+
+export function getNextAction(currentStatus: PieceStatus): ScanAction | null {
+  return NEXT_ACTION[currentStatus] ?? null;
+}
 
 export function validateTransition(
   currentStatus: PieceStatus,
@@ -56,21 +66,21 @@ export function deriveShipmentStatus(
   }
 
   const total = pieceStatuses.length;
-  let pickedUp = 0;
+  let completed = 0;
   let delivered = 0;
   let inTransit = 0;
 
   for (const s of pieceStatuses) {
-    if (s === "picked_up") pickedUp++;
+    if (s === "completed") completed++;
     else if (s === "delivered") delivered++;
     else if (s === "in_transit") inTransit++;
   }
 
-  if (pickedUp === total) {
-    return { status: "picked_up" as ShipmentStatus };
+  if (completed === total) {
+    return { status: "completed" as ShipmentStatus };
   }
 
-  const atLeastDelivered = pickedUp + delivered;
+  const atLeastDelivered = completed + delivered;
   if (atLeastDelivered === total) {
     return { status: "delivered" as ShipmentStatus };
   }

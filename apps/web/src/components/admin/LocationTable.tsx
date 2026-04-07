@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { Plus, MarkerPin01 } from "@untitledui/icons";
 import { Spinner } from "../ui/Spinner";
 import { StatusPill } from "./StatusPill";
 import { LocationDetailPanel } from "./LocationDetailPanel";
+import { Badge } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { trpc } from "../../trpc";
 
 export function LocationTable() {
@@ -35,21 +39,23 @@ export function LocationTable() {
   if (!locations || locations.length === 0) {
     return (
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <button
-            type="button"
-            onClick={handleAddClick}
-            className="bg-brand-600 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-brand-700 transition-colors"
-          >
+        <div className="mb-4 flex items-center justify-between">
+          <Button size="sm" color="primary" iconLeading={Plus} onClick={handleAddClick}>
             Add Location
-          </button>
+          </Button>
         </div>
 
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="text-sm text-neutral-500">
-            No locations configured yet. Use &apos;Add Location&apos; to create one.
-          </p>
-        </div>
+        <EmptyState className="py-24">
+          <EmptyState.Header pattern="circle">
+            <EmptyState.FeaturedIcon icon={MarkerPin01} color="gray" theme="modern" />
+          </EmptyState.Header>
+          <EmptyState.Content>
+            <EmptyState.Title>No locations configured</EmptyState.Title>
+            <EmptyState.Description>
+              Use "Add Location" above to create your first location.
+            </EmptyState.Description>
+          </EmptyState.Content>
+        </EmptyState>
 
         {isCreating && (
           <LocationDetailPanel locationId={null} isNew={true} onClose={handlePanelClose} />
@@ -61,31 +67,27 @@ export function LocationTable() {
   return (
     <div>
       {/* Toolbar */}
-      <div className="flex items-center justify-between mb-4">
-        <button
-          type="button"
-          onClick={handleAddClick}
-          className="bg-brand-600 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-brand-700 transition-colors"
-        >
+      <div className="mb-4 flex items-center justify-between">
+        <Button size="sm" color="primary" iconLeading={Plus} onClick={handleAddClick}>
           Add Location
-        </button>
+        </Button>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-neutral-200">
+      <div className="overflow-x-auto rounded-xl border border-secondary">
         <table className="w-full">
           <thead>
-            <tr className="bg-neutral-50 border-b border-neutral-200">
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+            <tr className="border-b border-secondary bg-secondary_subtle">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Name
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Address
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Printers
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Status
               </th>
             </tr>
@@ -99,22 +101,22 @@ export function LocationTable() {
                 <tr
                   key={location.id}
                   onClick={() => handleRowClick(location.id)}
-                  className={`border-b border-neutral-100 cursor-pointer transition-colors hover:bg-neutral-50 ${
-                    isSelected ? "bg-brand-50" : ""
+                  className={`border-b border-secondary last:border-b-0 cursor-pointer transition-colors hover:bg-primary_hover ${
+                    isSelected ? "bg-brand-primary_alt" : ""
                   }`}
                 >
-                  <td className="px-3 py-3 text-sm font-semibold text-neutral-900">
+                  <td className="px-4 py-3.5 text-sm font-medium text-primary">
                     {location.name}
                   </td>
-                  <td className="px-3 py-3 text-sm text-neutral-600">
+                  <td className="px-4 py-3.5 text-sm text-tertiary">
                     {location.address || "-"}
                   </td>
-                  <td className="px-3 py-3">
-                    <span className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+                  <td className="px-4 py-3.5">
+                    <Badge size="sm" type="pill-color" color="gray">
                       {printerCount} printer{printerCount !== 1 ? "s" : ""}
-                    </span>
+                    </Badge>
                   </td>
-                  <td className="px-3 py-3">
+                  <td className="px-4 py-3.5">
                     <StatusPill status={location.active ? "active" : "inactive"} />
                   </td>
                 </tr>

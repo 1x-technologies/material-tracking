@@ -1,5 +1,5 @@
 /**
- * ShipmentTimeline — vertical connected-dot timeline showing all shipment
+ * ShipmentTimeline -- vertical connected-dot timeline showing all shipment
  * events in ascending chronological order (oldest at top, newest at bottom).
  *
  * Events include:
@@ -12,32 +12,37 @@
  * "System" since no cancel-actor field exists on the shipment document.
  */
 
+import { Edit05, Camera01 } from "@untitledui/icons";
+import { Badge } from "@/components/base/badges/badges";
+import type { BadgeColors } from "@/components/base/badges/badge-types";
+
 const ACTION_LABELS: Record<string, string> = {
   created: "Created",
   in_transit: "In Transit",
   delivered: "Delivered",
-  picked_up: "Picked Up",
+  completed: "Completed",
   cancelled: "Cancelled",
   shipment_created: "Shipment Created",
 };
 
-/** Dot and badge color classes per action type (D-05 palette). */
+/** Dot color classes per action type. */
 const ACTION_DOT_COLORS: Record<string, string> = {
-  created: "bg-neutral-400",
-  in_transit: "bg-blue-500",
-  delivered: "bg-green-500",
-  picked_up: "bg-purple-500",
-  cancelled: "bg-red-500",
-  shipment_created: "bg-neutral-400",
+  created: "bg-utility-neutral-200",
+  in_transit: "bg-utility-blue-500",
+  delivered: "bg-utility-green-500",
+  completed: "bg-utility-purple-500",
+  cancelled: "bg-utility-red-500",
+  shipment_created: "bg-utility-neutral-200",
 };
 
-const ACTION_BADGE_COLORS: Record<string, string> = {
-  created: "bg-neutral-100 text-neutral-700",
-  in_transit: "bg-blue-100 text-blue-700",
-  delivered: "bg-green-100 text-green-700",
-  picked_up: "bg-purple-100 text-purple-700",
-  cancelled: "bg-red-100 text-red-700",
-  shipment_created: "bg-neutral-100 text-neutral-700",
+/** Badge color per action. */
+const ACTION_BADGE_COLORS: Record<string, BadgeColors> = {
+  created: "gray",
+  in_transit: "blue",
+  delivered: "success",
+  completed: "purple",
+  cancelled: "error",
+  shipment_created: "gray",
 };
 
 /* ------------------------------------------------------------------ */
@@ -166,7 +171,7 @@ export function ShipmentTimeline({
     }
   }
 
-  // Cancelled (synthetic) — D-09: updatedAt is approximate cancel time
+  // Cancelled (synthetic) -- D-09: updatedAt is approximate cancel time
   if (status === "cancelled") {
     entries.push({
       id: "shipment-cancelled",
@@ -178,12 +183,12 @@ export function ShipmentTimeline({
     });
   }
 
-  // Sort ascending (oldest first — "story from start to end")
+  // Sort ascending (oldest first)
   entries.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
   if (entries.length === 0) {
     return (
-      <p className="text-sm text-neutral-400 py-6 text-center">
+      <p className="text-sm text-quaternary py-6 text-center">
         No activity recorded yet
       </p>
     );
@@ -193,16 +198,16 @@ export function ShipmentTimeline({
     <div className="relative pl-8">
       {/* Vertical connecting line */}
       <div
-        className="absolute left-3 top-2 bottom-2 w-0.5 bg-neutral-200"
+        className="absolute left-3 top-2 bottom-2 w-0.5 bg-secondary"
         aria-hidden="true"
       />
 
       <ol className="space-y-6" aria-label="Shipment activity timeline">
         {entries.map((entry) => {
           const dotColor =
-            ACTION_DOT_COLORS[entry.action] ?? "bg-neutral-400";
+            ACTION_DOT_COLORS[entry.action] ?? "bg-utility-neutral-200";
           const badgeColor =
-            ACTION_BADGE_COLORS[entry.action] ?? "bg-neutral-100 text-neutral-700";
+            ACTION_BADGE_COLORS[entry.action] ?? "gray";
 
           return (
             <li key={entry.id} className="relative">
@@ -217,32 +222,23 @@ export function ShipmentTimeline({
               <div className="min-w-0">
                 {/* Row 1: action badge + piece number */}
                 <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeColor}`}
-                  >
+                  <Badge size="sm" color={badgeColor}>
                     {ACTION_LABELS[entry.action] ?? entry.action}
-                  </span>
+                  </Badge>
 
                   {entry.pieceNumber != null && (
-                    <span className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">
+                    <Badge size="sm" color="gray">
                       Piece {entry.pieceNumber}
-                    </span>
+                    </Badge>
                   )}
 
                   {/* D-07: signature indicator */}
                   {entry.hasSignature && (
                     <span
-                      className="inline-flex items-center gap-1 text-xs text-neutral-500"
+                      className="inline-flex items-center gap-1 text-xs text-tertiary"
                       title="Signature captured"
                     >
-                      <svg
-                        className="h-3.5 w-3.5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path d="M3.5 13.5l3-3 2 2 5-5 3 3" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      <Edit05 className="h-3.5 w-3.5" aria-hidden="true" />
                       Signed
                     </span>
                   )}
@@ -250,21 +246,10 @@ export function ShipmentTimeline({
                   {/* D-07: photo indicator */}
                   {entry.hasPhotos && (
                     <span
-                      className="inline-flex items-center gap-1 text-xs text-neutral-500"
+                      className="inline-flex items-center gap-1 text-xs text-tertiary"
                       title="Photos attached"
                     >
-                      <svg
-                        className="h-3.5 w-3.5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm9 3a2 2 0 100-4 2 2 0 000 4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <Camera01 className="h-3.5 w-3.5" aria-hidden="true" />
                       Photos
                     </span>
                   )}
@@ -272,16 +257,16 @@ export function ShipmentTimeline({
 
                 {/* Row 2: user + time */}
                 <div className="mt-1 flex flex-wrap items-center gap-x-3 text-sm">
-                  <span className="font-medium text-neutral-700">
+                  <span className="font-medium text-secondary">
                     {entry.userName}
                   </span>
                   <span
-                    className="text-neutral-400"
+                    className="text-quaternary"
                     title={formatAbsolute(entry.timestamp)}
                   >
                     {formatRelative(entry.timestamp)}
                   </span>
-                  <span className="text-xs text-neutral-400 hidden sm:inline">
+                  <span className="text-xs text-quaternary hidden sm:inline">
                     {formatAbsolute(entry.timestamp)}
                   </span>
                 </div>

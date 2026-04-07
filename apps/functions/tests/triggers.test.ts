@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 function deriveShipmentStatus(pieceStatuses: string[]): string {
-  if (pieceStatuses.every((s) => s === "picked_up")) return "picked_up";
-  if (pieceStatuses.every((s) => s === "delivered" || s === "picked_up")) return "delivered";
-  if (pieceStatuses.some((s) => s === "delivered" || s === "picked_up"))
+  if (pieceStatuses.every((s) => s === "completed")) return "completed";
+  if (pieceStatuses.every((s) => s === "delivered" || s === "completed")) return "delivered";
+  if (pieceStatuses.some((s) => s === "delivered" || s === "completed"))
     return "partially_delivered";
   if (pieceStatuses.some((s) => s === "in_transit")) return "in_transit";
   return "created";
@@ -22,11 +22,11 @@ describe("deriveShipmentStatus", () => {
     expect(deriveShipmentStatus(["created", "delivered", "created"])).toBe("partially_delivered");
   });
 
-  it("returns delivered when all pieces are delivered or picked_up", () => {
-    expect(deriveShipmentStatus(["delivered", "delivered", "picked_up"])).toBe("delivered");
+  it("returns delivered when all pieces are delivered or completed", () => {
+    expect(deriveShipmentStatus(["delivered", "delivered", "completed"])).toBe("delivered");
   });
 
-  it("returns picked_up when all pieces are picked_up", () => {
-    expect(deriveShipmentStatus(["picked_up", "picked_up"])).toBe("picked_up");
+  it("returns completed when all pieces are completed", () => {
+    expect(deriveShipmentStatus(["completed", "completed"])).toBe("completed");
   });
 });

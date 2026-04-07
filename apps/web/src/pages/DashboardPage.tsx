@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { Package, Route, CheckCircle, AlertTriangle } from "@untitledui/icons";
 import { useShipmentsSubscription } from "../hooks/useShipmentsSubscription";
 import { useAuthContext } from "../context/AuthContext";
 import { classifyAllExceptions } from "../utils/exceptions";
@@ -11,7 +12,38 @@ import {
   type SortDirection,
 } from "../components/dashboard/ShipmentTable";
 import { DriverTripView } from "../components/dashboard/DriverTripView";
+import { Button } from "@/components/base/buttons/button";
 import { Spinner } from "../components/ui/Spinner";
+
+/* ------------------------------------------------------------------ */
+/*  Metric Card                                                       */
+/* ------------------------------------------------------------------ */
+
+interface MetricCardProps {
+  label: string;
+  value: number;
+  icon: React.FC<{ className?: string }>;
+  iconBg: string;
+  iconColor: string;
+}
+
+function MetricCard({ label, value, icon: Icon, iconBg, iconColor }: MetricCardProps) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-secondary bg-primary p-4 shadow-xs sm:gap-4 sm:p-6">
+      <div className={`flex items-center justify-center size-10 rounded-lg sm:size-11 ${iconBg}`}>
+        <Icon className={`size-5 ${iconColor}`} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-medium text-tertiary sm:text-sm">{label}</p>
+        <p className="text-lg font-semibold text-primary tabular-nums sm:text-display-xs">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dashboard Page                                                    */
+/* ------------------------------------------------------------------ */
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -43,6 +75,16 @@ export function DashboardPage() {
     return count;
   }, [exceptionsMap]);
 
+  const inTransitCount = useMemo(
+    () => shipments.filter((s) => s.status === "in_transit").length,
+    [shipments],
+  );
+
+  const deliveredCount = useMemo(
+    () => shipments.filter((s) => s.status === "delivered" || s.status === "partially_delivered").length,
+    [shipments],
+  );
+
   const driverTaskCount = useMemo(() => {
     if (!isDriver || !appUser) return 0;
     return shipments.filter(
@@ -56,27 +98,30 @@ export function DashboardPage() {
     () => {
       const baseTabs = [
         { id: "all", label: "All", count: shipments.length },
-        { id: "in_transit", label: "In Transit", count: shipments.filter((s) => s.status === "in_transit").length },
-        { id: "delivered", label: "Delivered", count: shipments.filter((s) => s.status === "delivered" || s.status === "partially_delivered").length },
-        { id: "picked_up", label: "Picked Up", count: shipments.filter((s) => s.status === "picked_up").length },
+        { id: "created", label: "Created", count: shipments.filter((s) => s.status === "created").length },
+        { id: "in_transit", label: "In Transit", count: inTransitCount },
+        { id: "delivered", label: "Delivered", count: deliveredCount },
+        { id: "completed", label: "Completed", count: shipments.filter((s) => s.status === "completed").length },
         { id: "exceptions", label: "Exceptions", count: exceptionCount },
       ];
       if (isDriver) {
-        baseTabs.unshift({ id: "my_tasks", label: "My Tasks", count: driverTaskCount });
+        baseTabs.push({ id: "my_tasks", label: "My Tasks", count: driverTaskCount });
       }
       return baseTabs;
     },
-    [shipments, exceptionCount, isDriver, driverTaskCount],
+    [shipments, exceptionCount, isDriver, driverTaskCount, inTransitCount, deliveredCount],
   );
 
   const filteredShipments = useMemo(() => {
     switch (activeTab) {
+      case "created":
+        return shipments.filter((s) => s.status === "created");
       case "in_transit":
         return shipments.filter((s) => s.status === "in_transit");
       case "delivered":
         return shipments.filter((s) => s.status === "delivered" || s.status === "partially_delivered");
-      case "picked_up":
-        return shipments.filter((s) => s.status === "picked_up");
+      case "completed":
+        return shipments.filter((s) => s.status === "completed");
       case "exceptions":
         return shipments.filter((s) => exceptionsMap.has(s.id));
       default:
@@ -112,23 +157,58 @@ export function DashboardPage() {
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 mt-4">
+      <div className="rounded-xl bg-utility-red-50 border border-utility-red-200 px-4 py-3 text-sm text-utility-red-700 mt-4">
         <strong>Error:</strong> {error.message}
       </div>
     );
   }
 
   return (
-    <div className="py-6">
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold text-neutral-900">Dashboard</h1>
-        <p className="text-sm text-neutral-500 mt-1">
+    <div className="py-6 space-y-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-display-xs font-semibold text-primary">Dashboard</h1>
+        <p className="text-sm text-tertiary mt-1">
           Last updated: {lastUpdatedRef.current}
         </p>
       </div>
 
+      {/* Metric Cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+        <MetricCard
+          label="Total Shipments"
+          value={shipments.length}
+          icon={Package}
+          iconBg="bg-utility-brand-50"
+          iconColor="text-utility-brand-700"
+        />
+        <MetricCard
+          label="In Transit"
+          value={inTransitCount}
+          icon={Route}
+          iconBg="bg-utility-blue-50"
+          iconColor="text-utility-blue-700"
+        />
+        <MetricCard
+          label="Delivered"
+          value={deliveredCount}
+          icon={CheckCircle}
+          iconBg="bg-utility-green-50"
+          iconColor="text-utility-green-700"
+        />
+        <MetricCard
+          label="Exceptions"
+          value={exceptionCount}
+          icon={AlertTriangle}
+          iconBg="bg-utility-red-50"
+          iconColor="text-utility-red-700"
+        />
+      </div>
+
+      {/* Tabs */}
       <FilterTabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
+      {/* Content */}
       {activeTab === "my_tasks" ? (
         <DriverTripView shipments={shipments} locationId={appUser?.locationId ?? ""} />
       ) : (
@@ -143,16 +223,16 @@ export function DashboardPage() {
           />
 
           <div className="flex flex-col items-center gap-2 py-6">
-            <p className="text-xs text-neutral-400">
+            <p className="text-xs text-quaternary">
               Showing last {daysBack} days
             </p>
-            <button
-              type="button"
+            <Button
+              size="sm"
+              color="secondary"
               onClick={() => setDaysBack((d) => d + 30)}
-              className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors"
             >
               Show Older Shipments
-            </button>
+            </Button>
           </div>
         </>
       )}

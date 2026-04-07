@@ -28,7 +28,7 @@ Every non-inventory package is trackable end-to-end — from creation to pickup 
 
 - [x] Scan QR codes via RF scanners and phone cameras to trigger status updates — Validated in Phase 5
 - [x] Individual piece-level tracking within multi-piece shipments — Validated in Phase 5
-- [x] Four-stage status lifecycle per piece: Created → In Transit → Delivered → Picked Up — Validated in Phase 5
+- [x] Four-stage status lifecycle per piece: Created → In Transit → Delivered → Completed — Validated in Phase 5
 - [x] Derived shipment status from piece statuses (e.g., "Partially Delivered 3/5") — Validated in Phase 5
 - [x] Authenticated scanning — track who scanned what and when — Validated in Phase 5
 

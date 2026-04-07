@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 const printerSchema = z.object({
-  name: z.string(),
-  ip: z.string(),
-  model: z.string(),
+  name: z.string().min(1).max(128),
+  ip: z.string().ipv4(),
+  model: z.string().min(1).max(128),
   isDefault: z.boolean(),
 });
 
 export const updateUserSchema = z.object({
-  uid: z.string(),
+  uid: z.string().min(1).max(128),
   patch: z.object({
     role: z.enum(["admin", "driver", "staff"]).nullable().optional(),
     locationId: z.string().optional(),
@@ -17,7 +17,7 @@ export const updateUserSchema = z.object({
 });
 
 export const bulkAssignRoleSchema = z.object({
-  uids: z.array(z.string()).min(1),
+  uids: z.array(z.string().min(1).max(128)).min(1).max(100),
   role: z.enum(["admin", "driver", "staff"]),
 });
 

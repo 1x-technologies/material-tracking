@@ -422,7 +422,7 @@ describe("shipment.search", () => {
     mockQueryGet.mockResolvedValue({ docs: [] });
 
     const result = await shipmentCaller(staffCtx()).shipment.search({
-      status: "picked_up",
+      status: "completed",
     });
 
     expect(result.items).toHaveLength(0);

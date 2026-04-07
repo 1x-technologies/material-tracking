@@ -16,12 +16,12 @@ Replace the placeholder DashboardPage with a live status board showing all activ
 ### Dashboard layout
 
 - **D-01:** **Table-based status board** — rows per shipment with columns: shipment number, status badge, priority badge, origin → destination, piece count + progress (e.g., "3/5 delivered"), sender, receiver, created date, last activity. Sortable by priority and status. Tablet-friendly with horizontal scroll if needed.
-- **D-02:** **Status filter tabs** at the top — All, In Transit, Delivered, Picked Up, plus an "Exceptions" tab showing only flagged shipments. Active tab highlighted.
+- **D-02:** **Status filter tabs** at the top — All, In Transit, Delivered, Completed, plus an "Exceptions" tab showing only flagged shipments. Active tab highlighted.
 - **D-03:** **Click row to navigate** to shipment detail page (`/shipments/{id}`).
 
 ### Real-time updates
 
-- **D-04:** Use **Firestore `onSnapshot`** on the `shipments` collection (client SDK, not tRPC) for live updates — dashboard subscribes to active shipments (where status not in `picked_up`, `cancelled` unless filtered). Changes appear without page refresh.
+- **D-04:** Use **Firestore `onSnapshot`** on the `shipments` collection (client SDK, not tRPC) for live updates — dashboard subscribes to active shipments (where status not in `completed`, `cancelled` unless filtered). Changes appear without page refresh.
 - **D-05:** **Limit query scope** — only load shipments from the last 30 days by default (filter by `createdAt`) to avoid loading the entire history. "Show older" button or date range filter for more.
 - **D-06:** **Optimistic UI** — status badge updates instantly when `onSnapshot` fires; no loading spinner per update.
 
@@ -120,7 +120,7 @@ None.
 
 - Exception thresholds: stalled 4h, overdue 24h, aged 24h (configurable in Phase 10)
 - Driver trip view: filter by `appUser.locationId` against shipment `origin.locationId` (pickup) and `destination.locationId` (deliver)
-- Real-time: `onSnapshot` with `where("status", "not-in", ["picked_up", "cancelled"])` + `where("createdAt", ">", thirtyDaysAgo)` — may need composite index
+- Real-time: `onSnapshot` with `where("status", "not-in", ["completed", "cancelled"])` + `where("createdAt", ">", thirtyDaysAgo)` — may need composite index
 
 </specifics>
 

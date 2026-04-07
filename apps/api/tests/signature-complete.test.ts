@@ -5,6 +5,7 @@ const {
   mockBatchUpdate,
   mockBatchCommit,
   mockFileSave,
+  mockFileMakePublic,
   mockFileGetSignedUrl,
   mockDocUpdate,
   mockDocGet,
@@ -14,6 +15,7 @@ const {
   mockBatchUpdate: vi.fn(),
   mockBatchCommit: vi.fn().mockResolvedValue(undefined),
   mockFileSave: vi.fn().mockResolvedValue(undefined),
+  mockFileMakePublic: vi.fn().mockResolvedValue(undefined),
   mockFileGetSignedUrl: vi.fn().mockResolvedValue(["https://storage.example.com/sig.png"]),
   mockDocUpdate: vi.fn().mockResolvedValue(undefined),
   mockDocGet: vi.fn(),
@@ -85,11 +87,21 @@ vi.mock("../src/lib/firebase", () => {
         update: mockBatchUpdate,
         commit: mockBatchCommit,
       })),
+      runTransaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          get: mockDocGet,
+          update: mockDocUpdate,
+          set: mockDocSet,
+        };
+        return fn(tx);
+      }),
     },
     storage: {
       bucket: vi.fn(() => ({
+        name: "test-bucket",
         file: vi.fn(() => ({
           save: mockFileSave,
+          makePublic: mockFileMakePublic,
           getSignedUrl: mockFileGetSignedUrl,
         })),
       })),

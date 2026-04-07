@@ -1,7 +1,7 @@
-import type { ProcessScanInput, ScanResult } from "@material-tracking/shared";
+import type { ProcessScanInput, ScanAction, ScanResult } from "@material-tracking/shared";
 import { TRPCError } from "@trpc/server";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
-import { deriveShipmentStatus, validateTransition } from "./shipment-status";
+import { deriveShipmentStatus, getNextAction, validateTransition } from "./shipment-status";
 
 export async function processOneScan(
   db: FirebaseFirestore.Firestore,
@@ -30,9 +30,11 @@ export async function processOneScan(
   const shipmentRef = pieceRef.parent.parent!;
 
   return db.runTransaction(async (tx) => {
-    const [pieceSnap, shipmentSnap] = await Promise.all([
+    // All reads MUST happen before any writes in Firestore transactions
+    const [pieceSnap, shipmentSnap, allPiecesSnap] = await Promise.all([
       tx.get(pieceRef),
       tx.get(shipmentRef),
+      tx.get(shipmentRef.collection("pieces")),
     ]);
 
     if (!pieceSnap.exists || !shipmentSnap.exists) {
@@ -52,13 +54,34 @@ export async function processOneScan(
       });
     }
 
-    const result = validateTransition(pieceData.status, input.action);
+    // Smart auto-detect: if scanner is the receiver and piece is delivered, go to completed
+    let action = input.action ?? null;
+    if (!action) {
+      const receiver = shipmentData.receiver as { email?: string } | undefined;
+      const scannerEmail = user.email?.toLowerCase();
+      const receiverEmail = receiver?.email?.toLowerCase();
+
+      if (scannerEmail && receiverEmail && scannerEmail === receiverEmail && pieceData.status === "delivered") {
+        action = "completed" as ScanAction;
+      } else {
+        action = getNextAction(pieceData.status);
+      }
+    }
+
+    if (!action) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: `NO_NEXT_ACTION: piece is already at terminal status ${pieceData.status}`,
+      });
+    }
+
+    const result = validateTransition(pieceData.status, action);
     if (!result.valid) {
       throw new TRPCError({ code: "CONFLICT", message: result.error });
     }
 
     const event = {
-      action: input.action,
+      action,
       timestamp: Timestamp.now(),
       userId: user.uid,
       userName: user.name ?? user.email ?? "",
@@ -72,14 +95,14 @@ export async function processOneScan(
       updatedAt: FieldValue.serverTimestamp(),
     };
 
-    if (input.action === "delivered") {
+    if (action === "delivered") {
       pieceUpdate.deliveredAt = FieldValue.serverTimestamp();
     }
-    if (input.action === "picked_up") {
-      pieceUpdate.pickedUpAt = FieldValue.serverTimestamp();
+    if (action === "completed") {
+      pieceUpdate.completedAt = FieldValue.serverTimestamp();
     }
 
-    if (input.action === "delivered" && input.signatureUrl) {
+    if (action === "delivered" && input.signatureUrl) {
       pieceUpdate.deliverySignatureUrl = input.signatureUrl;
     }
 
@@ -89,7 +112,6 @@ export async function processOneScan(
 
     tx.update(pieceRef, pieceUpdate);
 
-    const allPiecesSnap = await tx.get(shipmentRef.collection("pieces"));
     const allStatuses = allPiecesSnap.docs.map((doc) =>
       doc.id === pieceRef.id ? result.newStatus : doc.data().status,
     );
@@ -103,8 +125,23 @@ export async function processOneScan(
     if (derived.deliveredCount !== undefined) {
       shipmentUpdate.deliveredPieceCount = derived.deliveredCount;
     }
+    // Set deliveredAt on shipment when it first reaches delivered status (used by reports)
+    if (derived.status === "delivered" && !shipmentData.deliveredAt) {
+      shipmentUpdate.deliveredAt = FieldValue.serverTimestamp();
+    }
+    // Copy delivery signature to shipment level for display on detail page
+    if (input.signatureUrl && !shipmentData.signatureUrl) {
+      shipmentUpdate.signatureUrl = input.signatureUrl;
+    }
+    // Set completedAt on shipment when all pieces are completed
+    if (derived.status === "completed" && !shipmentData.completedAt) {
+      shipmentUpdate.completedAt = FieldValue.serverTimestamp();
+    }
 
     tx.update(shipmentRef, shipmentUpdate);
+
+    const origin = shipmentData.origin as { name: string; locationId: string } | undefined;
+    const destination = shipmentData.destination as { name: string; locationId: string } | undefined;
 
     return {
       pieceId: pieceRef.id,
@@ -112,6 +149,10 @@ export async function processOneScan(
       newStatus: result.newStatus,
       shipmentNumber: shipmentData.shipmentNumber as string,
       pieceNumber: pieceData.pieceNumber as number,
+      origin: origin?.name ?? null,
+      destination: destination?.name ?? null,
+      description: (shipmentData.description as string) ?? null,
+      totalPieces: allPiecesSnap.size,
     };
   });
 }

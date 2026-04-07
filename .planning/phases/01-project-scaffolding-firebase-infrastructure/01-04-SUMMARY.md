@@ -69,7 +69,7 @@ completed: 2026-03-31
 - 2 scheduled functions using v2 object syntax (avoids PERMISSION_DENIED bug) with America/Chicago timezone
 - Secret Manager access pattern established for runtime secret retrieval
 - tsup bundles workspace packages into self-contained CJS dist with generated deployment package.json
-- 5 passing tests covering all status derivation lifecycle states (created, in_transit, partially_delivered, delivered, picked_up)
+- 5 passing tests covering all status derivation lifecycle states (created, in_transit, partially_delivered, delivered, completed)
 
 ## Task Commits
 

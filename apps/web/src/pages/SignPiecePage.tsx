@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import { useParams } from "react-router";
 import SignatureCanvas from "react-signature-canvas";
+import { CheckCircle, AlertCircle } from "@untitledui/icons";
+import { Button } from "@/components/base/buttons/button";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { trpc } from "../trpc";
 
 type PageState = "ready" | "submitting" | "success" | "error";
@@ -33,15 +36,17 @@ export function SignPiecePage() {
 
   if (state === "success") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-4">
-        <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-neutral-900">Signature Submitted</h1>
-          <p className="mt-2 text-sm text-neutral-500">Thank you! You may close this page.</p>
+      <div className="flex min-h-screen items-center justify-center bg-primary p-4">
+        <div className="w-full max-w-md rounded-xl bg-primary p-8 shadow-lg text-center">
+          <EmptyState size="sm">
+            <EmptyState.Header pattern="none">
+              <EmptyState.FeaturedIcon icon={CheckCircle} color="success" theme="light" />
+            </EmptyState.Header>
+            <EmptyState.Content>
+              <EmptyState.Title>Signature Submitted</EmptyState.Title>
+              <EmptyState.Description>Thank you! You may close this page.</EmptyState.Description>
+            </EmptyState.Content>
+          </EmptyState>
         </div>
       </div>
     );
@@ -49,31 +54,33 @@ export function SignPiecePage() {
 
   if (state === "error") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-4">
-        <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-            <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-neutral-900">Unable to Submit</h1>
-          <p className="mt-2 text-sm text-neutral-500">{errorMessage}</p>
+      <div className="flex min-h-screen items-center justify-center bg-primary p-4">
+        <div className="w-full max-w-md rounded-xl bg-primary p-8 shadow-lg text-center">
+          <EmptyState size="sm">
+            <EmptyState.Header pattern="none">
+              <EmptyState.FeaturedIcon icon={AlertCircle} color="error" theme="light" />
+            </EmptyState.Header>
+            <EmptyState.Content>
+              <EmptyState.Title>Unable to Submit</EmptyState.Title>
+              <EmptyState.Description>{errorMessage}</EmptyState.Description>
+            </EmptyState.Content>
+          </EmptyState>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
-        <h1 className="text-xl font-semibold text-neutral-900 text-center">
+    <div className="flex min-h-screen items-center justify-center bg-primary p-4">
+      <div className="w-full max-w-md rounded-xl bg-primary p-8 shadow-lg">
+        <h1 className="text-xl font-semibold text-primary text-center">
           Material Tracking
         </h1>
-        <p className="mt-1 text-sm text-neutral-500 text-center mb-6">
+        <p className="mt-1 text-sm text-tertiary text-center mb-6">
           Sign for Delivery
         </p>
 
-        <div className="rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50">
+        <div className="rounded-lg border-2 border-dashed border-secondary bg-secondary">
           <SignatureCanvas
             ref={sigRef}
             penColor="black"
@@ -85,22 +92,26 @@ export function SignPiecePage() {
         </div>
 
         <div className="mt-4 flex items-center gap-3">
-          <button
-            type="button"
+          <Button
+            size="md"
+            color="secondary"
             onClick={handleClear}
-            disabled={state === "submitting"}
-            className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition-colors disabled:opacity-60"
+            isDisabled={state === "submitting"}
+            className="flex-1"
           >
             Clear
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            size="md"
+            color="primary"
             onClick={handleSubmit}
-            disabled={state === "submitting"}
-            className="flex-1 rounded-md bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-700 transition-colors disabled:opacity-60"
+            isDisabled={state === "submitting"}
+            isLoading={state === "submitting"}
+            showTextWhileLoading
+            className="flex-1"
           >
-            {state === "submitting" ? "Submitting\u2026" : "Submit Signature"}
-          </button>
+            {state === "submitting" ? "Submitting..." : "Submit Signature"}
+          </Button>
         </div>
       </div>
     </div>

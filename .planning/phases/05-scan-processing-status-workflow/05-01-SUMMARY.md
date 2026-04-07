@@ -36,7 +36,7 @@ key-decisions:
 
 patterns-established:
   - "Scan mutation pattern: collectionGroup lookup → transaction(validate → event → piece update → derive shipment) → return ScanResult"
-  - "Status derivation counts pieces by status and applies priority: all picked_up > all delivered > partial > any in_transit > created"
+  - "Status derivation counts pieces by status and applies priority: all completed > all delivered > partial > any in_transit > created"
 
 requirements-completed: [SCAN-03, SCAN-04, SCAN-05, SCAN-06]
 
@@ -57,8 +57,8 @@ completed: 2026-04-01
 - **Files modified:** 4
 
 ## Accomplishments
-- Pure functions for transition validation (created→in_transit→delivered→picked_up) and shipment status derivation from piece statuses
-- Transactional scan.process mutation: QR lookup via collection group, lifecycle enforcement, PieceEvent with arrayUnion, deliveredAt/pickedUpAt timestamps
+- Pure functions for transition validation (created→in_transit→delivered→completed) and shipment status derivation from piece statuses
+- Transactional scan.process mutation: QR lookup via collection group, lifecycle enforcement, PieceEvent with arrayUnion, deliveredAt/completedAt timestamps
 - Shipment status auto-derives after each scan including partially_delivered with counts
 - Firestore collection group index on pieces.qrCode for cross-shipment lookup
 

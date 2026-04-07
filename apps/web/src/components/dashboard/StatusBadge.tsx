@@ -1,20 +1,22 @@
 import type { ShipmentStatus } from "@material-tracking/shared";
+import { BadgeWithDot } from "@/components/base/badges/badges";
+import type { BadgeColors } from "@/components/base/badges/badge-types";
 
-const STATUS_COLORS: Record<ShipmentStatus, string> = {
-  created: "bg-neutral-100 text-neutral-700",
-  in_transit: "bg-blue-100 text-blue-700",
-  partially_delivered: "bg-amber-100 text-amber-700",
-  delivered: "bg-green-100 text-green-700",
-  picked_up: "bg-purple-100 text-purple-700",
-  cancelled: "bg-red-100 text-red-700",
+const STATUS_BADGE_COLOR: Record<ShipmentStatus, BadgeColors> = {
+  created: "gray",
+  in_transit: "blue",
+  partially_delivered: "orange",
+  delivered: "success",
+  completed: "purple",
+  cancelled: "error",
 };
 
 const STATUS_LABELS: Record<ShipmentStatus, string> = {
   created: "Created",
   in_transit: "In Transit",
-  partially_delivered: "Partially Delivered",
+  partially_delivered: "Partial",
   delivered: "Delivered",
-  picked_up: "Picked Up",
+  completed: "Completed",
   cancelled: "Cancelled",
 };
 
@@ -24,10 +26,12 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status }: StatusBadgeProps) {
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[status]}`}
+    <BadgeWithDot
+      type="pill-color"
+      size="sm"
+      color={STATUS_BADGE_COLOR[status]}
     >
       {STATUS_LABELS[status]}
-    </span>
+    </BadgeWithDot>
   );
 }

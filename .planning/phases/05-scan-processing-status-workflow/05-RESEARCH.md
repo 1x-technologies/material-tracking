@@ -8,7 +8,7 @@
 
 Phase 5 replaces `ScanStubPage` with a real scan experience: **action-first** UX (D-03), **keyboard-wedge** primary input (D-01), optional **camera** decode (D-02), **strict sequential** piece transitions (D-04), **any authenticated role** on the API route (D-05). All writes stay **server-side** (Admin SDK / existing `firestore.rules` — no client writes). Piece lookup is a **`collectionGroup('pieces')` query** on `qrCode` (equals piece document ID from Phase 4). Each successful scan appends a **`PieceEvent`** to the piece’s `events` array (D-10), updates piece status and timestamps as needed, then **recomputes and writes parent shipment status** (D-06). The web app must **widen `/scan` route access** from `driver`+`admin` to **any signed-in user** (D-05). **Sonner** and **html5-qrcode** are named in STACK.md but are **not yet** in `apps/web/package.json` — add them (or explicitly choose native toast / zxing-wasm per discretion).
 
-**Primary recommendation:** Implement `shipment.processScan` (or `scan.process`) as a **`protectedProcedure`** using **`db.runTransaction`**: collection-group lookup by `qrCode` → validate shipment not `cancelled` → validate transition → update piece (status + `FieldValue.arrayUnion` event + `updatedAt`; set `deliveredAt` / `pickedUpAt` when applicable) → fetch sibling pieces for that shipment → derive shipment fields → update shipment. Mirror contracts in `processScanSchema` / `ScanResult`.
+**Primary recommendation:** Implement `shipment.processScan` (or `scan.process`) as a **`protectedProcedure`** using **`db.runTransaction`**: collection-group lookup by `qrCode` → validate shipment not `cancelled` → validate transition → update piece (status + `FieldValue.arrayUnion` event + `updatedAt`; set `deliveredAt` / `completedAt` when applicable) → fetch sibling pieces for that shipment → derive shipment fields → update shipment. Mirror contracts in `processScanSchema` / `ScanResult`.
 
 <user_constraints>
 ## User Constraints (from CONTEXT.md)
@@ -19,10 +19,10 @@ From **Phase 5 CONTEXT — Implementation Decisions (D-01 … D-11)**:
 
 - **D-01:** Auto-focused text input on the scan page; RF scanner types QR value + Enter → auto-submit; clear input after submission.
 - **D-02:** “Scan with Camera” button opens viewfinder overlay (`html5-qrcode` or `zxing-wasm`); on decode, same path as RF; dismiss closes overlay.
-- **D-03:** User selects action **before** scanning: In Transit / Delivered / Picked Up; session applies selected action to all scans.
-- **D-04:** Strict sequential lifecycle — no skipping (Created → In Transit → Delivered → Picked Up); API rejects invalid skips.
+- **D-03:** User selects action **before** scanning: In Transit / Delivered / Completed; session applies selected action to all scans.
+- **D-04:** Strict sequential lifecycle — no skipping (Created → In Transit → Delivered → Completed); API rejects invalid skips.
 - **D-05:** **Any authenticated user** may scan (not Driver-only); Staff and Admin included.
-- **D-06:** Derived shipment status: all Created → `created`; any In Transit → `in_transit`; mixed Delivered/other → `partially_delivered` (e.g. “Partially Delivered 3/5”); all Delivered → `delivered`; all Picked Up → `picked_up`; `cancelled` overrides all.
+- **D-06:** Derived shipment status: all Created → `created`; any In Transit → `in_transit`; mixed Delivered/other → `partially_delivered` (e.g. “Partially Delivered 3/5”); all Delivered → `delivered`; all Completed → `completed`; `cancelled` overrides all.
 - **D-07:** Toast + inline card list on success; list accumulates for the session.
 - **D-08:** Inline red error below input on failure; clear on next attempt.
 - **D-09:** Audio success beep / error buzz (e.g. Web Audio API).
@@ -64,7 +64,7 @@ From **Phase 5 CONTEXT — Implementation Decisions (D-01 … D-11)**:
 ## Project Constraints (from `.cursor/rules/`)
 
 - **Stack:** React 19 + Vite 8 + Tailwind; Firestore nested `pieces` under `shipments`; Firebase Auth (Google Workspace); Cloud Functions v2 + Cloud Run per PROJECT.md (this phase implements via existing **Node tRPC API** + Admin SDK — align with “no client writes”).
-- **Model:** Pieces as subcollections; denormalized fields where already established; status lifecycle Created → In Transit → Delivered → Picked Up.
+- **Model:** Pieces as subcollections; denormalized fields where already established; status lifecycle Created → In Transit → Delivered → Completed.
 - **Roles:** Admin, Driver, Staff — Phase 5 scan uses **auth only**, not Driver-only (D-05).
 
 ## Standard Stack
@@ -118,7 +118,7 @@ pnpm --filter @material-tracking/web add html5-qrcode sonner
 |------------------|----------------------------------|-------------------|
 | `in_transit` | `created` | `in_transit` |
 | `delivered` | `in_transit` | `delivered` |
-| `picked_up` | `delivered` | `picked_up` |
+| `completed` | `delivered` | `completed` |
 
 Reject if already at target or ahead (idempotent policy: **reject** per D-08 examples).
 
@@ -126,7 +126,7 @@ Reject if already at target or ahead (idempotent policy: **reject** per D-08 exa
 6. **Shipment update:** After piece write, compute D-06. Suggested **evaluation order** (planner: encode in pure function + unit tests):
 
    - If `shipment.status === 'cancelled'` → reject scan (or no-op; **reject** is safer).
-   - If every piece `picked_up` → `shipment.status = picked_up`.
+   - If every piece `completed` → `shipment.status = completed`.
    - Else if every piece `delivered` (none less) → `delivered`.
    - Else if **any** piece `in_transit` → `in_transit`.
    - Else if **any** piece `delivered` and not all delivered → `partially_delivered` + counts for label.

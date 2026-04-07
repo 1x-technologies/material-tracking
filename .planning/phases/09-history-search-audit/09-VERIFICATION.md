@@ -101,7 +101,7 @@ No blocker or warning-level anti-patterns found in Phase 9 artifacts.
 ### 2. Timeline Visual Display
 
 **Test:** Open a shipment detail page for a shipment with multiple scanned pieces (including at least one with a signature or photo). Check the Activity section.
-**Expected:** Vertical connected-dot timeline with color-coded dots (blue for in_transit, green for delivered, purple for picked_up, etc.). Each entry shows action badge, piece number, user name, relative time, absolute time. Signature/photo indicators appear on events that have them. "Shipment Created" at top, events in chronological order.
+**Expected:** Vertical connected-dot timeline with color-coded dots (blue for in_transit, green for delivered, purple for completed, etc.). Each entry shows action badge, piece number, user name, relative time, absolute time. Signature/photo indicators appear on events that have them. "Shipment Created" at top, events in chronological order.
 **Why human:** Visual layout, color accuracy, dot connectivity, and responsive behavior require visual inspection.
 
 ### 3. Cancelled Shipment Timeline

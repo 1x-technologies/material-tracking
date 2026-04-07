@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { RequireRole } from "./components/auth/RequireRole";
 import { AppLayout } from "./components/layout/AppLayout";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { Spinner } from "./components/ui/Spinner";
 import { AuthProvider, useAuthContext } from "./context/AuthContext";
 import { AccessDeniedPage } from "./pages/AccessDeniedPage";
@@ -59,7 +60,9 @@ function AuthenticatedRoutes() {
             path="shipments/new"
             element={
               <RequireRole allowedRoles={["staff", "admin"]}>
-                <ShipmentFormPage />
+                <ErrorBoundary fallbackTitle="Shipment form error">
+                  <ShipmentFormPage />
+                </ErrorBoundary>
               </RequireRole>
             }
           />
@@ -67,7 +70,9 @@ function AuthenticatedRoutes() {
             path="shipments/:shipmentId/edit"
             element={
               <RequireRole allowedRoles={["staff", "admin"]}>
-                <ShipmentFormPage />
+                <ErrorBoundary fallbackTitle="Shipment form error">
+                  <ShipmentFormPage />
+                </ErrorBoundary>
               </RequireRole>
             }
           />
@@ -75,16 +80,20 @@ function AuthenticatedRoutes() {
             path="shipments/:shipmentId"
             element={
               <RequireRole allowedRoles={["staff", "admin"]}>
-                <ShipmentFormPage />
+                <ErrorBoundary fallbackTitle="Shipment form error">
+                  <ShipmentFormPage />
+                </ErrorBoundary>
               </RequireRole>
             }
           />
-          <Route path="scan" element={<ScanPage />} />
+          <Route path="scan" element={<ErrorBoundary fallbackTitle="Scanner error"><ScanPage /></ErrorBoundary>} />
           <Route
             path="admin"
             element={
               <RequireRole allowedRoles={["admin"]}>
-                <AdminPage />
+                <ErrorBoundary fallbackTitle="Admin panel error">
+                  <AdminPage />
+                </ErrorBoundary>
               </RequireRole>
             }
           />

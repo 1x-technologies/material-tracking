@@ -1,4 +1,5 @@
 import { QRCodeSVG } from "qrcode.react";
+import { Badge } from "@/components/base/badges/badges";
 import { pieceFraction, truncateDescription } from "../../lib/labelFormatters";
 
 export interface LabelData {
@@ -19,17 +20,17 @@ export interface LabelPreviewCardProps {
   label: LabelData;
 }
 
-const priorityColors: Record<string, string> = {
-  urgent: "bg-red-100 text-red-700",
-  standard: "bg-blue-100 text-blue-700",
-  low: "bg-neutral-100 text-neutral-600",
+const priorityBadgeColor: Record<string, "error" | "blue" | "gray"> = {
+  urgent: "error",
+  standard: "blue",
+  low: "gray",
 };
 
 export function LabelPreviewCard({ label }: LabelPreviewCardProps) {
-  const colorClass = priorityColors[label.priority] ?? priorityColors.low;
+  const badgeColor = priorityBadgeColor[label.priority] ?? "gray";
 
   return (
-    <div className="aspect-[4/3] border border-neutral-300 rounded-lg bg-white p-4 flex gap-4">
+    <div className="aspect-[4/3] rounded-lg border border-secondary bg-primary p-4 flex gap-4 shadow-xs">
       <div className="flex items-center justify-center shrink-0 w-[40%]">
         <QRCodeSVG
           value={label.qrCode}
@@ -41,15 +42,15 @@ export function LabelPreviewCard({ label }: LabelPreviewCardProps) {
 
       <div className="flex flex-col justify-between min-w-0 w-[60%] py-1">
         <div>
-          <p className="text-base font-bold leading-tight truncate">
+          <p className="text-base font-bold leading-tight truncate text-primary">
             {label.shipmentNumber}
           </p>
-          <p className="text-lg font-semibold text-neutral-800">
+          <p className="text-lg font-semibold text-secondary">
             {pieceFraction(label.pieceNumber, label.pieceCount)}
           </p>
         </div>
 
-        <div className="space-y-0.5 text-sm text-neutral-600">
+        <div className="space-y-0.5 text-sm text-tertiary">
           <p className="truncate">From: {label.senderName}</p>
           <p className="truncate">To: {label.receiverName}</p>
           <p className="truncate">
@@ -58,15 +59,13 @@ export function LabelPreviewCard({ label }: LabelPreviewCardProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <span
-            className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${colorClass}`}
-          >
+          <Badge size="sm" color={badgeColor}>
             {label.priority}
-          </span>
-          <span className="text-xs text-neutral-500">{label.category}</span>
+          </Badge>
+          <span className="text-xs text-tertiary">{label.category}</span>
         </div>
 
-        <p className="text-xs text-neutral-400 truncate">
+        <p className="text-xs text-quaternary truncate">
           {truncateDescription(label.description)}
         </p>
       </div>

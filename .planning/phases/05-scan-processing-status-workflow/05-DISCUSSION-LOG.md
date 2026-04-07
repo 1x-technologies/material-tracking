@@ -49,7 +49,7 @@
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| No skipping | Strict sequential: Created → In Transit → Delivered → Picked Up | ✓ |
+| No skipping | Strict sequential: Created → In Transit → Delivered → Completed | ✓ |
 | Allow skipping | For edge cases like hand-delivered items | |
 | Claude's discretion | | |
 
@@ -69,7 +69,7 @@
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Standard | All Created=Created, any In Transit=In Transit, mixed=Partially Delivered 3/5, all Picked Up=Picked Up | ✓ |
+| Standard | All Created=Created, any In Transit=In Transit, mixed=Partially Delivered 3/5, all Completed=Completed | ✓ |
 | Simple | Lowest status across all pieces | |
 | Claude's discretion | | |
 

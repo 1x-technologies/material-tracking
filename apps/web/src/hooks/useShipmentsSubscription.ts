@@ -23,7 +23,7 @@ export interface UseShipmentsSubscriptionResult {
   error: Error | null;
 }
 
-const TERMINAL_STATUSES: ShipmentStatus[] = ["picked_up", "cancelled"];
+const TERMINAL_STATUSES: ShipmentStatus[] = ["completed", "cancelled"];
 
 export function useShipmentsSubscription(
   options?: UseShipmentsSubscriptionOptions,

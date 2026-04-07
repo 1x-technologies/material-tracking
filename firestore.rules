@@ -35,5 +35,22 @@ service cloud.firestore {
     match /counters/{docId} {
       allow read, write: if false;
     }
+
+    match /mail/{docId} {
+      allow read, write: if false;
+    }
+
+    match /admin_audit_log/{docId} {
+      allow read, write: if false;
+    }
+
+    match /signatureRequests/{docId} {
+      allow read, write: if false;
+    }
+
+    match /settings/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
   }
 }

@@ -1,19 +1,19 @@
+import { BadgeWithDot } from "@/components/base/badges/badges";
+
 interface StatusPillProps {
   status: "active" | "inactive" | "pending";
 }
 
-const statusStyles: Record<StatusPillProps["status"], string> = {
-  active: "bg-green-100 text-green-700",
-  inactive: "bg-neutral-100 text-neutral-500",
-  pending: "bg-amber-100 text-amber-700",
+const statusColorMap: Record<StatusPillProps["status"], "success" | "gray" | "warning"> = {
+  active: "success",
+  inactive: "gray",
+  pending: "warning",
 };
 
 export function StatusPill({ status }: StatusPillProps) {
   return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[status]}`}
-    >
+    <BadgeWithDot size="sm" type="pill-color" color={statusColorMap[status]}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
+    </BadgeWithDot>
   );
 }

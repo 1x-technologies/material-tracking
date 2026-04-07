@@ -8,30 +8,47 @@ export const onPieceStatusChange = onDocumentUpdated(
     region: "us-central1",
   },
   async (event) => {
-    const before = event.data?.before.data();
-    const after = event.data?.after.data();
+    try {
+      const before = event.data?.before.data();
+      const after = event.data?.after.data();
 
-    if (!before || !after || before.status === after.status) return;
+      if (!before || !after || before.status === after.status) return;
 
-    const shipmentRef = db.collection("shipments").doc(event.params.shipmentId);
-    const piecesSnap = await shipmentRef.collection("pieces").get();
-    const statuses = piecesSnap.docs.map((d) => d.data().status as string);
+      const shipmentRef = db.collection("shipments").doc(event.params.shipmentId);
 
-    const derivedStatus = deriveShipmentStatus(statuses);
+      // Validate shipment exists before updating
+      const shipmentSnap = await shipmentRef.get();
+      if (!shipmentSnap.exists) {
+        console.error(
+          `onPieceStatusChange: shipment ${event.params.shipmentId} not found for piece ${event.params.pieceId}`,
+        );
+        return;
+      }
 
-    await shipmentRef.update({
-      status: derivedStatus,
-      updatedAt: FieldValue.serverTimestamp(),
-      ...(derivedStatus === "delivered" ? { deliveredAt: FieldValue.serverTimestamp() } : {}),
-      ...(derivedStatus === "picked_up" ? { pickedUpAt: FieldValue.serverTimestamp() } : {}),
-    });
+      const piecesSnap = await shipmentRef.collection("pieces").get();
+      const statuses = piecesSnap.docs.map((d) => d.data().status as string);
+
+      const derivedStatus = deriveShipmentStatus(statuses);
+
+      await shipmentRef.update({
+        status: derivedStatus,
+        updatedAt: FieldValue.serverTimestamp(),
+        ...(derivedStatus === "delivered" ? { deliveredAt: FieldValue.serverTimestamp() } : {}),
+        ...(derivedStatus === "completed" ? { completedAt: FieldValue.serverTimestamp() } : {}),
+      });
+    } catch (error) {
+      console.error(
+        `onPieceStatusChange error for shipment ${event.params.shipmentId}, piece ${event.params.pieceId}:`,
+        error,
+      );
+    }
   },
 );
 
 function deriveShipmentStatus(pieceStatuses: string[]): string {
-  if (pieceStatuses.every((s) => s === "picked_up")) return "picked_up";
-  if (pieceStatuses.every((s) => s === "delivered" || s === "picked_up")) return "delivered";
-  if (pieceStatuses.some((s) => s === "delivered" || s === "picked_up"))
+  if (pieceStatuses.every((s) => s === "completed")) return "completed";
+  if (pieceStatuses.every((s) => s === "delivered" || s === "completed")) return "delivered";
+  if (pieceStatuses.some((s) => s === "delivered" || s === "completed"))
     return "partially_delivered";
   if (pieceStatuses.some((s) => s === "in_transit")) return "in_transit";
   return "created";

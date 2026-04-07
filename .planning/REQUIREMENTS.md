@@ -32,7 +32,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **SCAN-01**: Driver can scan QR code via RF scanner (keyboard wedge input)
 - [x] **SCAN-02**: Driver can scan QR code via phone camera as fallback
-- [x] **SCAN-03**: Each piece follows four-stage lifecycle: Created → In Transit → Delivered → Picked Up
+- [x] **SCAN-03**: Each piece follows four-stage lifecycle: Created → In Transit → Delivered → Completed
 - [x] **SCAN-04**: Each piece is tracked individually within multi-piece shipments
 - [x] **SCAN-05**: Shipment status is derived from piece statuses (e.g., "Partially Delivered 3/5")
 - [x] **SCAN-06**: Every scan records who scanned, what piece was scanned, and timestamp

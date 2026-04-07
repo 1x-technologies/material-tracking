@@ -22,7 +22,7 @@ Searchable shipment history page with filters (date range, sender, receiver, sta
 
 ### Timeline view (HIST-03)
 
-- **D-05:** **Visual timeline** on shipment detail page — replaces/enhances the basic `PieceEventsList` from Phase 5. Vertical timeline with connected dots, color-coded by action type (created=neutral, in_transit=blue, delivered=green, picked_up=purple, cancelled=red).
+- **D-05:** **Visual timeline** on shipment detail page — replaces/enhances the basic `PieceEventsList` from Phase 5. Vertical timeline with connected dots, color-coded by action type (created=neutral, in_transit=blue, delivered=green, completed=purple, cancelled=red).
 - **D-06:** Timeline includes **all event types**: creation, each scan event (with piece number, who, when), edits (if tracked), cancellation. Events sorted chronologically.
 - **D-07:** Each timeline entry shows: **action icon**, **timestamp** (relative + absolute), **user name**, **piece number** (for scan events), and optional **signature/photo indicators**.
 

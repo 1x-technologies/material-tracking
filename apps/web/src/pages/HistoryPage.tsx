@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import { SearchSm, FilterFunnel01, PackageSearch } from "@untitledui/icons";
 import type { ShipmentStatus } from "@material-tracking/shared";
 import {
   ShipmentTable,
@@ -11,14 +12,18 @@ import type { ShipmentWithId } from "../hooks/useShipmentsSubscription";
 import type { ExceptionType } from "../utils/exceptions";
 import { Spinner } from "../components/ui/Spinner";
 import { trpc } from "../trpc";
+import { Input } from "@/components/base/input/input";
+import { NativeSelect } from "@/components/base/select/select-native";
+import { Button } from "@/components/base/buttons/button";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
 
-const ALL_STATUSES: { value: ShipmentStatus | ""; label: string }[] = [
+const ALL_STATUSES: { value: string; label: string }[] = [
   { value: "", label: "All Statuses" },
   { value: "created", label: "Created" },
   { value: "in_transit", label: "In Transit" },
   { value: "partially_delivered", label: "Partially Delivered" },
   { value: "delivered", label: "Delivered" },
-  { value: "picked_up", label: "Picked Up" },
+  { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
 ];
 
@@ -183,20 +188,26 @@ export function HistoryPage() {
   };
 
   return (
-    <div className="py-6">
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold text-neutral-900">History</h1>
-        <p className="text-sm text-neutral-500 mt-1">
+    <div className="py-6 space-y-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-display-xs font-semibold text-primary">History</h1>
+        <p className="text-sm text-tertiary mt-1">
           Search and browse all shipments
         </p>
       </div>
 
-      {/* Filter bar */}
-      <div className="rounded-lg border border-neutral-200 bg-white p-4 mb-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {/* Filter Panel */}
+      <div className="rounded-xl border border-secondary bg-primary p-6 shadow-xs">
+        <div className="flex items-center gap-2 mb-5">
+          <FilterFunnel01 className="size-4 text-quaternary" />
+          <h2 className="text-sm font-semibold text-secondary">Filters</h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {/* Date From */}
           <div>
-            <label htmlFor="history-date-from" className="block text-xs font-medium text-neutral-600 mb-1">
+            <label htmlFor="history-date-from" className="block text-sm font-medium text-secondary mb-1.5">
               Date From
             </label>
             <input
@@ -204,13 +215,13 @@ export function HistoryPage() {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
+              className="w-full rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary shadow-xs ring-1 ring-primary ring-inset outline-hidden transition duration-100 ease-linear focus-visible:ring-2 focus-visible:ring-brand"
             />
           </div>
 
           {/* Date To */}
           <div>
-            <label htmlFor="history-date-to" className="block text-xs font-medium text-neutral-600 mb-1">
+            <label htmlFor="history-date-to" className="block text-sm font-medium text-secondary mb-1.5">
               Date To
             </label>
             <input
@@ -218,91 +229,68 @@ export function HistoryPage() {
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
+              className="w-full rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary shadow-xs ring-1 ring-primary ring-inset outline-hidden transition duration-100 ease-linear focus-visible:ring-2 focus-visible:ring-brand"
             />
           </div>
 
           {/* Status */}
-          <div>
-            <label htmlFor="history-status" className="block text-xs font-medium text-neutral-600 mb-1">
-              Status
-            </label>
-            <select
-              id="history-status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as ShipmentStatus | "")}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none bg-white"
-            >
-              {ALL_STATUSES.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <NativeSelect
+            label="Status"
+            size="sm"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as ShipmentStatus | "")}
+            options={ALL_STATUSES}
+          />
 
           {/* Sender */}
-          <div>
-            <label htmlFor="history-sender" className="block text-xs font-medium text-neutral-600 mb-1">
-              Sender
-            </label>
-            <input
-              id="history-sender"
-              type="text"
-              value={senderFilter}
-              onChange={(e) => setSenderFilter(e.target.value)}
-              placeholder="Name or email"
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
-          </div>
+          <Input
+            label="Sender"
+            size="sm"
+            placeholder="Name or email"
+            icon={SearchSm}
+            value={senderFilter}
+            onChange={(v) => setSenderFilter(v)}
+          />
 
           {/* Receiver */}
-          <div>
-            <label htmlFor="history-receiver" className="block text-xs font-medium text-neutral-600 mb-1">
-              Receiver
-            </label>
-            <input
-              id="history-receiver"
-              type="text"
-              value={receiverFilter}
-              onChange={(e) => setReceiverFilter(e.target.value)}
-              placeholder="Name, email, or company"
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
-          </div>
+          <Input
+            label="Receiver"
+            size="sm"
+            placeholder="Name, email, or company"
+            icon={SearchSm}
+            value={receiverFilter}
+            onChange={(v) => setReceiverFilter(v)}
+          />
 
           {/* Keyword */}
-          <div>
-            <label htmlFor="history-keyword" className="block text-xs font-medium text-neutral-600 mb-1">
-              Description Keyword
-            </label>
-            <input
-              id="history-keyword"
-              type="text"
-              value={keywordFilter}
-              onChange={(e) => setKeywordFilter(e.target.value)}
-              placeholder="Search description"
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
-          </div>
+          <Input
+            label="Description Keyword"
+            size="sm"
+            placeholder="Search description"
+            icon={SearchSm}
+            value={keywordFilter}
+            onChange={(v) => setKeywordFilter(v)}
+          />
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-2 mt-3">
-          <button
-            type="button"
+        <div className="flex gap-3 mt-5 pt-4 border-t border-secondary">
+          <Button
+            size="md"
+            color="primary"
             onClick={handleApplyFilters}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-700 transition-colors"
+            className="min-h-[44px]"
           >
             Apply Filters
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            size="md"
+            color="secondary"
             onClick={handleClearFilters}
-            className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors"
+            className="min-h-[44px]"
           >
             Clear
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -312,40 +300,55 @@ export function HistoryPage() {
           <Spinner />
         </div>
       ) : error ? (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl bg-utility-red-50 border border-utility-red-200 px-4 py-3 text-sm text-utility-red-700">
           <strong>Error:</strong> {error.message}
         </div>
       ) : (
-        <>
+        <div className="space-y-4">
           {/* Results count */}
-          <p className="text-xs text-neutral-400 mb-2">
+          <p className="text-xs text-quaternary">
             {sortedItems.length} result{sortedItems.length !== 1 ? "s" : ""}
             {allItems.length !== sortedItems.length && ` (${allItems.length} loaded, ${sortedItems.length} matching filters)`}
           </p>
 
-          <ShipmentTable
-            shipments={sortedItems}
-            exceptionsMap={emptyExceptionsMap}
-            onRowClick={handleRowClick}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            onSort={handleSort}
-          />
+          {sortedItems.length === 0 && !isLoading ? (
+            <EmptyState className="py-16">
+              <EmptyState.Header pattern="none">
+                <EmptyState.FeaturedIcon icon={PackageSearch} color="gray" theme="modern" />
+              </EmptyState.Header>
+              <EmptyState.Content>
+                <EmptyState.Title>No results found</EmptyState.Title>
+                <EmptyState.Description>
+                  Try adjusting your filters or search criteria to find what you are looking for.
+                </EmptyState.Description>
+              </EmptyState.Content>
+            </EmptyState>
+          ) : (
+            <ShipmentTable
+              shipments={sortedItems}
+              exceptionsMap={emptyExceptionsMap}
+              onRowClick={handleRowClick}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+          )}
 
           {/* Load More button -- visible when more pages available */}
           {hasNextPage && (
-            <div className="flex justify-center py-6">
-              <button
-                type="button"
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-                className="rounded-lg border border-neutral-300 bg-white px-6 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isFetchingNextPage ? "Loading..." : "Load More"}
-              </button>
-            </div>
+            <Button
+              size="md"
+              color="secondary"
+              className="w-full"
+              onClick={() => fetchNextPage()}
+              isDisabled={isFetchingNextPage}
+              isLoading={isFetchingNextPage}
+              showTextWhileLoading
+            >
+              {isFetchingNextPage ? "Loading..." : "Load More"}
+            </Button>
           )}
-        </>
+        </div>
       )}
     </div>
   );

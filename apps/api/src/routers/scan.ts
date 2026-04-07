@@ -45,13 +45,12 @@ export const scanRouter = router({
     }),
 
   requestSignatureLink: protectedProcedure
-    .input(z.object({ shipmentId: z.string().min(1), pieceId: z.string().min(1) }))
+    .input(z.object({ shipmentId: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const token = crypto.randomBytes(32).toString("hex");
 
       await db.collection("signatureRequests").doc(token).set({
         shipmentId: input.shipmentId,
-        pieceId: input.pieceId,
         createdBy: ctx.user.uid,
         createdAt: FieldValue.serverTimestamp(),
         expiresAt: new Date(Date.now() + SIGNATURE_TOKEN_EXPIRY_MS),
@@ -106,40 +105,63 @@ export const scanRouter = router({
   submitSignatureByToken: publicProcedure
     .input(z.object({ token: z.string().min(1), signatureData: z.string().min(1) }))
     .mutation(async ({ input }) => {
-      const reqDoc = await db.collection("signatureRequests").doc(input.token).get();
-      if (!reqDoc.exists) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Invalid signature link" });
-      }
-
-      const data = reqDoc.data()!;
-      if (data.consumedAt !== null) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "This signature link has already been used" });
-      }
-
-      const expiresAt = data.expiresAt?.toDate?.() ?? new Date(data.expiresAt);
-      if (expiresAt < new Date()) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "This signature link has expired" });
-      }
-
-      const { shipmentId, pieceId } = data;
-
+      // Validate signature data before entering the transaction
       const base64Match = input.signatureData.match(/^data:image\/png;base64,(.+)$/);
       const base64 = base64Match ? base64Match[1] : input.signatureData;
       const buffer = Buffer.from(base64, "base64");
 
-      const filePath = `signatures/${shipmentId}/${pieceId}/${Date.now()}.png`;
-      const file = storage.bucket().file(filePath);
-      await file.save(buffer, { contentType: "image/png", public: false });
+      // Size limit: reject if buffer > 500KB
+      const MAX_SIGNATURE_SIZE = 500 * 1024;
+      if (buffer.length > MAX_SIGNATURE_SIZE) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Signature image exceeds 500KB limit" });
+      }
 
-      const [signedUrl] = await file.getSignedUrl({ action: "read", expires: "03-01-2099" });
+      // PNG header validation: first 4 bytes must be [0x89, 0x50, 0x4E, 0x47]
+      const PNG_HEADER = [0x89, 0x50, 0x4e, 0x47];
+      if (
+        buffer.length < 4 ||
+        buffer[0] !== PNG_HEADER[0] ||
+        buffer[1] !== PNG_HEADER[1] ||
+        buffer[2] !== PNG_HEADER[2] ||
+        buffer[3] !== PNG_HEADER[3]
+      ) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Signature must be a valid PNG image" });
+      }
 
-      await db.doc(`shipments/${shipmentId}/pieces/${pieceId}`).update({
-        deliverySignatureUrl: signedUrl,
-        updatedAt: FieldValue.serverTimestamp(),
+      // Use a transaction for atomic consumedAt check + update (TOCTOU fix)
+      const { shipmentId } = await db.runTransaction(async (tx) => {
+        const reqRef = db.collection("signatureRequests").doc(input.token);
+        const reqDoc = await tx.get(reqRef);
+
+        if (!reqDoc.exists) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Invalid signature link" });
+        }
+
+        const data = reqDoc.data()!;
+        if (data.consumedAt !== null) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "This signature link has already been used" });
+        }
+
+        const expiresAt = data.expiresAt?.toDate?.() ?? new Date(data.expiresAt);
+        if (expiresAt < new Date()) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "This signature link has expired" });
+        }
+
+        // Mark as consumed within the transaction
+        tx.update(reqRef, { consumedAt: FieldValue.serverTimestamp() });
+
+        return { shipmentId: data.shipmentId as string };
       });
 
-      await db.collection("signatureRequests").doc(input.token).update({
-        consumedAt: FieldValue.serverTimestamp(),
+      const filePath = `signatures/${shipmentId}/${Date.now()}.png`;
+      const file = storage.bucket().file(filePath);
+      await file.save(buffer, { contentType: "image/png" });
+      await file.makePublic();
+      const publicUrl = `https://storage.googleapis.com/${storage.bucket().name}/${filePath}`;
+
+      await db.doc(`shipments/${shipmentId}`).update({
+        signatureUrl: publicUrl,
+        updatedAt: FieldValue.serverTimestamp(),
       });
 
       // --- Signature-to-Complete: transition all pieces to completed (D-11) ---

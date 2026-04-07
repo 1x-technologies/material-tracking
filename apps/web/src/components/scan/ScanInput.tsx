@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Input } from "@/components/base/input/input";
+import { QrCode01 } from "@untitledui/icons";
 
 interface ScanInputProps {
   onScan: (qrCode: string) => void;
@@ -14,7 +16,7 @@ export function ScanInput({ onScan, disabled, error }: ScanInputProps) {
     inputRef.current?.focus();
   }, []);
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       e.preventDefault();
       const trimmed = buffer.trim();
@@ -27,22 +29,19 @@ export function ScanInput({ onScan, disabled, error }: ScanInputProps) {
   }
 
   return (
-    <div>
-      <input
+    <div onKeyDown={handleKeyDown}>
+      <Input
         ref={inputRef}
-        type="text"
         value={buffer}
-        onChange={(e) => setBuffer(e.target.value)}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-        placeholder="Scan QR code or type manually…"
-        className={[
-          "text-lg px-4 py-3 w-full rounded-lg border border-neutral-300",
-          "focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500",
-          disabled ? "opacity-50 cursor-not-allowed bg-neutral-50" : "bg-white",
-        ].join(" ")}
+        onChange={(v) => setBuffer(v)}
+        isDisabled={disabled}
+        placeholder="Scan QR code or type manually..."
+        icon={QrCode01}
+        size="lg"
+        isInvalid={!!error}
+        hint={error || undefined}
+        className="text-base"
       />
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );
 }

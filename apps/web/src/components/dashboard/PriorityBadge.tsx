@@ -1,9 +1,11 @@
 import type { Priority } from "@material-tracking/shared";
+import { Badge } from "@/components/base/badges/badges";
+import type { BadgeColors } from "@/components/base/badges/badge-types";
 
-const PRIORITY_COLORS: Record<Priority, string> = {
-  urgent: "bg-red-100 text-red-700",
-  standard: "bg-neutral-100 text-neutral-600",
-  low: "bg-slate-100 text-slate-600",
+const PRIORITY_BADGE_COLOR: Record<Priority, BadgeColors> = {
+  urgent: "error",
+  standard: "gray",
+  low: "blue",
 };
 
 const PRIORITY_LABELS: Record<Priority, string> = {
@@ -18,10 +20,12 @@ interface PriorityBadgeProps {
 
 export function PriorityBadge({ priority }: PriorityBadgeProps) {
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${PRIORITY_COLORS[priority]}`}
+    <Badge
+      type="pill-color"
+      size="sm"
+      color={PRIORITY_BADGE_COLOR[priority]}
     >
       {PRIORITY_LABELS[priority]}
-    </span>
+    </Badge>
   );
 }

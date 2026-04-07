@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect } from "react";
+import { CloseButton } from "@/components/base/buttons/close-button";
 
 interface SidePanelProps {
   open: boolean;
@@ -18,12 +19,22 @@ export function SidePanel({ open, onClose, title, subtitle, children }: SidePane
     return () => document.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
+  // Prevent body scroll when panel is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <>
-      {/* Backdrop for mobile (< lg) */}
+      {/* Overlay backdrop */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/20 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/30 transition-opacity duration-200"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -33,30 +44,27 @@ export function SidePanel({ open, onClose, title, subtitle, children }: SidePane
       <div
         role="dialog"
         aria-label={title}
-        className={`fixed top-0 right-0 z-50 h-full w-full lg:w-[400px] bg-white border-l border-neutral-200 shadow-lg transition-transform duration-200 ease-out ${
+        className={`fixed top-0 right-0 z-50 flex h-full w-full flex-col border-l border-secondary bg-primary shadow-xl transition-transform duration-200 ease-out lg:w-[400px] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex items-start justify-between p-4 border-b border-neutral-200">
+        <div className="flex items-start justify-between gap-4 border-b border-secondary px-6 py-5">
           <div className="min-w-0 flex-1">
-            <h2 className="text-lg font-semibold text-neutral-900 truncate">{title}</h2>
+            <h2 className="truncate text-lg font-semibold text-primary">{title}</h2>
             {subtitle && (
-              <p className="text-sm text-neutral-500 truncate mt-0.5">{subtitle}</p>
+              <p className="mt-0.5 truncate text-sm text-tertiary">{subtitle}</p>
             )}
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close panel"
-            className="flex items-center justify-center size-11 rounded-md text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50 transition-colors flex-shrink-0"
-          >
-            <span className="text-xl" aria-hidden="true">X</span>
-          </button>
+          <CloseButton
+            onPress={onClose}
+            size="sm"
+            label="Close panel"
+          />
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 h-[calc(100%-73px)]">
+        <div className="flex-1 overflow-y-auto px-6 py-5">
           {children}
         </div>
       </div>

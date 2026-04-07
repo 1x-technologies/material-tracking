@@ -70,7 +70,7 @@ The highest-risk integration is **Firebase Storage security rules**: current rul
 ## Project Constraints (from .cursor/rules/)
 
 - **Stack:** React 19 + Vite 8 + Tailwind; Firestore nested `pieces` under `shipments`; Firebase Auth (Google Workspace SSO); Cloud Functions v2 + Cloud Run; Firebase Storage; three roles (Admin, Driver, Staff).
-- **Data:** Denormalized piece fields; status lifecycle Created → In Transit → Delivered → Picked Up.
+- **Data:** Denormalized piece fields; status lifecycle Created → In Transit → Delivered → Completed.
 - **Planning:** Decisions live in `.planning/PROJECT.md`, requirements in `.planning/REQUIREMENTS.md`.
 
 ## Standard Stack

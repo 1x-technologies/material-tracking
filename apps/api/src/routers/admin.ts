@@ -6,6 +6,7 @@ import {
   updateSettingsSchema,
   updateUserSchema,
 } from "@material-tracking/shared";
+import { TRPCError } from "@trpc/server";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { db } from "../lib/firebase";
 import { adminProcedure } from "../middleware/auth";
@@ -21,12 +22,12 @@ function toISO(val: unknown): string | null {
   return ts.toDate?.()?.toISOString() ?? null;
 }
 
-function writeAuditLog(entry: Record<string, unknown>): void {
-  db.collection("admin_audit_log")
-    .add(entry)
-    .catch((err: unknown) => {
-      console.error("[admin] audit log write failed:", err);
-    });
+async function writeAuditLog(entry: Record<string, unknown>): Promise<void> {
+  try {
+    await db.collection("admin_audit_log").add(entry);
+  } catch (err: unknown) {
+    console.error("[admin] audit log write failed:", err);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -76,12 +77,53 @@ export const adminRouter = router({
     const beforeSnap = await userRef.get();
     const beforeData = beforeSnap.exists ? beforeSnap.data() : {};
 
+    const isSelf = input.uid === ctx.user.uid;
+    const isRemovingOwnAdmin =
+      isSelf && input.patch.role !== undefined && input.patch.role !== "admin";
+    const isDeactivatingSelf = isSelf && input.patch.active === false;
+
+    // Prevent admins from locking themselves out
+    if (isRemovingOwnAdmin || isDeactivatingSelf) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "You cannot remove your own admin role or deactivate yourself",
+      });
+    }
+
+    // When demoting any admin, ensure at least one active admin remains
+    const isRemovingAdminRole =
+      beforeData?.role === "admin" &&
+      input.patch.role !== undefined &&
+      input.patch.role !== "admin";
+    const isDeactivatingAdmin =
+      beforeData?.role === "admin" && input.patch.active === false;
+
+    if (isRemovingAdminRole || isDeactivatingAdmin) {
+      const adminsSnap = await db
+        .collection("users")
+        .where("role", "==", "admin")
+        .where("active", "!=", false)
+        .get();
+
+      // Count active admins (excluding the target user who is being changed)
+      const activeAdminCount = adminsSnap.docs.filter(
+        (doc) => doc.id !== input.uid,
+      ).length;
+
+      if (activeAdminCount < 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot remove the last active admin. Promote another user to admin first.",
+        });
+      }
+    }
+
     await userRef.update({
       ...input.patch,
       updatedAt: FieldValue.serverTimestamp(),
     });
 
-    writeAuditLog({
+    await writeAuditLog({
       adminUid: ctx.user.uid,
       adminName: ctx.user.name ?? ctx.user.email ?? "",
       action: "update_user",
@@ -107,7 +149,7 @@ export const adminRouter = router({
           updatedAt: FieldValue.serverTimestamp(),
         });
 
-        writeAuditLog({
+        await writeAuditLog({
           adminUid: ctx.user.uid,
           adminName: ctx.user.name ?? ctx.user.email ?? "",
           action: "bulk_assign_role",
@@ -157,7 +199,7 @@ export const adminRouter = router({
       createdAt: FieldValue.serverTimestamp(),
     });
 
-    writeAuditLog({
+    await writeAuditLog({
       adminUid: ctx.user.uid,
       adminName: ctx.user.name ?? ctx.user.email ?? "",
       action: "create_location",
@@ -180,7 +222,7 @@ export const adminRouter = router({
       updatedAt: FieldValue.serverTimestamp(),
     });
 
-    writeAuditLog({
+    await writeAuditLog({
       adminUid: ctx.user.uid,
       adminName: ctx.user.name ?? ctx.user.email ?? "",
       action: "update_location",
@@ -210,7 +252,7 @@ export const adminRouter = router({
 
     await settingsRef.set(input, { merge: true });
 
-    writeAuditLog({
+    await writeAuditLog({
       adminUid: ctx.user.uid,
       adminName: ctx.user.name ?? ctx.user.email ?? "",
       action: "update_settings",

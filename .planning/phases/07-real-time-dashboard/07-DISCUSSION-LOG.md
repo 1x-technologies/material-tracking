@@ -14,7 +14,7 @@
 User skipped the gray area selection. Claude applied recommended defaults:
 
 - **D-01:** Table-based status board (standard for logistics dashboards)
-- **D-02:** Status filter tabs (All, In Transit, Delivered, Picked Up, Exceptions)
+- **D-02:** Status filter tabs (All, In Transit, Delivered, Completed, Exceptions)
 - **D-03:** Click row to navigate to detail page
 - **D-04:** Firestore onSnapshot for real-time (per PROJECT.md)
 - **D-05:** 30-day default scope with "show older" option

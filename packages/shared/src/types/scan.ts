@@ -1,8 +1,8 @@
-import type { ScanAction } from "../enums";
+import type { PieceStatus, ScanAction } from "../enums";
 
 export interface ScanInput {
   qrCode: string;
-  action: ScanAction;
+  action?: ScanAction;
   signatureUrl?: string;
   photoUrls?: string[];
 }
@@ -10,7 +10,11 @@ export interface ScanInput {
 export interface ScanResult {
   pieceId: string;
   shipmentId: string;
-  newStatus: string;
+  newStatus: PieceStatus;
   shipmentNumber: string;
   pieceNumber: number;
+  origin: string | null;
+  destination: string | null;
+  description: string | null;
+  totalPieces: number;
 }

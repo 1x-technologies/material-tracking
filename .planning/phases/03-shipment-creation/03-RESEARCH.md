@@ -32,7 +32,7 @@
 ## Edit / cancel rules (D-07–D-09, SHIP-04/05)
 
 - **Update shipment:** Allow only when `shipment.status === "created"` (no scans in Phase 3; forward-compatible comment for “no piece left `created`” later).
-- **Cancel:** Set `status` to `"cancelled"`; reject if already `cancelled` or `picked_up`. Until scanning exists, also require `status === "created"` for simplicity **or** document one rule: cancel allowed if **no piece** has status other than `created` — choose **created-only** for minimal scope in Phase 3 API (executor can add piece-level check if pieces always exist).
+- **Cancel:** Set `status` to `"cancelled"`; reject if already `cancelled` or `completed`. Until scanning exists, also require `status === "created"` for simplicity **or** document one rule: cancel allowed if **no piece** has status other than `created` — choose **created-only** for minimal scope in Phase 3 API (executor can add piece-level check if pieces always exist).
 
 ## Priority visuals (SHIP-03)
 

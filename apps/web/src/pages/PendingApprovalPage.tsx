@@ -1,28 +1,32 @@
+import { Hourglass01 } from "@untitledui/icons";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
+import { Button } from "@/components/base/buttons/button";
 import { useAuthContext } from "../context/AuthContext";
 
 export function PendingApprovalPage() {
   const { signOutUser } = useAuthContext();
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-md p-6 text-center">
-        <span className="text-5xl text-neutral-400 mb-4 block" aria-hidden="true">
-          {"\u23F3"}
-        </span>
-        <h1 className="text-lg font-semibold text-neutral-900">
-          Account Pending Approval
-        </h1>
-        <p className="text-sm text-neutral-600 max-w-sm text-center mt-2">
-          Your account is pending approval. An administrator will assign your role shortly.
-        </p>
-        <button
-          type="button"
-          onClick={signOutUser}
-          className="mt-6 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
-        >
-          Sign Out
-        </button>
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-primary px-4">
+      <EmptyState size="lg">
+        <EmptyState.Header>
+          <EmptyState.FeaturedIcon icon={Hourglass01} color="warning" theme="light" />
+        </EmptyState.Header>
+
+        <EmptyState.Content>
+          <EmptyState.Title>Account Pending Approval</EmptyState.Title>
+          <EmptyState.Description>
+            Your account has been created but is awaiting administrator approval.
+            You will receive access once an admin assigns your role.
+          </EmptyState.Description>
+        </EmptyState.Content>
+
+        <EmptyState.Footer>
+          <Button size="md" color="secondary" onClick={signOutUser}>
+            Sign Out
+          </Button>
+        </EmptyState.Footer>
+      </EmptyState>
     </div>
   );
 }

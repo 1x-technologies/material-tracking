@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const pieceEventSchema = z.object({
-  action: z.enum(["created", "in_transit", "delivered", "picked_up"]),
+  action: z.enum(["created", "in_transit", "delivered", "completed"]),
   timestamp: z.date(),
   userId: z.string(),
   userName: z.string(),

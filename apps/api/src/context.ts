@@ -16,12 +16,25 @@ export interface Context {
   user: AuthUser | null;
 }
 
+// Server-side email domain validation.  Only users whose email matches the
+// allowed domain can access the API.  Defaults to "1x.tech" so that even if
+// the env var is missing, access is restricted to the correct org.
+const ALLOWED_EMAIL_DOMAIN = process.env.ALLOWED_EMAIL_DOMAIN || "1x.tech";
+
 export async function createContext({ req }: CreateExpressContextOptions): Promise<Context> {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (!token) return { user: null };
 
   try {
     const decoded = await auth.verifyIdToken(token);
+
+    // Reject users whose email is not in the allowed domain
+    if (!decoded.email || !decoded.email.endsWith(`@${ALLOWED_EMAIL_DOMAIN}`)) {
+      console.warn(
+        `[auth] Rejected login from unauthorized domain: ${decoded.email ?? "(no email)"}`,
+      );
+      return { user: null };
+    }
     const userRef = db.collection("users").doc(decoded.uid);
     let snap = await userRef.get();
 

@@ -25,7 +25,7 @@ const DEFAULT_THRESHOLDS: ExceptionThresholds = {
   agedThresholdHours: 24,
 };
 
-const RESOLVED_STATUSES: ShipmentStatus[] = ["delivered", "picked_up", "cancelled"];
+const RESOLVED_STATUSES: ShipmentStatus[] = ["delivered", "completed", "cancelled"];
 
 function toMillis(ts: { toDate: () => Date }): number {
   return ts.toDate().getTime();

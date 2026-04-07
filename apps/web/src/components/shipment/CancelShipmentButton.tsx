@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { Trash01 } from "@untitledui/icons";
+import { Button } from "@/components/base/buttons/button";
 import { trpc } from "../../trpc";
 
 interface CancelShipmentButtonProps {
@@ -35,21 +37,20 @@ export function CancelShipmentButton({ shipmentId }: CancelShipmentButtonProps) 
   };
 
   return (
-    <button
-      type="button"
+    <Button
+      color={armed ? "primary-destructive" : "secondary-destructive"}
+      size="sm"
+      iconLeading={Trash01}
       onClick={handleClick}
-      disabled={cancelMutation.isPending}
-      className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-        armed
-          ? "bg-red-600 text-white hover:bg-red-700"
-          : "border border-red-300 text-red-600 hover:bg-red-50"
-      } disabled:opacity-50 disabled:cursor-not-allowed`}
+      isDisabled={cancelMutation.isPending}
+      isLoading={cancelMutation.isPending}
+      showTextWhileLoading
     >
       {cancelMutation.isPending
-        ? "Cancelling…"
+        ? "Cancelling..."
         : armed
           ? "Click again to cancel"
           : "Cancel Shipment"}
-    </button>
+    </Button>
   );
 }

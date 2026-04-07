@@ -1,5 +1,8 @@
 import { useRef } from "react";
 import SignatureCanvas from "react-signature-canvas";
+import { Button } from "@/components/base/buttons/button";
+import { CloseButton } from "@/components/base/buttons/close-button";
+import { Edit01 } from "@untitledui/icons";
 
 interface SignatureDialogProps {
   open: boolean;
@@ -18,13 +21,13 @@ export function SignatureDialog({ open, onConfirm, onSkip, onClose, receiverName
     signatureRef.current?.clear();
   }
 
-  async function handleConfirm() {
+  function handleConfirm() {
     if (!signatureRef.current || signatureRef.current.isEmpty()) return;
 
-    const dataUrl = signatureRef.current.toDataURL("image/png");
-    const res = await fetch(dataUrl);
-    const blob = await res.blob();
-    onConfirm(blob);
+    const canvas = signatureRef.current.getCanvas();
+    canvas.toBlob((blob) => {
+      if (blob) onConfirm(blob);
+    }, "image/png");
   }
 
   function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -46,15 +49,18 @@ export function SignatureDialog({ open, onConfirm, onSkip, onClose, receiverName
       aria-modal="true"
       aria-label="Signature capture"
     >
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-neutral-900">
-          {receiverName ? `Signature for ${receiverName}` : "Capture Signature"}
-        </h3>
-        <p className="text-sm text-neutral-500">
+      <div className="bg-primary rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-primary">
+            {receiverName ? `Signature for ${receiverName}` : "Capture Signature"}
+          </h3>
+          <CloseButton size="sm" label="Close dialog" onPress={onClose} />
+        </div>
+        <p className="text-sm text-tertiary">
           Sign below to confirm delivery. You can skip if a signature is not available.
         </p>
 
-        <div className="border border-neutral-300 rounded-lg overflow-hidden">
+        <div className="border border-primary rounded-lg overflow-hidden">
           <SignatureCanvas
             ref={signatureRef}
             penColor="black"
@@ -66,35 +72,31 @@ export function SignatureDialog({ open, onConfirm, onSkip, onClose, receiverName
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <button
-            type="button"
+          <Button
+            size="sm"
+            color="link-gray"
+            iconLeading={Edit01}
             onClick={handleClear}
-            className="text-sm font-medium text-neutral-600 hover:text-neutral-800 transition-colors"
           >
             Clear
-          </button>
+          </Button>
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
+            <Button
+              size="sm"
+              color="secondary"
               onClick={onSkip}
-              className="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors"
             >
               Skip
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              size="sm"
+              color="primary"
+              isDisabled={isCanvasEmpty}
               onClick={handleConfirm}
-              disabled={isCanvasEmpty}
-              className={[
-                "px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors",
-                isCanvasEmpty
-                  ? "bg-brand-300 cursor-not-allowed"
-                  : "bg-brand-600 hover:bg-brand-700",
-              ].join(" ")}
             >
               Confirm
-            </button>
+            </Button>
           </div>
         </div>
       </div>

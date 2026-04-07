@@ -1,4 +1,3 @@
-import type { KnownBlock } from "@slack/web-api";
 import { WebClient } from "@slack/web-api";
 import { getSecret } from "./firebase";
 
@@ -37,7 +36,8 @@ export async function lookupSlackUser(
 
 export async function sendSlackDM(
   email: string,
-  message: { text: string; blocks: KnownBlock[] },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  message: { text: string; blocks: any[] },
 ): Promise<void> {
   const userId = await lookupSlackUser(email);
   if (!userId) {

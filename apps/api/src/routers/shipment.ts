@@ -182,41 +182,43 @@ export const shipmentRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const ref = db.doc(`shipments/${input.shipmentId}`);
-      const snap = await ref.get();
+      await db.runTransaction(async (tx) => {
+        const ref = db.doc(`shipments/${input.shipmentId}`);
+        const snap = await tx.get(ref);
 
-      if (!snap.exists) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Shipment not found" });
-      }
-
-      const current = snap.data()!;
-      if (current.status !== "created") {
-        throw new TRPCError({ code: "CONFLICT", message: "SHIPMENT_NOT_EDITABLE" });
-      }
-
-      const { originId, destinationId, ...directFields } = input.patch;
-      const updateData: Record<string, unknown> = {
-        ...directFields,
-        updatedAt: FieldValue.serverTimestamp(),
-      };
-
-      if (originId) {
-        const originSnap = await db.doc(`locations/${originId}`).get();
-        if (!originSnap.exists || originSnap.data()?.active !== true) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "INVALID_LOCATION: origin not found or inactive" });
+        if (!snap.exists) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Shipment not found" });
         }
-        updateData.origin = { locationId: originSnap.id, name: originSnap.data()!.name as string };
-      }
 
-      if (destinationId) {
-        const destSnap = await db.doc(`locations/${destinationId}`).get();
-        if (!destSnap.exists || destSnap.data()?.active !== true) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "INVALID_LOCATION: destination not found or inactive" });
+        const current = snap.data()!;
+        if (current.status !== "created") {
+          throw new TRPCError({ code: "CONFLICT", message: "SHIPMENT_NOT_EDITABLE" });
         }
-        updateData.destination = { locationId: destSnap.id, name: destSnap.data()!.name as string };
-      }
 
-      await ref.update(updateData);
+        const { originId, destinationId, ...directFields } = input.patch;
+        const updateData: Record<string, unknown> = {
+          ...directFields,
+          updatedAt: FieldValue.serverTimestamp(),
+        };
+
+        if (originId) {
+          const originSnap = await tx.get(db.doc(`locations/${originId}`));
+          if (!originSnap.exists || originSnap.data()?.active !== true) {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "INVALID_LOCATION: origin not found or inactive" });
+          }
+          updateData.origin = { locationId: originSnap.id, name: originSnap.data()!.name as string };
+        }
+
+        if (destinationId) {
+          const destSnap = await tx.get(db.doc(`locations/${destinationId}`));
+          if (!destSnap.exists || destSnap.data()?.active !== true) {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "INVALID_LOCATION: destination not found or inactive" });
+          }
+          updateData.destination = { locationId: destSnap.id, name: destSnap.data()!.name as string };
+        }
+
+        tx.update(ref, updateData);
+      });
 
       return { success: true };
     }),

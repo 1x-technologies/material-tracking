@@ -10,7 +10,7 @@ alwaysApply: true
 QR-based shipment tracking system for non-inventory materials between company locations (HA ↔ SC). Replaces manual sticker + drive log process.
 
 ## Tech Stack
-- **Frontend**: React 19 + Vite 8 + Tailwind CSS + shadcn/ui
+- **Frontend**: React 19 + Vite 8 + Tailwind CSS + Untitled UI React components
 - **Database**: Cloud Firestore (nested subcollections: pieces under shipments)
 - **Auth**: Firebase Auth with Google Workspace SSO
 - **Backend**: Cloud Functions v2 (triggers, events, scheduled) + Cloud Run (heavy operations)
@@ -34,4 +34,4 @@ QR-based shipment tracking system for non-inventory materials between company lo
 - Firestore `onSnapshot` for real-time dashboard (no websocket server)
 - Pieces as subcollections under shipments with denormalized fields
 - Three roles: Admin, Driver, Staff
-- Status lifecycle per piece: Created → In Transit → Delivered → Picked Up
+- Status lifecycle per piece: Created → In Transit → Delivered → Completed

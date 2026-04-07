@@ -2,6 +2,7 @@ import { adminRouter } from "./routers/admin";
 import { directoryRouter } from "./routers/directory";
 import { healthRouter } from "./routers/health";
 import { locationsRouter } from "./routers/locations";
+import { printerRouter } from "./routers/printer";
 import { scanRouter } from "./routers/scan";
 import { shipmentRouter } from "./routers/shipment";
 import { userRouter } from "./routers/user";
@@ -12,6 +13,7 @@ export const appRouter = router({
   directory: directoryRouter,
   health: healthRouter,
   locations: locationsRouter,
+  printer: printerRouter,
   scan: scanRouter,
   shipment: shipmentRouter,
   user: userRouter,

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const processScanSchema = z.object({
   qrCode: z.string().min(1, "QR code is required"),
-  action: z.enum(["in_transit", "delivered", "picked_up"]),
+  action: z.enum(["in_transit", "delivered", "completed"]).optional(),
   signatureUrl: z.string().url().optional(),
   photoUrls: z.array(z.string().url()).max(10).optional(),
 });

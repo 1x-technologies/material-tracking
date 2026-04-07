@@ -18,7 +18,7 @@ const shipmentStatusEnum = z.enum([
   "in_transit",
   "partially_delivered",
   "delivered",
-  "picked_up",
+  "completed",
   "cancelled",
 ]);
 

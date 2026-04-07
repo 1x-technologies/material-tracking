@@ -14,9 +14,10 @@ export interface SlackNotificationData {
   detailUrl: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface SlackMessage {
   text: string;
-  blocks: object[];
+  blocks: any[];
 }
 
 function fieldsSection(data: SlackNotificationData): object {

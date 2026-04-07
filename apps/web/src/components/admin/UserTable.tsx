@@ -1,8 +1,14 @@
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { SearchLg, Users01 } from "@untitledui/icons";
 import { Spinner } from "../ui/Spinner";
 import { StatusPill } from "./StatusPill";
 import { UserDetailPanel } from "./UserDetailPanel";
+import { Badge } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { Checkbox } from "@/components/base/checkbox/checkbox";
+import { Input } from "@/components/base/input/input";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { trpc } from "../../trpc";
 
 function formatRelativeDate(dateStr: string | null): string {
@@ -19,6 +25,12 @@ function formatRelativeDate(dateStr: string | null): string {
   if (diffDays < 30) return `${diffDays}d ago`;
   return date.toLocaleDateString();
 }
+
+const roleBadgeColor: Record<string, "brand" | "purple" | "blue"> = {
+  admin: "brand",
+  driver: "purple",
+  staff: "blue",
+};
 
 export function UserTable() {
   const { data: users, isLoading } = trpc.admin.listUsers.useQuery();
@@ -64,6 +76,7 @@ export function UserTable() {
   const allVisibleIds = useMemo(() => new Set(filteredUsers.map((u) => u.uid)), [filteredUsers]);
 
   const allSelected = filteredUsers.length > 0 && filteredUsers.every((u) => selectedIds.has(u.uid));
+  const someSelected = selectedIds.size > 0 && !allSelected;
 
   const toggleSelectAll = () => {
     if (allSelected) {
@@ -104,43 +117,51 @@ export function UserTable() {
 
   if (!users || users.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <span className="text-5xl text-neutral-400 mb-4" aria-hidden="true">
-          {"\uD83D\uDC64"}
-        </span>
-        <p className="text-sm text-neutral-500">
-          No users yet. Users appear here after signing in with Google.
-        </p>
-      </div>
+      <EmptyState className="py-24">
+        <EmptyState.Header pattern="circle">
+          <EmptyState.FeaturedIcon icon={Users01} color="gray" theme="modern" />
+        </EmptyState.Header>
+        <EmptyState.Content>
+          <EmptyState.Title>No users yet</EmptyState.Title>
+          <EmptyState.Description>
+            Users appear here after signing in with Google.
+          </EmptyState.Description>
+        </EmptyState.Content>
+      </EmptyState>
     );
   }
 
   return (
     <div>
       {/* Toolbar */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between gap-4">
         <div className="relative" ref={dropdownRef}>
-          <button
-            type="button"
-            onClick={() => setBulkDropdownOpen((prev) => !prev)}
-            disabled={selectedIds.size === 0}
-            className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
-              selectedIds.size > 0
-                ? "bg-brand-600 text-white hover:bg-brand-700"
-                : "bg-neutral-100 text-neutral-400 cursor-not-allowed"
-            }`}
-          >
-            Assign Role{selectedIds.size > 0 ? ` (${selectedIds.size})` : ""}
-          </button>
+          {selectedIds.size > 0 ? (
+            <Button
+              size="sm"
+              color="primary"
+              onClick={() => setBulkDropdownOpen((prev) => !prev)}
+            >
+              Assign Role ({selectedIds.size})
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              color="secondary"
+              isDisabled
+            >
+              Assign Role
+            </Button>
+          )}
 
           {bulkDropdownOpen && (
-            <div className="absolute top-full left-0 mt-1 z-10 w-40 rounded-md border border-neutral-200 bg-white shadow-lg">
+            <div className="absolute top-full left-0 z-10 mt-1 w-40 rounded-lg border border-secondary bg-primary shadow-lg">
               {(["admin", "driver", "staff"] as const).map((role) => (
                 <button
                   key={role}
                   type="button"
                   onClick={() => handleBulkAssign(role)}
-                  className="block w-full px-4 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 first:rounded-t-md last:rounded-b-md"
+                  className="block w-full px-4 py-2.5 text-left text-sm font-medium text-secondary transition-colors first:rounded-t-lg last:rounded-b-lg hover:bg-primary_hover"
                 >
                   {role.charAt(0).toUpperCase() + role.slice(1)}
                 </button>
@@ -149,45 +170,47 @@ export function UserTable() {
           )}
         </div>
 
-        <input
-          type="text"
-          placeholder="Search users..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-64 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-        />
+        <div className="w-72">
+          <Input
+            size="sm"
+            placeholder="Search users..."
+            icon={SearchLg}
+            value={searchQuery}
+            onChange={(v) => setSearchQuery(v)}
+          />
+        </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-neutral-200">
+      <div className="overflow-x-auto rounded-xl border border-secondary">
         <table className="w-full">
           <thead>
-            <tr className="bg-neutral-50 border-b border-neutral-200">
-              <th className="w-10 px-3 py-3">
-                <input
-                  type="checkbox"
-                  checked={allSelected}
+            <tr className="border-b border-secondary bg-secondary_subtle">
+              <th className="w-12 px-4 py-3">
+                <Checkbox
+                  isSelected={allSelected}
+                  isIndeterminate={someSelected}
                   onChange={toggleSelectAll}
                   aria-label="Select all users"
-                  className="size-4 rounded border-neutral-300"
+                  size="sm"
                 />
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Name
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Email
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Role
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Location
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Status
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-600 uppercase tracking-wider">
+              <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-tertiary">
                 Last Active
               </th>
             </tr>
@@ -207,46 +230,48 @@ export function UserTable() {
                 <tr
                   key={user.uid}
                   onClick={() => handleRowClick(user.uid)}
-                  className={`border-b border-neutral-100 cursor-pointer transition-colors hover:bg-neutral-50 ${
-                    isSelected ? "bg-brand-50" : ""
+                  className={`border-b border-secondary last:border-b-0 cursor-pointer transition-colors hover:bg-primary_hover ${
+                    isSelected ? "bg-brand-primary_alt" : ""
                   }`}
                 >
-                  <td className="px-3 py-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(user.uid)}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        toggleSelect(user.uid);
-                      }}
-                      onClick={(e) => e.stopPropagation()}
+                  <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      isSelected={selectedIds.has(user.uid)}
+                      onChange={() => toggleSelect(user.uid)}
                       aria-label={`Select ${user.displayName}`}
-                      className="size-4 rounded border-neutral-300"
+                      size="sm"
+                      slot={null}
                     />
                   </td>
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center size-8 rounded-full bg-brand-600 text-white text-xs font-semibold flex-shrink-0">
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-solid text-xs font-semibold text-white">
                         {initial}
                       </div>
-                      <span className="text-sm font-semibold text-neutral-900 truncate">
+                      <span className="truncate text-sm font-medium text-primary">
                         {user.displayName}
                       </span>
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-sm text-neutral-600">{user.email}</td>
-                  <td className="px-3 py-3 text-sm">
+                  <td className="hidden md:table-cell px-4 py-3.5 text-sm text-tertiary">{user.email}</td>
+                  <td className="px-4 py-3.5">
                     {roleDisplay ? (
-                      <span className="text-neutral-900">{roleDisplay}</span>
+                      <Badge
+                        size="sm"
+                        type="pill-color"
+                        color={roleBadgeColor[user.role ?? ""] ?? "gray"}
+                      >
+                        {roleDisplay}
+                      </Badge>
                     ) : (
-                      <span className="italic text-neutral-400">Pending</span>
+                      <span className="text-sm italic text-quaternary">Pending</span>
                     )}
                   </td>
-                  <td className="px-3 py-3 text-sm text-neutral-600">{locationName}</td>
-                  <td className="px-3 py-3">
+                  <td className="px-4 py-3.5 text-sm text-tertiary">{locationName}</td>
+                  <td className="px-4 py-3.5">
                     <StatusPill status={pillStatus} />
                   </td>
-                  <td className="px-3 py-3 text-sm text-neutral-600">
+                  <td className="hidden md:table-cell px-4 py-3.5 text-sm text-tertiary">
                     {formatRelativeDate(user.lastLoginAt)}
                   </td>
                 </tr>

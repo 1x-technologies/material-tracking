@@ -55,7 +55,7 @@ completed: 2026-04-01
 - **Files modified:** 4
 
 ## Accomplishments
-- FilterTabs component with accessible tablist, 5 filter tabs (All, In Transit, Delivered, Picked Up, Exceptions), count badges, and red-highlighted exception count
+- FilterTabs component with accessible tablist, 5 filter tabs (All, In Transit, Delivered, Completed, Exceptions), count badges, and red-highlighted exception count
 - ShipmentTable with all 10 columns (shipment#, status, priority, route, pieces, sender, receiver, created, last activity, exceptions), sorting on 4 fields with direction toggle, row click navigation, empty state
 - DashboardPage fully wired with real-time data via useShipmentsSubscription, useMemo-optimized filtering/sorting pipeline, loading spinner, error banner
 - Show Older Shipments button extending the 30-day default window by 30-day increments
@@ -75,7 +75,7 @@ Each task was committed atomically:
 - `apps/web/src/hooks/useShipmentsSubscription.ts` - Added daysBack param for configurable time range
 
 ## Decisions Made
-- Used showCompleted: true on the subscription hook so the dashboard sees all statuses including picked_up; tab filtering handles the visual separation
+- Used showCompleted: true on the subscription hook so the dashboard sees all statuses including completed; tab filtering handles the visual separation
 - Exported sortShipments as a standalone utility from ShipmentTable for DashboardPage to use in useMemo
 - daysBack defaults to 30 with +30 increments — avoids unbounded queries while allowing historical access
 

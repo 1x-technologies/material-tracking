@@ -1,7 +1,11 @@
+import { Button } from "@/components/base/buttons/button";
+import { Zap, Truck01, CheckCircle, CheckDone01 } from "@untitledui/icons";
+
 const actions = [
-  { value: "in_transit", label: "In Transit" },
-  { value: "delivered", label: "Delivered" },
-  { value: "picked_up", label: "Picked Up" },
+  { value: "auto", label: "Auto Detect", icon: Zap },
+  { value: "in_transit", label: "In Transit", icon: Truck01 },
+  { value: "delivered", label: "Delivered", icon: CheckCircle },
+  { value: "completed", label: "Completed", icon: CheckDone01 },
 ] as const;
 
 interface ActionSelectorProps {
@@ -11,29 +15,22 @@ interface ActionSelectorProps {
 
 export function ActionSelector({ value, onChange }: ActionSelectorProps) {
   return (
-    <div className="flex">
-      {actions.map((action, i) => {
+    <div className="grid grid-cols-2 gap-2 sm:flex">
+      {actions.map((action) => {
         const isActive = value === action.value;
-        const isFirst = i === 0;
-        const isLast = i === actions.length - 1;
 
         return (
-          <button
+          <Button
             key={action.value}
             type="button"
+            size="md"
+            color={isActive ? "primary" : "secondary"}
+            iconLeading={action.icon}
             onClick={() => onChange(action.value)}
-            className={[
-              "px-4 py-2 text-sm font-medium border transition-colors",
-              isFirst ? "rounded-l-lg" : "",
-              isLast ? "rounded-r-lg" : "",
-              !isFirst ? "-ml-px" : "",
-              isActive
-                ? "bg-brand-600 text-white border-brand-600 z-10"
-                : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50",
-            ].join(" ")}
+            className="min-h-[44px]"
           >
             {action.label}
-          </button>
+          </Button>
         );
       })}
     </div>

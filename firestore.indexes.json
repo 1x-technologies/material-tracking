@@ -18,37 +18,22 @@
       ]
     },
     {
-      "collectionGroup": "shipments",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "origin.locationId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "shipments",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "destination.locationId", "order": "ASCENDING" },
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
-      ]
-    },
-    {
       "collectionGroup": "pieces",
       "queryScope": "COLLECTION_GROUP",
       "fields": [
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "updatedAt", "order": "DESCENDING" }
       ]
-    },
-    {
-      "collectionGroup": "pieces",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        { "fieldPath": "qrCode", "order": "ASCENDING" }
-      ]
     }
   ],
-  "fieldOverrides": []
+  "fieldOverrides": [
+    {
+      "collectionGroup": "pieces",
+      "fieldPath": "qrCode",
+      "indexes": [
+        { "order": "ASCENDING", "queryScope": "COLLECTION" },
+        { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" }
+      ]
+    }
+  ]
 }

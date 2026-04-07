@@ -36,7 +36,7 @@ After a shipment is created (Phase 3), the system generates a unique QR code for
 
 - **D-11:** "Print Labels" / "Reprint Labels" action available on **both** shipment detail and edit pages.
 - **D-12:** Reprint dialog allows users to **select which pieces** to reprint AND specify **number of copies** per piece (e.g., print 3 copies of piece 2/5 only). No visual "REPRINT" watermark — reprints are identical to originals.
-- **D-13:** Reprint allowed at **any shipment status** (Created, In Transit, Delivered, Picked Up) — labels may be lost/damaged at any stage. Only `Cancelled` shipments may optionally hide the action (Claude's discretion).
+- **D-13:** Reprint allowed at **any shipment status** (Created, In Transit, Delivered, Completed) — labels may be lost/damaged at any stage. Only `Cancelled` shipments may optionally hide the action (Claude's discretion).
 
 ### Claude's Discretion
 

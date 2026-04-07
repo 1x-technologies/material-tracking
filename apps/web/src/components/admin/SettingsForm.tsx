@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "../../trpc";
 import { Spinner } from "../ui/Spinner";
+import { InputNumber } from "@/components/base/input/input-number";
+import { Toggle } from "@/components/base/toggle/toggle";
+import { Button } from "@/components/base/buttons/button";
 
 export function SettingsForm() {
   const { data: settings, isLoading } = trpc.admin.getSettings.useQuery();
@@ -64,137 +67,102 @@ export function SettingsForm() {
   }
 
   return (
-    <div className="max-w-xl space-y-6 py-4">
+    <div className="max-w-2xl space-y-6">
       {/* Threshold card */}
-      <div className="rounded-lg border border-neutral-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-neutral-900">Exception Thresholds</h2>
-        <p className="text-sm text-neutral-500 mt-1">
+      <div className="rounded-xl border border-secondary bg-primary p-6">
+        <h2 className="text-lg font-semibold text-primary">Exception Thresholds</h2>
+        <p className="mt-1 text-sm text-tertiary">
           Configure when shipments are flagged as stalled, overdue, or aged
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-          <div>
-            <label htmlFor="stalled-hours" className="block text-sm font-medium text-neutral-700 mb-1">
-              Stalled (hours)
-            </label>
-            <input
-              id="stalled-hours"
-              type="number"
-              min={1}
-              value={stalledHours}
-              onChange={(e) => setStalledHours(Number(e.target.value))}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
-          </div>
-          <div>
-            <label htmlFor="overdue-hours" className="block text-sm font-medium text-neutral-700 mb-1">
-              Overdue (hours)
-            </label>
-            <input
-              id="overdue-hours"
-              type="number"
-              min={1}
-              value={overdueHours}
-              onChange={(e) => setOverdueHours(Number(e.target.value))}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
-          </div>
-          <div>
-            <label htmlFor="aged-hours" className="block text-sm font-medium text-neutral-700 mb-1">
-              Aged (hours)
-            </label>
-            <input
-              id="aged-hours"
-              type="number"
-              min={1}
-              value={agedHours}
-              onChange={(e) => setAgedHours(Number(e.target.value))}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-            />
-          </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <InputNumber
+            label="Stalled (hours)"
+            size="sm"
+            minValue={1}
+            value={stalledHours}
+            onChange={(v) => setStalledHours(v)}
+            orientation="horizontal"
+          />
+          <InputNumber
+            label="Overdue (hours)"
+            size="sm"
+            minValue={1}
+            value={overdueHours}
+            onChange={(v) => setOverdueHours(v)}
+            orientation="horizontal"
+          />
+          <InputNumber
+            label="Aged (hours)"
+            size="sm"
+            minValue={1}
+            value={agedHours}
+            onChange={(v) => setAgedHours(v)}
+            orientation="horizontal"
+          />
         </div>
       </div>
 
       {/* Notification card */}
-      <div className="rounded-lg border border-neutral-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-neutral-900">Default Notification Preferences</h2>
-        <p className="text-sm text-neutral-500 mt-1">
+      <div className="rounded-xl border border-secondary bg-primary p-6">
+        <h2 className="text-lg font-semibold text-primary">Default Notification Preferences</h2>
+        <p className="mt-1 text-sm text-tertiary">
           Set default email notification preferences for new users
         </p>
 
-        <div className="mt-4 space-y-4">
-          <label className="flex items-center justify-between">
-            <span className="text-sm text-neutral-700">Delivery notifications</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={defaultPrefs.onDelivery}
-              onClick={() => setDefaultPrefs({ ...defaultPrefs, onDelivery: !defaultPrefs.onDelivery })}
-              className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${
-                defaultPrefs.onDelivery ? "bg-brand-600" : "bg-neutral-200"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
-                  defaultPrefs.onDelivery ? "translate-x-5" : "translate-x-1"
-                }`}
-              />
-            </button>
-          </label>
+        <div className="mt-5 space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-secondary">Delivery notifications</p>
+              <p className="text-sm text-tertiary">Notify when packages are delivered</p>
+            </div>
+            <Toggle
+              isSelected={defaultPrefs.onDelivery}
+              onChange={(checked) => setDefaultPrefs({ ...defaultPrefs, onDelivery: checked })}
+              size="sm"
+            />
+          </div>
 
-          <label className="flex items-center justify-between">
-            <span className="text-sm text-neutral-700">Pickup notifications</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={defaultPrefs.onPickup}
-              onClick={() => setDefaultPrefs({ ...defaultPrefs, onPickup: !defaultPrefs.onPickup })}
-              className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${
-                defaultPrefs.onPickup ? "bg-brand-600" : "bg-neutral-200"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
-                  defaultPrefs.onPickup ? "translate-x-5" : "translate-x-1"
-                }`}
-              />
-            </button>
-          </label>
+          <div className="border-t border-secondary" />
 
-          <label className="flex items-center justify-between">
-            <span className="text-sm text-neutral-700">In-transit notifications</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={defaultPrefs.onTransit}
-              onClick={() => setDefaultPrefs({ ...defaultPrefs, onTransit: !defaultPrefs.onTransit })}
-              className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${
-                defaultPrefs.onTransit ? "bg-brand-600" : "bg-neutral-200"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
-                  defaultPrefs.onTransit ? "translate-x-5" : "translate-x-1"
-                }`}
-              />
-            </button>
-          </label>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-secondary">Pickup notifications</p>
+              <p className="text-sm text-tertiary">Notify when packages are picked up</p>
+            </div>
+            <Toggle
+              isSelected={defaultPrefs.onPickup}
+              onChange={(checked) => setDefaultPrefs({ ...defaultPrefs, onPickup: checked })}
+              size="sm"
+            />
+          </div>
+
+          <div className="border-t border-secondary" />
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-secondary">In-transit notifications</p>
+              <p className="text-sm text-tertiary">Notify when packages enter transit</p>
+            </div>
+            <Toggle
+              isSelected={defaultPrefs.onTransit}
+              onChange={(checked) => setDefaultPrefs({ ...defaultPrefs, onTransit: checked })}
+              size="sm"
+            />
+          </div>
         </div>
       </div>
 
       {/* Save button */}
-      <button
-        type="button"
+      <Button
+        size="md"
+        color="primary"
         onClick={handleSave}
-        disabled={!isDirty || updateSettingsMutation.isPending}
-        className={`rounded-md px-6 py-2 text-sm font-semibold transition-colors ${
-          isDirty
-            ? "bg-brand-600 text-white hover:bg-brand-700"
-            : "bg-neutral-100 text-neutral-400"
-        } disabled:bg-neutral-100 disabled:text-neutral-400`}
+        isDisabled={!isDirty || updateSettingsMutation.isPending}
+        isLoading={updateSettingsMutation.isPending}
       >
-        {updateSettingsMutation.isPending ? "Saving..." : "Save Settings"}
-      </button>
+        Save Settings
+      </Button>
     </div>
   );
 }

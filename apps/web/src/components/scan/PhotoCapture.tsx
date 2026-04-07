@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/base/buttons/button";
+import { CloseButton } from "@/components/base/buttons/close-button";
+import { Image01 } from "@untitledui/icons";
 
 interface PhotoCaptureProps {
   onPhotosChange: (files: File[]) => void;
@@ -52,14 +55,13 @@ export function PhotoCapture({ onPhotosChange, disabled }: PhotoCaptureProps) {
           {previews.map((url, i) => (
             <div key={url} className="relative">
               <img src={url} alt={`Photo ${i + 1}`} className="h-16 w-16 rounded object-cover" />
-              <button
-                type="button"
-                onClick={() => handleRemove(i)}
-                disabled={disabled}
-                className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white hover:bg-red-600 transition-colors"
-              >
-                &times;
-              </button>
+              <CloseButton
+                size="xs"
+                label={`Remove photo ${i + 1}`}
+                isDisabled={disabled}
+                onPress={() => handleRemove(i)}
+                className="absolute -top-2 -right-2 !size-5 !p-0 rounded-full bg-red-500 text-white hover:bg-red-600"
+              />
             </div>
           ))}
         </div>
@@ -67,11 +69,19 @@ export function PhotoCapture({ onPhotosChange, disabled }: PhotoCaptureProps) {
 
       <label
         className={[
-          "inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors cursor-pointer",
-          disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-neutral-50",
+          "inline-flex cursor-pointer",
+          disabled ? "pointer-events-none opacity-50" : "",
         ].join(" ")}
       >
-        <span>📸 Add Photo</span>
+        <Button
+          size="sm"
+          color="secondary"
+          iconLeading={Image01}
+          isDisabled={disabled}
+          className="pointer-events-none"
+        >
+          Add Photo
+        </Button>
         <input
           ref={fileInputRef}
           type="file"

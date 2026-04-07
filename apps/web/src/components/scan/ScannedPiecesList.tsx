@@ -1,3 +1,6 @@
+import { Badge } from "@/components/base/badges/badges";
+import type { BadgeColors } from "@/components/base/badges/badge-types";
+
 interface ScannedItem {
   pieceId: string;
   shipmentId: string;
@@ -5,12 +8,16 @@ interface ScannedItem {
   shipmentNumber: string;
   pieceNumber: number;
   scannedAt: Date;
+  origin?: string | null;
+  destination?: string | null;
+  description?: string | null;
+  totalPieces?: number;
 }
 
-const statusStyles: Record<string, string> = {
-  in_transit: "bg-blue-100 text-blue-700",
-  delivered: "bg-green-100 text-green-700",
-  picked_up: "bg-purple-100 text-purple-700",
+const statusBadgeColor: Record<string, BadgeColors> = {
+  in_transit: "blue",
+  delivered: "success",
+  completed: "purple",
 };
 
 function formatTime(date: Date): string {
@@ -27,7 +34,7 @@ interface ScannedPiecesListProps {
 
 export function ScannedPiecesList({ items }: ScannedPiecesListProps) {
   if (items.length === 0) {
-    return <p className="text-sm text-neutral-400 text-center py-4">No pieces scanned yet</p>;
+    return <p className="text-sm text-quaternary text-center py-4">No pieces scanned yet</p>;
   }
 
   return (
@@ -35,19 +42,27 @@ export function ScannedPiecesList({ items }: ScannedPiecesListProps) {
       {items.map((item, i) => (
         <div
           key={`${item.pieceId}-${i}`}
-          className="rounded-lg border border-neutral-200 px-4 py-3 flex items-center justify-between"
+          className="rounded-lg border border-secondary px-4 py-3 flex items-center justify-between"
         >
-          <div>
-            <p className="font-semibold text-neutral-900">{item.shipmentNumber}</p>
-            <p className="text-sm text-neutral-500">Piece {item.pieceNumber}</p>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-primary">{item.shipmentNumber}</p>
+            <p className="text-sm text-tertiary">
+              Piece {item.pieceNumber}{item.totalPieces ? `/${item.totalPieces}` : ""}
+              {item.origin && item.destination ? ` \u2022 ${item.origin} \u2192 ${item.destination}` : ""}
+            </p>
+            {item.description && (
+              <p className="text-xs text-quaternary truncate">{item.description}</p>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <span
-              className={`text-xs font-medium px-2 py-1 rounded-full capitalize ${statusStyles[item.newStatus] ?? "bg-neutral-100 text-neutral-700"}`}
+            <Badge
+              type="pill-color"
+              size="sm"
+              color={statusBadgeColor[item.newStatus] ?? "gray"}
             >
               {formatStatus(item.newStatus)}
-            </span>
-            <span className="text-xs text-neutral-400">{formatTime(item.scannedAt)}</span>
+            </Badge>
+            <span className="text-xs text-quaternary">{formatTime(item.scannedAt)}</span>
           </div>
         </div>
       ))}

@@ -38,9 +38,29 @@ async function ensureProfileViaApi(idToken: string): Promise<void> {
   const apiUrl = import.meta.env.VITE_API_URL
     ? `${import.meta.env.VITE_API_URL}/trpc/user.me`
     : "/api/trpc/user.me";
-  await fetch(apiUrl, {
-    headers: { authorization: `Bearer ${idToken}` },
-  });
+
+  // 10-second timeout prevents the UI from hanging indefinitely when the API
+  // is slow or unreachable (e.g. cold-start, network issues).
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
+  try {
+    const res = await fetch(apiUrl, {
+      headers: { authorization: `Bearer ${idToken}` },
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      console.error(`[ensureProfileViaApi] HTTP ${res.status}: ${res.statusText}`);
+    }
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      console.error("[ensureProfileViaApi] Request timed out after 10 seconds");
+    } else {
+      console.error("[ensureProfileViaApi] Fetch failed:", err);
+    }
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {

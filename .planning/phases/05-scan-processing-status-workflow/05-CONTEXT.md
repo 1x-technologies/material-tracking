@@ -6,7 +6,7 @@
 <domain>
 ## Phase Boundary
 
-Drivers scan QR codes (printed in Phase 4) to advance pieces through the four-stage status lifecycle: Created → In Transit → Delivered → Picked Up. Two scan methods: RF scanner (keyboard wedge input into auto-focused text field) and phone camera fallback (button-triggered viewfinder). Driver selects the target action before scanning. Shipment-level status auto-derives from piece statuses. Every scan is recorded with who, what, and when. A basic events list shows on the shipment detail page. Phase 5 does NOT include batch scan mode (Phase 6), signature/photo capture (Phase 6), or full timeline view (Phase 9).
+Drivers scan QR codes (printed in Phase 4) to advance pieces through the four-stage status lifecycle: Created → In Transit → Delivered → Completed. Two scan methods: RF scanner (keyboard wedge input into auto-focused text field) and phone camera fallback (button-triggered viewfinder). Driver selects the target action before scanning. Shipment-level status auto-derives from piece statuses. Every scan is recorded with who, what, and when. A basic events list shows on the shipment detail page. Phase 5 does NOT include batch scan mode (Phase 6), signature/photo capture (Phase 6), or full timeline view (Phase 9).
 
 </domain>
 
@@ -17,18 +17,18 @@ Drivers scan QR codes (printed in Phase 4) to advance pieces through the four-st
 
 - **D-01:** **Auto-focused text input** on the scan page — page loads with cursor in the scan field. RF scanner (keyboard wedge) types the QR code value followed by Enter, which auto-submits the scan. Input clears after submission, ready for the next scan.
 - **D-02:** **"Scan with Camera" button** opens a camera viewfinder overlay using `html5-qrcode` (or `zxing-wasm`). On successful decode, the QR value is processed the same as RF input. Viewfinder closes after scan or on manual dismiss.
-- **D-03:** Driver **selects the action first** (In Transit / Delivered / Picked Up) via a selector at the top of the scan page, then scans one or more pieces. All scans in the session apply the selected action. This is batch-friendly — driver knows what operation they're performing.
+- **D-03:** Driver **selects the action first** (In Transit / Delivered / Completed) via a selector at the top of the scan page, then scans one or more pieces. All scans in the session apply the selected action. This is batch-friendly — driver knows what operation they're performing.
 
 ### Status lifecycle rules
 
-- **D-04:** **Strict sequential lifecycle** — no skipping stages. Created → In Transit → Delivered → Picked Up only. API rejects scans that would skip a stage (e.g., Created → Delivered returns an error).
+- **D-04:** **Strict sequential lifecycle** — no skipping stages. Created → In Transit → Delivered → Completed only. API rejects scans that would skip a stage (e.g., Created → Delivered returns an error).
 - **D-05:** **Any authenticated user** can perform scans — not restricted to Driver role. Staff and Admin can also scan (useful when drivers are unavailable or for testing).
 - **D-06:** **Standard derived shipment status** from piece statuses:
   - All pieces Created → Shipment `created`
   - Any piece In Transit → Shipment `in_transit`
   - Mixed Delivered/other → Shipment `partially_delivered` (e.g., "Partially Delivered 3/5")
   - All pieces Delivered → Shipment `delivered`
-  - All pieces Picked Up → Shipment `picked_up`
+  - All pieces Completed → Shipment `completed`
   - Cancelled overrides all → Shipment `cancelled`
 
 ### Scan feedback and confirmation
@@ -108,9 +108,9 @@ None.
 
 ### Reusable assets
 
-- `packages/shared/src/schemas/scan.ts` — `processScanSchema` validates `qrCode` + `action` (in_transit, delivered, picked_up); `batchScanSchema` wraps array of scans
+- `packages/shared/src/schemas/scan.ts` — `processScanSchema` validates `qrCode` + `action` (in_transit, delivered, completed); `batchScanSchema` wraps array of scans
 - `packages/shared/src/types/piece.ts` — `PieceEvent` with `action`, `timestamp`, `userId`, `userName`, `location?`
-- `packages/shared/src/enums.ts` — `PieceStatus` (created, in_transit, delivered, picked_up), `ShipmentStatus` (includes partially_delivered)
+- `packages/shared/src/enums.ts` — `PieceStatus` (created, in_transit, delivered, completed), `ShipmentStatus` (includes partially_delivered)
 - `apps/api/src/middleware/auth.ts` — `protectedProcedure` for D-05 (any authenticated user)
 
 ### Established patterns
@@ -135,7 +135,7 @@ None.
 - RF scanner auto-focus: `useEffect` with `inputRef.current?.focus()` on mount
 - Keyboard wedge: RF scanners type characters rapidly then send Enter — detect Enter keypress to trigger submission
 - Audio: Web Audio API `oscillator` for beep (440Hz, 200ms) and buzz (200Hz, 300ms) — no external audio files needed
-- Scan page action selector: prominent segmented control at top with In Transit / Delivered / Picked Up
+- Scan page action selector: prominent segmented control at top with In Transit / Delivered / Completed
 - Inline scanned-pieces list: shows piece number, shipment number, new status, timestamp — most recent at top
 
 </specifics>

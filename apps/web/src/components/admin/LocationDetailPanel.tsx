@@ -4,6 +4,8 @@ import type { Printer } from "@material-tracking/shared";
 import { trpc } from "../../trpc";
 import { SidePanel } from "./SidePanel";
 import { PrinterList } from "./PrinterList";
+import { Button } from "@/components/base/buttons/button";
+import { Input } from "@/components/base/input/input";
 
 interface LocationDetailPanelProps {
   locationId: string | null;
@@ -163,78 +165,58 @@ export function LocationDetailPanel({ locationId, isNew, onClose }: LocationDeta
 
   return (
     <SidePanel open={true} onClose={handleClose} title={title}>
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Name */}
-        <div>
-          <label htmlFor="loc-name" className="block text-sm font-semibold text-neutral-900 mb-1">
-            Name
-          </label>
-          <input
-            id="loc-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. HA"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-          />
-        </div>
+        <Input
+          label="Name"
+          size="sm"
+          placeholder="e.g. HA"
+          value={name}
+          onChange={(v) => setName(v)}
+        />
 
         {/* Full Name */}
-        <div>
-          <label htmlFor="loc-fullname" className="block text-sm font-semibold text-neutral-900 mb-1">
-            Full Name
-          </label>
-          <input
-            id="loc-fullname"
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="e.g. Houston Assembly"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-          />
-        </div>
+        <Input
+          label="Full Name"
+          size="sm"
+          placeholder="e.g. Houston Assembly"
+          value={fullName}
+          onChange={(v) => setFullName(v)}
+        />
 
         {/* Address */}
-        <div>
-          <label htmlFor="loc-address" className="block text-sm font-semibold text-neutral-900 mb-1">
-            Address
-          </label>
-          <input
-            id="loc-address"
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="e.g. 123 Main St, Houston, TX"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-          />
-        </div>
+        <Input
+          label="Address"
+          size="sm"
+          placeholder="e.g. 123 Main St, Houston, TX"
+          value={address}
+          onChange={(v) => setAddress(v)}
+        />
 
         {/* Status toggle (only for existing locations) */}
         {!isNew && (
-          <div className="border-t border-neutral-100 pt-4" aria-live="polite">
-            <p className="text-sm font-semibold text-neutral-900 mb-2">Status</p>
+          <div className="border-t border-secondary pt-6" aria-live="polite">
+            <p className="mb-3 text-sm font-medium text-secondary">Status</p>
             {active ? (
-              <button
-                type="button"
+              <Button
+                size="sm"
+                color={armed ? "primary-destructive" : "secondary-destructive"}
                 onClick={handleDeactivate}
-                disabled={isPending}
-                className={`w-full rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
-                  armed
-                    ? "bg-red-600 text-white hover:bg-red-700"
-                    : "border border-red-300 text-red-700 hover:bg-red-50"
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                isDisabled={isPending}
+                className="w-full"
               >
                 {armed ? "Confirm Deactivate?" : "Deactivate Location"}
-              </button>
+              </Button>
             ) : (
-              <button
-                type="button"
+              <Button
+                size="sm"
+                color="secondary"
                 onClick={handleReactivate}
-                disabled={isPending}
-                className="w-full rounded-md border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                isDisabled={isPending}
+                className="w-full"
               >
                 Reactivate Location
-              </button>
+              </Button>
             )}
           </div>
         )}
@@ -243,19 +225,17 @@ export function LocationDetailPanel({ locationId, isNew, onClose }: LocationDeta
         <PrinterList printers={printers} onChange={setPrinters} />
 
         {/* Save button */}
-        <div className="pt-4">
-          <button
-            type="button"
+        <div className="border-t border-secondary pt-6">
+          <Button
+            size="md"
+            color="primary"
             onClick={handleSave}
-            disabled={!isDirty || isPending}
-            className={`w-full rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
-              isDirty
-                ? "bg-brand-600 text-white hover:bg-brand-700"
-                : "bg-neutral-100 text-neutral-400"
-            } disabled:bg-neutral-100 disabled:text-neutral-400`}
+            isDisabled={!isDirty || isPending}
+            isLoading={isPending}
+            className="w-full"
           >
-            {isPending ? "Saving..." : saveButtonText}
-          </button>
+            {saveButtonText}
+          </Button>
         </div>
       </div>
     </SidePanel>

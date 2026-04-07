@@ -1,9 +1,11 @@
 import type { ExceptionType } from "../../utils/exceptions";
+import { Badge } from "@/components/base/badges/badges";
+import type { BadgeColors } from "@/components/base/badges/badge-types";
 
-const EXCEPTION_COLORS: Record<ExceptionType, string> = {
-  aged: "bg-red-100 text-red-700",
-  overdue: "bg-orange-100 text-orange-700",
-  stalled: "bg-yellow-100 text-yellow-700",
+const EXCEPTION_BADGE_COLOR: Record<ExceptionType, BadgeColors> = {
+  stalled: "warning",
+  overdue: "error",
+  aged: "error",
 };
 
 const EXCEPTION_LABELS: Record<ExceptionType, string> = {
@@ -22,12 +24,14 @@ export function ExceptionBadge({ exceptions }: ExceptionBadgeProps) {
   return (
     <>
       {exceptions.map((type) => (
-        <span
+        <Badge
           key={type}
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${EXCEPTION_COLORS[type]}`}
+          type="pill-color"
+          size="sm"
+          color={EXCEPTION_BADGE_COLOR[type]}
         >
           {EXCEPTION_LABELS[type]}
-        </span>
+        </Badge>
       ))}
     </>
   );

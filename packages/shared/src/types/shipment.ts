@@ -50,7 +50,7 @@ export interface Shipment {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   deliveredAt?: Timestamp;
-  pickedUpAt?: Timestamp;
+  completedAt?: Timestamp;
   lastAgedReminderAt?: Timestamp;
   notificationPrefs: NotificationPrefs;
 }

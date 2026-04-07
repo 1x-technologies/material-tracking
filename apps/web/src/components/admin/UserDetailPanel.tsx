@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "../../trpc";
 import { SidePanel } from "./SidePanel";
+import { Button } from "@/components/base/buttons/button";
+import { NativeSelect } from "@/components/base/select/select-native";
 
 interface UserDetailPanelProps {
   userId: string;
@@ -118,6 +120,18 @@ export function UserDetailPanel({ userId, onClose }: UserDetailPanelProps) {
 
   const initial = user.displayName.charAt(0).toUpperCase() || "?";
 
+  const roleOptions = [
+    { label: "No role assigned", value: "" },
+    { label: "Admin", value: "admin" },
+    { label: "Driver", value: "driver" },
+    { label: "Staff", value: "staff" },
+  ];
+
+  const locationOptions = [
+    { label: "No location assigned", value: "" },
+    ...(locations?.map((loc) => ({ label: loc.name, value: loc.id })) ?? []),
+  ];
+
   return (
     <SidePanel
       open={true}
@@ -126,92 +140,74 @@ export function UserDetailPanel({ userId, onClose }: UserDetailPanelProps) {
       subtitle={user.email}
     >
       {/* Avatar */}
-      <div className="flex justify-center mb-6">
-        <div className="flex items-center justify-center size-16 rounded-full bg-brand-600 text-white text-xl font-semibold">
+      <div className="mb-8 flex justify-center">
+        <div className="flex size-16 items-center justify-center rounded-full bg-brand-solid text-xl font-semibold text-white">
           {initial}
         </div>
       </div>
 
       {/* Role assignment */}
-      <div className="border-b border-neutral-100 py-4">
-        <label htmlFor="user-role" className="block text-sm font-semibold text-neutral-900 mb-2">
-          Role
-        </label>
-        <select
-          id="user-role"
-          value={editRole}
-          onChange={(e) => setEditRole(e.target.value)}
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-        >
-          <option value="">No role assigned</option>
-          <option value="admin">Admin</option>
-          <option value="driver">Driver</option>
-          <option value="staff">Staff</option>
-        </select>
-      </div>
+      <div className="space-y-6">
+        <div>
+          <NativeSelect
+            label="Role"
+            size="sm"
+            value={editRole}
+            onChange={(e) => setEditRole(e.target.value)}
+            options={roleOptions}
+          />
+        </div>
 
-      {/* Location assignment */}
-      <div className="border-b border-neutral-100 py-4">
-        <label htmlFor="user-location" className="block text-sm font-semibold text-neutral-900 mb-2">
-          Location
-        </label>
-        <select
-          id="user-location"
-          value={editLocationId}
-          onChange={(e) => setEditLocationId(e.target.value)}
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
-        >
-          <option value="">No location assigned</option>
-          {locations?.map((loc) => (
-            <option key={loc.id} value={loc.id}>
-              {loc.name}
-            </option>
-          ))}
-        </select>
-      </div>
+        {/* Location assignment */}
+        <div>
+          <NativeSelect
+            label="Location"
+            size="sm"
+            value={editLocationId}
+            onChange={(e) => setEditLocationId(e.target.value)}
+            options={locationOptions}
+          />
+        </div>
 
-      {/* Status toggle */}
-      <div className="border-b border-neutral-100 py-4" aria-live="polite">
-        <p className="text-sm font-semibold text-neutral-900 mb-2">Status</p>
-        {editActive ? (
-          <button
-            type="button"
-            onClick={handleDeactivate}
-            disabled={updateUserMutation.isPending}
-            className={`w-full rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
-              armed
-                ? "bg-red-600 text-white hover:bg-red-700"
-                : "border border-red-300 text-red-700 hover:bg-red-50"
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
+        {/* Status section */}
+        <div className="border-t border-secondary pt-6" aria-live="polite">
+          <p className="mb-3 text-sm font-medium text-secondary">Status</p>
+          {editActive ? (
+            <Button
+              size="sm"
+              color={armed ? "primary-destructive" : "secondary-destructive"}
+              onClick={handleDeactivate}
+              isDisabled={updateUserMutation.isPending}
+              className="w-full"
+            >
+              {armed ? "Confirm Deactivate?" : "Deactivate User"}
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              color="secondary"
+              onClick={handleReactivate}
+              isDisabled={updateUserMutation.isPending}
+              className="w-full"
+            >
+              Reactivate User
+            </Button>
+          )}
+        </div>
+
+        {/* Save button */}
+        <div className="border-t border-secondary pt-6">
+          <Button
+            size="md"
+            color="primary"
+            onClick={handleSave}
+            isDisabled={!isDirty || updateUserMutation.isPending}
+            isLoading={updateUserMutation.isPending}
+            className="w-full"
           >
-            {armed ? "Confirm Deactivate?" : "Deactivate User"}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleReactivate}
-            disabled={updateUserMutation.isPending}
-            className="w-full rounded-md border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Reactivate User
-          </button>
-        )}
-      </div>
-
-      {/* Save button */}
-      <div className="pt-4">
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={!isDirty || updateUserMutation.isPending}
-          className={`w-full rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
-            isDirty
-              ? "bg-brand-600 text-white hover:bg-brand-700"
-              : "bg-neutral-100 text-neutral-400"
-          } disabled:bg-neutral-100 disabled:text-neutral-400`}
-        >
-          {updateUserMutation.isPending ? "Saving..." : "Save Changes"}
-        </button>
+            Save Changes
+          </Button>
+        </div>
       </div>
     </SidePanel>
   );
