@@ -1,8 +1,8 @@
 {
   "projects": {
-    "default": "manufacturing-472518",
-    "dev": "manufacturing-472518",
-    "staging": "manufacturing-472518",
-    "prod": "manufacturing-472518"
+    "default": "material-tracking-dev-492716",
+    "dev": "material-tracking-dev-492716",
+    "sandbox": "material-tracking-sandbox",
+    "prod": "material-tracking-prod"
   }
 }
