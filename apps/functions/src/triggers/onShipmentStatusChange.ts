@@ -35,7 +35,7 @@ export const onShipmentStatusChange = onDocumentUpdated(
 
     if (newStatus === "delivered" && after.notificationPrefs?.onDelivery) {
       message = buildDeliveredSlackMessage(notifData);
-    } else if (newStatus === "picked_up" && after.notificationPrefs?.onPickup) {
+    } else if (newStatus === "completed" && after.notificationPrefs?.onPickup) {
       message = buildCompletedSlackMessage(notifData);
     } else if (newStatus === "in_transit" && after.notificationPrefs?.onTransit) {
       message = buildInTransitSlackMessage(notifData);
